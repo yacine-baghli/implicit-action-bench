@@ -73,12 +73,14 @@ after the Opus pilot and trajectory audit.
 ## Pilot outcome: rejected for scaling
 
 The November 15, 2026 Valkyrie pilot used all eight tasks with three trials per
-task for Fable 5.2, GPT-6 Astra, and Gemini 4 Carbon under the same
-mini-SWE-agent harness. Fable scored 59.6% ± 7.7 points, Astra scored 80.0% ±
-8.0 points, and Carbon scored 45.0% ± 1.8 points. The set does not advance:
+task for five models under the same mini-SWE-agent harness. Sol 6.1 scored
+89.2% ± 2.4 points, Opus 5.5 scored 82.5% ± 3.7, Astra scored 80.0% ± 8.0,
+Fable scored 59.6% ± 7.7, and Carbon scored 45.0% ± 1.8. The set does not
+advance:
 
-- Astra and Fable are above the 55% hardening threshold;
-- Astra outscored Fable by 20.4 points under the shared harness;
+- Sol, Opus, Astra, and Fable are above the 55% hardening threshold;
+- Sol and Opus recorded actions in all 24 attempts with no blocking violation;
+- the raw score spread is 44.2 points under the shared harness;
 - seven zero-scoring runs were `RepeatedFormatError`/no-action failures;
 - Fable's actionful runs averaged 84.1%;
 - Carbon recorded no action in 12/24 attempts after reaching the fixed 25-step
@@ -86,6 +88,8 @@ mini-SWE-agent harness. Fable scored 59.6% ± 7.7 points, Astra scored 80.0% ±
   evidence of reasoning difficulty;
 - Astra exposed one confirmed and one probable negation false positive in the
   blocking gate, plus five verifier payloads truncated in result metadata;
+- Sol also produced five oversized verifier payloads, but trajectory recovery
+  confirmed business actions in each and left the official rewards unchanged;
 - trajectory review found lexical scorer misses such as `expiry` versus
   `expired`, not enough genuine reasoning failures.
 

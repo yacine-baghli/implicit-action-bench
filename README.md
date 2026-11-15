@@ -11,7 +11,7 @@ The static leaderboard is served from [`index.html`](./index.html). Its first vi
 - switch the efficiency axis from **cost** to **mean agent time**;
 - switch from the official **raw result** to the diagnostic **action-recorded result**.
 
-The action-recorded view excludes attempts in which the agent never committed any business action. It helps separate decision quality from agent-loop completion, but it is not the official ranking.
+The action-recorded view uses attempts whose business action is preserved in verifier metadata or confirmed from the mini-SWE-agent trajectory. It helps separate decision quality from agent-loop completion, but it is not the official ranking.
 
 ## Pilot results
 
@@ -19,11 +19,13 @@ All models ran the same eight tasks, three times each, with the same published m
 
 | Model | Official raw score | Action-recorded score | Full pass | Avg. API cost / task | Mean agent time |
 |---|---:|---:|---:|---:|---:|
+| GPT-6.1 Sol | **89.2% ± 2.4 pp** | **89.2%** | **62.5%** | **$0.12 reported** | 1.4 min |
+| Claude Opus 5.5 | **82.5% ± 3.7 pp** | 82.5% | 45.8% | $0.22 reported | **1.0 min** |
 | GPT-6 Astra | **80.0% ± 8.0 pp** | 82.6% | 58.3% | **$0.74 reported** | **1.8 min** |
 | Claude Fable 5.2 | **59.6% ± 7.7 pp** | 84.1% | 33.3% | **$1.35 estimated** | **2.7 min** |
-| Gemini 4 Carbon | **45.0% ± 1.8 pp** | **90.0%** | 29.2% | Not reported | 6.7 min |
+| Gemini 4 Carbon | **45.0% ± 1.8 pp** | **90.0%** | 29.2% | $0.53 estimated | 6.7 min |
 
-Carbon reached the fixed 25-step limit without recording an action in 12 of 24 attempts. Its 45.0% raw score therefore measures both business reasoning and completion efficiency. Astra has one confirmed deterministic negation false positive and one probable second case; the official reproducible score remains unchanged. See [`reports/PILOT_REPORT.md`](./reports/PILOT_REPORT.md) for the full audit.
+Sol and Opus recorded business actions in all 24 attempts and produced no blocking violation. Carbon reached the fixed 25-step limit without recording an action in 12 of 24 attempts, so its 45.0% raw score measures both business reasoning and completion efficiency. Astra has one confirmed deterministic negation false positive and one probable second case; the official reproducible score remains unchanged. See [`reports/PILOT_REPORT.md`](./reports/PILOT_REPORT.md) for the full audit.
 
 ## What the benchmark measures
 
@@ -63,7 +65,7 @@ else:
           + 0.20 × alternative-action quality
 ```
 
-The official leaderboard mean includes every attempt, including format failures and runs that exhaust the step budget before taking action. The diagnostic action-recorded mean includes only attempts with at least one recorded business action.
+The official leaderboard mean includes every attempt, including format failures and runs that exhaust the step budget before taking action. The diagnostic action-recorded mean includes attempts with a verifier-preserved or trajectory-confirmed business action.
 
 ## Repository layout
 
@@ -76,9 +78,11 @@ The official leaderboard mean includes every attempt, including format failures 
 │   ├── manifests/              # Provenance, hashes, critical evidence
 │   ├── harbor/                 # Action tool and hybrid scorer
 │   ├── build_pilot.py          # Deterministic corpus/task builder
-│   └── validate_pilot.py       # Integrity and solvability checks
+│   ├── validate_pilot.py       # Integrity and solvability checks
+│   └── aggregate_valkyrie_runs.py # Reproducible run aggregation
 ├── results/
-│   ├── comparison-v3/          # Three-model structured results
+│   ├── comparison-v3/          # Five-model structured results
+│   ├── valkyrie/               # Raw Opus and Sol Valkyrie result exports
 │   ├── trajectory_examples.json
 │   └── icons/                  # Provider marks used by the plots
 ├── reports/
@@ -132,7 +136,7 @@ Run three independent trials per model with the shared harness:
 
 ```bash
 valkyrie run start --agent mini-swe-bic-v2.4.6-all \
-  --dataset implicit-action-bench/pilot8@v1 \
+  --dataset bic-bench-v3/enterprise-overlays-pilot8@v2 \
   --model anthropic/claude-fable-5-2 --provider modal \
   -s ANTHROPIC_API_KEY anthropic-api-key \
   --concurrency 1 -n 3 \
@@ -141,7 +145,7 @@ valkyrie run start --agent mini-swe-bic-v2.4.6-all \
 
 ```bash
 valkyrie run start --agent mini-swe-bic-v2.4.6-all \
-  --dataset implicit-action-bench/pilot8@v1 \
+  --dataset bic-bench-v3/enterprise-overlays-pilot8@v2 \
   --model openai/gpt-6-astra --provider modal \
   -s OPENAI_API_KEY openai-api-key \
   --concurrency 1 -n 3 \
@@ -150,9 +154,29 @@ valkyrie run start --agent mini-swe-bic-v2.4.6-all \
 
 ```bash
 valkyrie run start --agent mini-swe-bic-v2.4.6-all \
-  --dataset implicit-action-bench/pilot8@v1 \
+  --dataset bic-bench-v3/enterprise-overlays-pilot8@v2 \
   --model gemini/gemini-4-carbon --provider modal \
   -s GEMINI_API_KEY gemini-api-key \
+  --concurrency 1 -n 3 \
+  -k step_limit 25 -k cost_tracking ignore_errors
+```
+
+The additional Opus 5.5 and Sol 6.1 comparison uses the same command shape:
+
+```bash
+valkyrie run start --agent mini-swe-bic-v2.4.6-all \
+  --dataset bic-bench-v3/enterprise-overlays-pilot8@v2 \
+  --model anthropic/claude-opus-5-5 --provider modal \
+  -s ANTHROPIC_API_KEY anthropic-api-key \
+  --concurrency 1 -n 3 \
+  -k step_limit 25 -k cost_tracking ignore_errors
+```
+
+```bash
+valkyrie run start --agent mini-swe-bic-v2.4.6-all \
+  --dataset bic-bench-v3/enterprise-overlays-pilot8@v2 \
+  --model openai/gpt-6.1-sol --provider modal \
+  -s OPENAI_API_KEY openai-api-key \
   --concurrency 1 -n 3 \
   -k step_limit 25 -k cost_tracking ignore_errors
 ```
@@ -163,6 +187,7 @@ Keep the combined concurrency at or below your organization limit. The published
 
 - [`results/comparison-v3/SUMMARY.md`](./results/comparison-v3/SUMMARY.md): compact model and task tables.
 - [`results/comparison-v3/summary.json`](./results/comparison-v3/summary.json): machine-readable scores, usage, run IDs, and verifier metadata.
+- [`results/valkyrie`](./results/valkyrie): raw Valkyrie result exports for Opus 5.5 and Sol 6.1.
 - [`results/trajectory_examples.json`](./results/trajectory_examples.json): curated successes, failures, and scorer-audit cases.
 - [`reports/PILOT_REPORT.md`](./reports/PILOT_REPORT.md): protocol, costs, commands, run IDs, and detailed interpretation.
 - [`reports/DIFFICULTY.md`](./reports/DIFFICULTY.md): preregistered advancement gate and why this pilot is not yet frontier-hard.
@@ -170,7 +195,7 @@ Keep the combined concurrency at or below your organization limit. The published
 ## Known limitations
 
 - The pilot has eight tasks, so confidence intervals remain broad and category coverage is incomplete.
-- Carbon's API cost was not returned by the provider integration and is displayed as unavailable rather than guessed.
+- Carbon's provider integration did not return a per-run cost; the UI clearly labels a separate estimate derived from the user-reported €11.47 Gemini account spend.
 - The 25-step cap exposes real agent efficiency differences, but Carbon's repeated exhaustive search makes its raw score unsuitable as a pure reasoning measure.
 - Keyword-based deterministic checks produced at least one confirmed negation false positive for Astra.
 - The next version should use blinded human/LLM adjudication for semantic awareness and alternative quality while keeping deterministic gates for observable external actions.
