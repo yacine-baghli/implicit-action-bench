@@ -268,15 +268,16 @@ def render_page() -> str:
         if model["status"] == "complete" and model["cost_per_attempt"] is not None
     ]
     stats = [
-        (str(len(data["models"])), "frontier models"),
-        ("24", "attempts / model"),
-        (f"${min(known_costs):.2f}", "lowest cost / task"),
-        (f'{complete_model["pass_rate"] * 100:.1f}%', "leading full-pass rate"),
+        (str(len(data["models"])), "frontier models", ""),
+        ("24", "attempts per model", "8 tasks × 3 tries · one attempt = one full task"),
+        (f"${min(known_costs):.2f}", "cheapest model, per attempt", "average API cost"),
+        (f'{complete_model["pass_rate"] * 100:.0f}%', "best full pass", "every check right"),
     ]
     stats_html = "".join(
         f'<div class="stat"><div class="value mono">{html.escape(value)}</div>'
-        f'<div class="key">{html.escape(label)}</div></div>'
-        for value, label in stats
+        f'<div class="key">{html.escape(label)}</div>'
+        + (f'<div class="hint">{html.escape(hint)}</div>' if hint else "") + "</div>"
+        for value, label, hint in stats
     )
     data_blob = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     icon_blob = json.dumps(icons, ensure_ascii=False).replace("</", "<\\/")
@@ -374,6 +375,11 @@ nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 .stat:first-child { border-left:0; }
 .stat .value { font-size:44px; font-weight:400; letter-spacing:-.03em; line-height:1.15; }
 .stat .key { color:var(--text-muted); font-size:17px; }
+.stat .hint { color:var(--text-muted); font-size:12.5px; margin-top:4px; opacity:.85; }
+.leader-columns.two, .leader-top.two { grid-template-columns:minmax(170px,1fr) 150px; }
+.segmented button[disabled] { opacity:.4; cursor:not-allowed; }
+.fair-list { margin:10px 0 18px; padding-left:20px; }
+.fair-list li { margin:6px 0; }
 .leaderboard { display:block; padding-bottom:110px; }
 .leaderboard-intro { display:grid; grid-template-columns:minmax(250px,.72fr) minmax(0,1.28fr); gap:80px; align-items:start; margin-bottom:34px; }
 .section-kicker { color:var(--accent); font-size:11px; font-weight:650; text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px; }
@@ -547,27 +553,21 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   .plot-logo svg { width:23px; height:23px; }
   .plot-shell { overflow:hidden; }
 }
-.both-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px; }
-.both-cell { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; }
-.both-label { font-size: 12px; color: var(--muted, #7a7f87); white-space: nowrap; }
-.both-track { height: 6px; border-radius: 3px; background: var(--track, #eef0f3); position: relative; overflow: hidden; }
-.both-fill { position: absolute; inset: 0 auto 0 0; border-radius: 3px; background: #4f46e5; }
-.both-val { font-size: 13px; min-width: 48px; text-align: right; }
 </style>
 </head>
 <body>
 <nav class="top"><div class="wrap">
-  <a class="brand" href="#"><span class="brand-mark"></span>implicit-action-bench</a>
-  <div class="navlinks"><a href="#leaderboard">Leaderboard</a><a href="#results">Results</a><a href="#trajectories">Trajectories</a><a href="#habits">Team habits</a><a href="#method">Methodology</a><a href="#takeaways">Takeaways</a></div>
+  <a class="brand" href="#"><span class="brand-mark"></span>Implicit Action Bench</a>
+  <div class="navlinks"><a href="#leaderboard">Leaderboard</a><a href="#takeaways">Key findings</a><a href="#results">Results</a><a href="#trajectories">Example runs</a><a href="#method">Methodology</a></div>
   <a class="navright" href="#method">Research release</a>
 </div></nav>
 <main class="wrap">
-  <div class="crumbs">Home<span>›</span>Benchmarks<span>›</span><b>implicit-action-bench</b></div>
+  <div class="crumbs">Home<span>›</span>Benchmarks<span>›</span><b>Implicit Action Bench</b></div>
 
   <section class="hero">
-    <h1>The benchmark for the rules<br>nobody writes down.</h1>
-    <div class="with">Built on <b>Valkyrie</b><span>·</span><b>one simple agent for every model</b><span class="team-credit">· by Yaya &amp; Vivi team</span></div>
-    <p>Top AI agents struggle with how a company actually works. Two parts, one company: in <b>implicit-action-bench</b> the rule is buried somewhere in the records; in <b>PrecedentBench</b> it only shows in how the team handled past work. Both are hard, both are graded fairly, and every model passes when it is told the rule.</p>
+    <h1>The tacit knowledge benchmark<br>for AI agents.</h1>
+    <div class="with"><b>Implicit Action Bench</b><span>·</span>built on <b>Valkyrie</b><span class="team-credit">· by Yaya &amp; Vivi team</span></div>
+    <p>Most of what a company knows is never written down. It lives in people's heads and in patterns in past work, which is why agents deployed inside companies fail. Implicit Action Bench measures whether frontier agents can recover it.</p>
     <div class="buttons"><a class="button primary" href="#leaderboard">Explore leaderboard</a><a class="button" href="#method">Read methodology</a></div>
   </section>
 
@@ -576,27 +576,18 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
 
   <section class="leaderboard" id="leaderboard">
     <div class="leaderboard-intro">
-      <div><div class="section-kicker" id="lb-kicker">Enterprise action intelligence</div><h2 id="lb-title">The implicit-action-bench leaderboard</h2></div>
+      <div><div class="section-kicker" id="lb-kicker">Leaderboard</div><h2 id="lb-title">Request breaks a hidden rule</h2></div>
       <div class="leaderboard-body" id="lb-body-iab">
-        <p>Eight high-context tasks are grounded in the Redwood Inference world from EnterpriseRAG-Bench. Each sandbox contains at least 120 authentic records plus current-decision overlays, requiring models to reconstruct the controlling rule from a realistic evidence neighborhood.</p>
-        <p>The full-pass view applies the benchmark's strictest criterion: every scoring component must pass. End-to-end performance and decision quality remain available as complementary views of agent execution and business reasoning.</p>
-        <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
-      </div>
-      <div class="leaderboard-body" id="lb-body-both" hidden>
-        <p>Each model's full-pass rate in both parts, side by side. The parts use different agents and graders, so we show the two numbers next to each other instead of averaging them.</p>
-        <p>Every top model is strong somewhere and weak somewhere else. None of them reliably does both jobs a new hire would be expected to do.</p>
+        <p>Eight business tasks at a real-looking company. Each ends with a tempting request that breaks a rule buried in the company's records. The agent has to find the rule and do the right thing instead.</p>
       </div>
       <div class="leaderboard-body" id="lb-body-pb" hidden>
-        <p>A normal Monday on Redwood Inference's finance team: fifteen supplier invoices to log, three quarters of invoice history and about 2,500 emails, Slack threads and tickets. Eight team habits decide how each invoice is logged. Some changed in October, some depend on two conditions, and none is written down. Every habit is shown by three recent examples.</p>
-        <p>The view shows the hardest honest setting: the whole morning right, all fifteen invoices, with and without last year's policy doc. This part uses its own plain agent and deterministic grader, so its scores are not mixed with the first part.</p>
-        <div class="chips"><a href="#habits">How it works</a><a href="#habits-cards">Trajectory evidence</a></div>
+        <p>Fifteen supplier invoices to log, with nine months of the team's past work. Eight team rules decide each invoice. None is written down, and some changed recently. The only way to learn them is from what the team did before.</p>
       </div>
     </div>
     <div class="card ranking-card">
       <div class="control-bar">
-        <div class="control-group"><span>Benchmark</span><div class="segmented" id="bench-toggle"><button type="button" data-bench="iab" aria-pressed="true">Rule written in the records</button><button type="button" data-bench="pb" aria-pressed="false">Rule only in the team's habits</button><button type="button" data-bench="both" aria-pressed="false">Both parts</button></div></div>
-        <div class="control-group" id="pb-score-group" hidden><span>Score view</span><div class="segmented" id="pb-score-toggle"><button type="button" data-pb-mode="pass" aria-pressed="true">Whole job right</button><button type="button" data-pb-mode="mean" aria-pressed="false">Invoices right</button></div></div>
-        <div class="control-group" id="iab-score-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="pass" aria-pressed="true">Full pass</button><button type="button" data-score-mode="raw" aria-pressed="false">End-to-end</button><button type="button" data-score-mode="actionful" aria-pressed="false">Decision quality</button></div></div>
+        <div class="control-group"><span>Benchmark</span><div class="segmented" id="bench-toggle"><button type="button" data-bench="iab" aria-pressed="true">Request breaks a hidden rule</button><button type="button" data-bench="pb" aria-pressed="false">Rule learned from past work</button></div></div>
+        <div class="control-group" id="iab-score-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="pass" aria-pressed="true">Full pass</button><button type="button" data-score-mode="raw" aria-pressed="false">End-to-end</button><button type="button" data-score-mode="actionful" aria-pressed="false" id="dq-button">Decision quality</button></div></div>
       </div>
       <div class="card-head leader-columns"><span>Model</span><span id="score-head">Full pass</span><span id="metric-head">Cost / task</span></div>
       <div id="leader-rows"></div>
@@ -613,23 +604,23 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
         <div class="plot-axis-title-x" id="plot-axis-title-x">Average API cost per task attempt</div>
         <div class="plot-note" id="plot-note"></div>
       </div>
-      <div class="card-foot"><span>3 trials × 8 tasks × __MODEL_COUNT__ frontier models</span><span class="mono">release 1.0</span></div>
+      <div class="card-foot"><span id="plot-foot">3 trials × 8 tasks × __MODEL_COUNT__ frontier models</span><span class="mono">release 1.0</span></div>
     </div>
   </section>
 
   <section class="takeaway-layout" id="takeaways">
-    <div><h2>Research insights</h2><ol class="takeaways" id="takeaway-list"></ol></div>
+    <div><h2>Key findings</h2><ol class="takeaways" id="takeaway-list"></ol></div>
     <aside class="quote">
       <strong class="mono" id="quote-score"></strong>
-      <p>Leading full-pass rate across 24 independent task attempts.</p>
-      <div class="who"><span id="quote-icon"></span><span id="quote-model"></span> · fixed harness and benchmark release</div>
+      <p id="quote-text">Best full-pass rate across 24 attempts.</p>
+      <div class="who"><span id="quote-icon"></span><span id="quote-model"></span><span id="quote-tail"> · same agent for every model</span></div>
     </aside>
   </section>
 
   <section class="section" id="results">
-    <h2>Results</h2>
-    <p class="sub">Explore task-level performance, repeated trials, system efficiency, and the complete benchmark task library under one fixed protocol.</p>
-    <div class="tabs" role="tablist">
+    <h2>Results by task</h2>
+    <p class="sub">Average score of each model on each task of the "Request breaks a hidden rule" part.</p>
+    <div class="tabs" role="tablist" hidden>
       <button role="tab" aria-selected="true" data-tab="task-panel">By task</button>
       <button role="tab" aria-selected="false" data-tab="trial-panel">Trials</button>
       <button role="tab" aria-selected="false" data-tab="system-panel">Systems</button>
@@ -642,32 +633,31 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   </section>
 
   <section class="section" id="trajectories">
-    <h2>Representative trajectories</h2>
-    <p class="sub">Concrete examples show how frontier agents discover evidence, reconcile implicit constraints, and translate reasoning into business actions.</p>
+    <h2>Example runs</h2>
+    <p class="sub">What agents actually did, from the "Request breaks a hidden rule" part.</p>
     <div class="trajectory-list" id="trajectory-list"></div>
   </section>
 
   <section class="section method" id="habits">
-    <h2>Rule only in the team's habits</h2>
-    <p class="sub">PrecedentBench: can an agent pick up how a team works from its history, when nobody wrote it down?</p>
-    <p><b>The job.</b> Log fifteen supplier invoices for Redwood Inference's finance team. The workspace holds three quarters of the team's invoice tracker and about 2,500 emails, Slack threads and tickets. The instruction is one line: log the invoices.</p>
-    <p><b>The habits.</b> Eight conventions decide each row: who reviews (Infra goes to Tomasz, the rest to Mireille), a review cutoff that moved from $5,000 to $10,000 in October, a supplier exempt after its contract, a reclassified cost center, notes like "PO matched" or "card", re-sent invoices marked as duplicates. Some depend on two conditions. Every habit is shown by three recent examples, so a careful new hire could get every invoice right.</p>
-    <p><b>Same agent for every model.</b> One plain loop, one terminal tool, reasoning effort high, identical instructions. Grading is deterministic: each invoice is logged once with the team's note and cost center.</p>
-    <div class="method-callout mono" id="pb-fair"></div>
+    <h2>Rule learned from past work: example runs</h2>
+    <p class="sub">The agent logs fifteen invoices for a finance team. Eight team rules decide each one (who reviews it, a cutoff that moved in October, a supplier exempt after its contract...). Each rule shows in at least three recent past invoices, so a careful new hire could get every invoice right.</p>
     <div class="trajectory-list" id="habits-cards"></div>
   </section>
 
   <section class="section method" id="method">
     <h2>Methodology</h2>
-    <p><b>Enterprise setting.</b> Every task starts from the same pinned EnterpriseRAG-Bench company world, then adds a small decision overlay. Agents search ordinary Slack, Gmail, CRM, Jira, Drive, and engineering records; no file is labeled as gold evidence or distractor.</p>
-    <p><b>Implicit constraints.</b> No single record states the complete rule. The correct action joins scope, authority, timing, evidence, or system-of-record facts across multiple sources. Distractors are recent and credible but do not control the final decision.</p>
-    <p><b>Shared harness.</b> Anthropic, OpenAI, and Google models use the same mini-SWE-agent package, system-prompt structure, business-action tool catalog, 25-step cap, and three independent trials. Task sandboxes have no public internet access.</p>
-    <div class="method-callout mono">score = 0 if a forbidden action occurs<br>otherwise 60% deterministic + 20% awareness + 20% alternative quality</div>
-    <p><b>Interpretation.</b> Full pass requires every scoring component. Partial credit is included in the mean. Standard deviation is calculated across the three complete trial means, and blocked providers remain unscored.</p>
-    <p><b>Research contribution.</b> The benchmark jointly measures decision quality and execution efficiency. The __SCORE_SPREAD__-point frontier-model spread, task-specific ranking reversals, and decision-quality comparison expose capabilities that aggregate question-answering evaluations do not capture.</p>
+    <p><b>How we keep it fair.</b></p>
+    <ul class="fair-list">
+      <li><b>Same agent for every model.</b> Within each part, every model runs in the same agent, with the same instructions, tools and step limit.</li>
+      <li><b>Graded by code, not by another AI.</b> Each answer is checked against a fixed answer key.</li>
+      <li><b>Solvable when told.</b> <span id="pb-fair"></span></li>
+      <li><b>No answer in the box.</b> We checked that nothing the agent can see gives the answer away.</li>
+    </ul>
+    <p><b>Request breaks a hidden rule.</b> Eight tasks built on a real company dataset (Redwood Inference, EnterpriseRAG-Bench). The agent searches Slack, Gmail, CRM, Jira and Drive records; no single record states the full rule. Doing the forbidden action scores 0; otherwise 60% exact checks, 20% awareness, 20% quality of the alternative. 3 attempts per task, mini-SWE-agent, 25-step limit, no internet.</p>
+    <p><b>Rule learned from past work.</b> Same company. The agent logs 15 invoices; eight team rules (some conditional, some changed in October) only show in nine months of past invoices, with or without last year's outdated policy doc. Full pass = every invoice right. 20 attempts per model, one plain agent with a terminal tool, reasoning effort high.</p>
   </section>
 </main>
-<footer><div class="wrap">implicit-action-bench · Enterprise constraint-aware action benchmark · built on Valkyrie</div></footer>
+<footer><div class="wrap">Implicit Action Bench · the tacit knowledge benchmark for AI agents · built on Valkyrie</div></footer>
 <div class="tip" hidden></div>
 <script>
 const theme = new URLSearchParams(location.search).get("theme");
@@ -678,7 +668,6 @@ const PROVIDER_TOKEN = {Anthropic:"anthropic", OpenAI:"openai", Google:"google"}
 const percent = value => value == null ? "N/A" : `${(value * 100).toFixed(1)}%`;
 let scoreMode = "pass";
 let bench = "iab";
-let pbMode = "pass";
 const PB = DATA.precedent ? DATA.precedent.jobs.invoices : null;
 let efficiencyMetric = "cost";
 const escapeHtml = value => String(value).replace(/[&<>"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[character]);
@@ -705,7 +694,7 @@ function scoreModeLabel() {
 }
 
 function scoreModeTitle() {
-  if (scoreMode === "pass") return "Full-pass success";
+  if (scoreMode === "pass") return "Full pass";
   return scoreMode === "raw" ? "End-to-end performance" : "Decision quality";
 }
 
@@ -769,29 +758,46 @@ function renderEfficiencyPlot(models) {
 }
 
 function renderPrecedent() {
-  const val = m => pbMode === "pass" ? m.main.pass : m.main.mean;
-  const lo = m => pbMode === "pass" ? m.main.pass_lo : m.main.mean_lo;
-  const hi = m => pbMode === "pass" ? m.main.pass_hi : m.main.mean_hi;
+  if (scoreMode === "actionful") scoreMode = "pass";
+  document.querySelectorAll("[data-score-mode]").forEach(item => item.setAttribute("aria-pressed", String(item.dataset.scoreMode === scoreMode)));
+  const val = m => scoreMode === "pass" ? m.main.pass : m.main.mean;
+  const lo = m => scoreMode === "pass" ? m.main.pass_lo : m.main.mean_lo;
+  const hi = m => scoreMode === "pass" ? m.main.pass_hi : m.main.mean_hi;
   const rows = [...PB.models].sort((a, b) => val(b) - val(a) || b.main.mean - a.main.mean);
   document.getElementById("leader-rows").innerHTML = rows.map(m => {
     const token = PROVIDER_TOKEN[m.provider] || "google";
-    const tip = `${m.name}|Whole job right: ${m.main.k}/${m.main.n} (95%: ${percent(m.main.pass_lo)}–${percent(m.main.pass_hi)})|Invoices right: ${percent(m.main.mean)}|Told the 8 habits: ${m.told.k}/${m.told.n} fully right`;
+    const tip = `${m.name}|Full pass: ${m.main.k} of ${m.main.n} attempts (95%: ${percent(m.main.pass_lo)}–${percent(m.main.pass_hi)})|End-to-end: ${percent(m.main.mean)} of invoices right|Told the 8 rules: ${m.told.k} of ${m.told.n} attempts fully right`;
     return `<div class="leader-row" tabindex="0" data-tip="${escapeHtml(tip)}">
-      <div class="leader-top"><span class="model-name">${ICONS[m.provider] || ""}${escapeHtml(m.name)}<span class="model-tag">${escapeHtml(m.provider)}</span></span><span class="model-score mono">${percent(val(m))}<small>${percent(lo(m))}–${percent(hi(m))}</small></span><span class="model-metric mono">${m.main.k}/${m.main.n}</span></div>
+      <div class="leader-top two"><span class="model-name">${ICONS[m.provider] || ""}${escapeHtml(m.name)}<span class="model-tag">${escapeHtml(m.provider)}</span></span><span class="model-score mono">${percent(val(m))}<small>${percent(lo(m))}–${percent(hi(m))}</small></span></div>
       <div class="leader-bar"><div class="leader-fill" style="width:${Math.max(val(m) * 100, .8)}%;background:linear-gradient(90deg,var(--${token}-a),var(--${token}-b))"></div></div>
     </div>`;
   }).join("");
   document.getElementById("axis").innerHTML = [0,20,40,60,80,100].map(value => `<span style="left:${value}%">${value}%</span>`).join("");
-  document.getElementById("score-head").textContent = pbMode === "pass" ? "Whole job right" : "Invoices right";
-  document.getElementById("metric-head").textContent = "Tries";
-  document.getElementById("foot-left").textContent = "8 habits · 3 examples each · with and without last year's policy doc";
-  document.getElementById("foot-right").textContent = `${PB.models[0].main.n} tries / model`;
+  document.getElementById("score-head").textContent = scoreModeLabel();
+  document.getElementById("metric-head").textContent = "";
+  document.getElementById("foot-left").textContent = scoreMode === "pass" ? "Full pass = every one of the 15 invoices right" : "End-to-end = share of invoices right";
+  document.getElementById("foot-right").textContent = `${PB.models[0].main.n} attempts / model`;
+  renderPbPlot();
   bindTooltips();
+}
+
+function renderPbPlot() {
+  const saved = [scoreMode, efficiencyMetric];
+  efficiencyMetric = "time";
+  const adapted = PB.models.map(m => ({ id: m.id, name: m.name, provider: m.provider, status: "complete",
+    pass_rate: m.main.pass, score: m.main.mean, actionful_mean: m.main.mean,
+    cost_per_attempt: null, mean_agent_minutes: m.mean_agent_minutes }));
+  renderEfficiencyPlot(adapted);
+  [scoreMode, efficiencyMetric] = saved;
+  document.getElementById("plot-title").textContent = `${scoreModeTitle()} vs. agent time`;
+  document.getElementById("plot-axis-title-x").textContent = "Average agent time per attempt";
+  document.getElementById("plot-foot").textContent = `${PB.models[0].main.n} attempts × ${PB.models.length} frontier models`;
+  document.getElementById("plot-note").textContent = "Time is the agent's own run time per attempt, averaged over 20 attempts. Cost is not shown for this part: list prices for every model were not available.";
 }
 
 function renderPrecedentSection() {
   if (!PB) return;
-  document.getElementById("pb-fair").textContent = `Told the 8 habits in plain words, every model gets ${PB.told.k} of ${PB.told.n} tries fully right.`;
+  document.getElementById("pb-fair").textContent = `In "Rule learned from past work", when the 8 team rules are written in the instruction, every model gets ${PB.told.k} of ${PB.told.n} attempts fully right. So when they fail without them, it is the missing knowledge, not the task.`;
   document.getElementById("habits-cards").innerHTML = PB.cards.map(c => `<article class="trajectory">
     <div><div class="eyebrow">${escapeHtml(c.label)}</div><h3>${escapeHtml(c.model)}</h3><div class="eyebrow">${escapeHtml(c.setting)}</div></div>
     <div><p><b>Observed.</b> ${escapeHtml(c.observed)}</p><p><b>Why it matters.</b> ${escapeHtml(c.why)}</p><code>${escapeHtml(c.run)}</code></div>
@@ -802,61 +808,34 @@ function pbStats() {
   if (!PB) return;
   const best = PB.models.reduce((a, b) => (b.main.k / b.main.n > a.main.k / a.main.n ? b : a));
   const tries = Math.max(...PB.models.map(m => m.main.n));
-  const st = [[String(PB.models.length), "frontier models"], [String(tries), "tries / model"],
-              ["8", "team habits, none written down"], [percent(best.main.k / best.main.n), "best whole-job pass rate"]];
-  document.getElementById("stats-pb").innerHTML = st.map(([v, k]) =>
-    `<div class="stat"><div class="value mono">${escapeHtml(v)}</div><div class="key">${escapeHtml(k)}</div></div>`).join("");
+  const st = [[String(PB.models.length), "frontier models", ""], ["15", "invoices per task", "decided by 8 unwritten team rules"],
+              [String(tries), "attempts per model", "one attempt = the whole task once"],
+              [`${Math.round(100 * best.main.k / best.main.n)}%`, "best full pass", "every invoice right"]];
+  document.getElementById("stats-pb").innerHTML = st.map(([v, k, h]) =>
+    `<div class="stat"><div class="value mono">${escapeHtml(v)}</div><div class="key">${escapeHtml(k)}</div>${h ? `<div class="hint">${escapeHtml(h)}</div>` : ""}</div>`).join("");
 }
 
 function setBench(next) {
-  bench = next;
-  pbStats();
-  document.getElementById("stats-iab").hidden = bench === "pb";
-  document.getElementById("stats-pb").hidden = bench !== "pb";
-  document.querySelectorAll("[data-bench]").forEach(item => item.setAttribute("aria-pressed", String(item.dataset.bench === bench)));
+  bench = next === "pb" ? "pb" : "iab";
   const pb = bench === "pb";
+  pbStats();
+  document.getElementById("stats-iab").hidden = pb;
+  document.getElementById("stats-pb").hidden = !pb;
+  document.querySelectorAll("[data-bench]").forEach(item => item.setAttribute("aria-pressed", String(item.dataset.bench === bench)));
   document.getElementById("lb-body-iab").hidden = pb;
   document.getElementById("lb-body-pb").hidden = !pb;
-  document.getElementById("iab-score-group").hidden = pb;
-  document.getElementById("pb-score-group").hidden = !pb;
-  document.getElementById("plot-card").hidden = pb;
-  document.getElementById("lb-kicker").textContent = pb ? "Company knowledge" : "Enterprise action intelligence";
-  document.getElementById("lb-title").textContent = pb ? "The PrecedentBench leaderboard" : "The implicit-action-bench leaderboard";
-  const both = bench === "both";
-  document.getElementById("lb-body-both").hidden = !both;
-  if (both) {
-    document.getElementById("lb-body-iab").hidden = true;
-    document.getElementById("iab-score-group").hidden = true;
-    document.getElementById("plot-card").hidden = true;
-    document.getElementById("lb-kicker").textContent = "Both parts";
-    document.getElementById("lb-title").textContent = "Every top model struggles somewhere";
-    renderBoth(); return;
-  }
+  document.getElementById("lb-title").textContent = pb ? "Rule learned from past work" : "Request breaks a hidden rule";
+  const dq = document.getElementById("dq-button");
+  dq.disabled = pb;
+  dq.title = pb ? "Not measured in this part" : "";
+  document.getElementById("metric-toggle").closest(".control-group").hidden = pb;
+  document.querySelectorAll(".leader-columns").forEach(el => el.classList.toggle("two", pb));
+  renderTakeaways();
   if (pb) { renderPrecedent(); return; }
-  document.getElementById("foot-left").textContent = "Full-pass, end-to-end, and decision-quality rankings";
+  document.getElementById("foot-left").textContent = "Full pass, end-to-end and decision quality";
+  document.getElementById("plot-foot").textContent = `3 trials × 8 tasks × ${DATA.models.filter(m => m.status === "complete").length} frontier models`;
   document.getElementById("foot-right").textContent = "24 attempts / model";
   renderLeaderboard();
-}
-
-function renderBoth() {
-  const ours = new Map((PB ? PB.models : []).map(m => [m.name, m]));
-  const names = [...new Set([...DATA.models.map(m => m.name), ...ours.keys()])];
-  const bar = (v, label) => v == null
-    ? `<div class="both-cell"><span class="both-label">${label}</span><span class="mono both-val">not run</span></div>`
-    : `<div class="both-cell"><span class="both-label">${label}</span><div class="both-track"><div class="both-fill" style="width:${Math.max(v * 100, 1)}%"></div></div><span class="mono both-val">${percent(v)}</span></div>`;
-  const rows = names.map(name => {
-    const a = DATA.models.find(m => m.name === name), b = ours.get(name);
-    const va = a && a.status === "complete" ? a.pass_rate : null, vb = b ? b.main.k / b.main.n : null;
-    const prov = (a || b).provider;
-    return { name, prov, va, vb, key: Math.max(va ?? 0, vb ?? 0) };
-  }).sort((x, y) => y.key - x.key);
-  document.getElementById("leader-rows").innerHTML = rows.map(r => `<div class="leader-row">
-    <div class="leader-top"><span class="model-name">${ICONS[r.prov] || ""}${escapeHtml(r.name)}<span class="model-tag">${escapeHtml(r.prov)}</span></span></div>
-    <div class="both-grid">${bar(r.va, "Rule in the records")}${bar(r.vb, "Rule only in habits")}</div></div>`).join("");
-  document.getElementById("score-head").textContent = "Full pass, each part";
-  document.getElementById("metric-head").textContent = "";
-  document.getElementById("foot-left").textContent = "Full-pass rate in each part, not averaged";
-  document.getElementById("foot-right").textContent = "Different agents per part";
 }
 
 function renderLeaderboard() {
@@ -891,16 +870,12 @@ function renderLeaderboard() {
 
 function bindLeaderboardControls() {
   document.querySelectorAll("[data-bench]").forEach(button => button.addEventListener("click", () => setBench(button.dataset.bench)));
-  document.querySelectorAll("[data-pb-mode]").forEach(button => button.addEventListener("click", () => {
-    pbMode = button.dataset.pbMode;
-    document.querySelectorAll("[data-pb-mode]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
-    renderPrecedent();
-  }));
   if (!PB) document.getElementById("bench-toggle").closest(".control-group").hidden = true;
   document.querySelectorAll("[data-score-mode]").forEach(button => button.addEventListener("click", () => {
+    if (button.disabled) return;
     scoreMode = button.dataset.scoreMode;
     document.querySelectorAll("[data-score-mode]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
-    renderLeaderboard();
+    bench === "pb" ? renderPrecedent() : renderLeaderboard();
   }));
   document.querySelectorAll("[data-metric]").forEach(button => button.addEventListener("click", () => {
     efficiencyMetric = button.dataset.metric;
@@ -910,9 +885,37 @@ function bindLeaderboardControls() {
 }
 
 function renderTakeaways() {
-  document.getElementById("takeaway-list").innerHTML = DATA.takeaways.map(item => `<li><b>${escapeHtml(item.title)}</b><span>${escapeHtml(item.detail)}</span></li>`).join("");
+  if (bench === "pb" && PB) {
+    const best = [...PB.models].sort((a, b) => b.main.pass - a.main.pass)[0];
+    const zero = PB.models.filter(m => m.main.k === 0).map(m => m.name.replace("Claude ", ""));
+    const items = [
+      ["Told the rules, every agent follows them. Left to learn them, few do.",
+       `With the 8 team rules written in the instruction, every model got all ${PB.told.n} attempts fully right. From past work alone, the best model got ${percent(best.main.pass)} of attempts fully right${zero.length ? `; ${zero.join(" and ")} got none` : ""}.`],
+      ["The more real the company, the worse they do.",
+       `With 4 team rules, the top three models got ${PB.top3_four_rules.k} of ${PB.top3_four_rules.n} attempts fully right. With 8 rules, some changed recently and some depending on two conditions, they got ${PB.top3_eight_rules.k} of ${PB.top3_eight_rules.n}.`],
+      ["Even the best agent fails most mornings.",
+       `${best.name} leads, yet gets every invoice right in only ${best.main.k} of ${best.main.n} attempts.`],
+    ];
+    document.getElementById("takeaway-list").innerHTML = items.map(([t, d]) => `<li><b>${escapeHtml(t)}</b><span>${escapeHtml(d)}</span></li>`).join("");
+    document.getElementById("quote-score").textContent = `100% vs ${percent(best.main.pass)}`;
+    document.getElementById("quote-text").textContent = "Full pass when told the team rules, vs. when learning them from past work (best model).";
+    document.getElementById("quote-model").textContent = best.name;
+    document.getElementById("quote-icon").innerHTML = ICONS[best.provider] || "";
+    return;
+  }
+  const done = DATA.models.filter(model => model.status === "complete").sort((a, b) => b.pass_rate - a.pass_rate);
+  const iabItems = [
+    ["Agents often take the tempting wrong action.",
+     `Even the best model passes every check in only ${percent(done[0].pass_rate)} of attempts; the weakest in ${percent(done[done.length - 1].pass_rate)}.`],
+    ["The rule is there, but scattered.",
+     "No single record states it. The agent has to join evidence across Slack, email, CRM and tickets, the way a careful employee would."],
+    ["Which model leads depends on the task.",
+     "Per-task scores swing widely between models, so one overall number hides very different strengths."],
+  ];
+  document.getElementById("takeaway-list").innerHTML = iabItems.map(([t, d]) => `<li><b>${escapeHtml(t)}</b><span>${escapeHtml(d)}</span></li>`).join("");
   const leader = DATA.models.filter(model => model.status === "complete").sort((left, right) => right.pass_rate - left.pass_rate)[0];
   document.getElementById("quote-score").textContent = percent(leader.pass_rate);
+  document.getElementById("quote-text").textContent = "Best full-pass rate across 24 attempts.";
   document.getElementById("quote-model").textContent = leader.name;
   document.getElementById("quote-icon").innerHTML = ICONS[leader.provider] || "";
 }
@@ -1041,7 +1044,7 @@ renderSystems();
 renderTaskLibrary();
 renderTrajectories();
 renderPrecedentSection();
-{ const b0 = new URLSearchParams(location.search).get("bench"); if (PB && (b0 === "pb" || b0 === "both")) setBench(b0); }
+{ const b0 = new URLSearchParams(location.search).get("bench"); if (PB && b0 === "pb") setBench("pb"); }
 bindTabs();
 bindTooltips();
 </script>
