@@ -97,6 +97,18 @@ def build_page_data() -> dict[str, Any]:
             for row in result["rows"]
             if row.get("agent_duration_seconds") is not None
         ]
+        trial_names = sorted(
+            {row["trial"] for row in result["rows"]},
+            key=lambda trial: int(trial.rsplit("-", 1)[-1]),
+        )
+        pass_trial_scores = [
+            statistics.mean(
+                row["score"] == 1.0
+                for row in result["rows"]
+                if row["trial"] == trial
+            )
+            for trial in trial_names
+        ]
         cost_type = (
             "estimated list"
             if estimated_cost is not None
@@ -116,6 +128,8 @@ def build_page_data() -> dict[str, Any]:
                 "stddev": result["score_stddev"],
                 "trial_scores": result["trial_scores"],
                 "pass_rate": result["pass_rate"],
+                "pass_trial_scores": pass_trial_scores,
+                "pass_stddev": statistics.pstdev(pass_trial_scores),
                 "blocking_violations": result["blocking_violations"],
                 "actionful_mean": result["actionful_score_mean"],
                 "actionful_stddev": result["actionful_score_stddev"],
@@ -149,6 +163,8 @@ def build_page_data() -> dict[str, Any]:
                 "stddev": None,
                 "trial_scores": [],
                 "pass_rate": None,
+                "pass_trial_scores": [],
+                "pass_stddev": None,
                 "blocking_violations": None,
                 "actionful_mean": None,
                 "actionful_runs": 0,
@@ -240,7 +256,7 @@ def render_page() -> str:
     icons = load_icons()
     complete_model = max(
         (model for model in data["models"] if model["status"] == "complete"),
-        key=lambda model: model["score"],
+        key=lambda model: model["pass_rate"],
     )
     known_costs = [
         model["cost_per_attempt"]
@@ -251,7 +267,7 @@ def render_page() -> str:
         (str(len(data["models"])), "frontier models"),
         ("24", "attempts / model"),
         (f"${min(known_costs):.2f}", "lowest cost / task"),
-        (f'{complete_model["score"] * 100:.1f}%', "leading official score"),
+        (f'{complete_model["pass_rate"] * 100:.1f}%', "leading full-pass rate"),
     ]
     stats_html = "".join(
         f'<div class="stat"><div class="value mono">{html.escape(value)}</div>'
@@ -551,23 +567,23 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
       <div><div class="section-kicker">Enterprise action intelligence</div><h2>The implicit-action-bench leaderboard</h2></div>
       <div class="leaderboard-body">
         <p>Eight high-context tasks are grounded in the Redwood Inference world from EnterpriseRAG-Bench. Each sandbox contains at least 120 authentic records plus current-decision overlays, requiring models to reconstruct the controlling rule from a realistic evidence neighborhood.</p>
-        <p>The official score measures end-to-end success: evidence discovery, constraint resolution, and useful action. The action-recorded view offers a complementary lens on decision quality once a model commits to an action.</p>
+        <p>The full-pass view applies the benchmark's strictest criterion: every scoring component must pass. Official score and action-recorded score remain available as complementary views of end-to-end performance and decision quality.</p>
         <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
       </div>
     </div>
     <div class="card ranking-card">
       <div class="control-bar">
-        <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="raw" aria-pressed="true">Official score</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
+        <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="pass" aria-pressed="true">Full pass</button><button type="button" data-score-mode="raw" aria-pressed="false">Official score</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
         <div class="control-group"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
       </div>
-      <div class="card-head leader-columns"><span>Model</span><span id="score-head">Official score</span><span id="metric-head">Cost / task</span></div>
+      <div class="card-head leader-columns"><span>Model</span><span id="score-head">Full pass</span><span id="metric-head">Cost / task</span></div>
       <div id="leader-rows"></div>
       <div class="axis" id="axis"></div>
-      <div class="card-foot"><span>Official and action-recorded rankings</span><span class="mono">24 attempts / model</span></div>
+      <div class="card-foot"><span>Full-pass, official, and action-recorded rankings</span><span class="mono">24 attempts / model</span></div>
     </div>
     <div class="card plot-card">
       <div class="plot-shell">
-        <div class="plot-head"><b id="plot-title">Official success vs. cost</b><span>Hover or focus a model for complete results</span></div>
+        <div class="plot-head"><b id="plot-title">Full-pass success vs. cost</b><span>Hover or focus a model for complete results</span></div>
         <div class="plot-stage"><span class="plot-axis-title-y">Success rate</span><div class="efficiency-plot" id="efficiency-plot"></div></div>
         <div class="plot-axis-title-x" id="plot-axis-title-x">Average API cost per task attempt</div>
         <div class="plot-note" id="plot-note"></div>
@@ -580,7 +596,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
     <div><h2>Research insights</h2><ol class="takeaways" id="takeaway-list"></ol></div>
     <aside class="quote">
       <strong class="mono" id="quote-score"></strong>
-      <p>Leading end-to-end score across 24 independent task attempts.</p>
+      <p>Leading full-pass rate across 24 independent task attempts.</p>
       <div class="who"><span id="quote-icon"></span><span id="quote-model"></span> · fixed harness and benchmark release</div>
     </aside>
   </section>
@@ -625,7 +641,7 @@ const DATA = __DATA__;
 const ICONS = __ICONS__;
 const PROVIDER_TOKEN = {Anthropic:"anthropic", OpenAI:"openai", Google:"google"};
 const percent = value => value == null ? "N/A" : `${(value * 100).toFixed(1)}%`;
-let scoreMode = "raw";
+let scoreMode = "pass";
 let efficiencyMetric = "cost";
 const escapeHtml = value => String(value).replace(/[&<>"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[character]);
 
@@ -636,11 +652,23 @@ function scoreClass(value) {
 }
 
 function displayedScore(model) {
+  if (scoreMode === "pass") return model.pass_rate;
   return scoreMode === "raw" ? model.score : model.actionful_mean;
 }
 
 function displayedStddev(model) {
+  if (scoreMode === "pass") return model.pass_stddev;
   return scoreMode === "raw" ? model.stddev : model.actionful_stddev;
+}
+
+function scoreModeLabel() {
+  if (scoreMode === "pass") return "Full pass";
+  return scoreMode === "raw" ? "Official score" : "Action-recorded score";
+}
+
+function scoreModeTitle() {
+  if (scoreMode === "pass") return "Full-pass success";
+  return scoreMode === "raw" ? "Official success" : "Action-recorded success";
 }
 
 function metricValue(model) {
@@ -691,11 +719,11 @@ function renderEfficiencyPlot(models) {
     const x = xPosition(model);
     const token = PROVIDER_TOKEN[model.provider] || "google";
     const reverse = x > 72 ? "flex-direction:row-reverse" : "";
-    const label = `${model.name}, ${scoreMode === "raw" ? "official" : "action-recorded"} score ${percent(score)}, ${metricLabel(model)}`;
+    const label = `${model.name}, ${scoreModeLabel().toLowerCase()} ${percent(score)}, ${metricLabel(model)}`;
     return `<div class="plot-point provider-${token}" tabindex="0" aria-label="${escapeHtml(label)}" style="left:${x}%;bottom:${score * 100}%;${reverse}" data-model-id="${escapeHtml(model.id)}"><span class="plot-logo">${ICONS[model.provider] || ""}</span><span class="plot-label"><b>${escapeHtml(model.name)}</b>${percent(score)} · ${metricLabel(model)}</span></div>`;
   }).join("");
   plot.innerHTML = `${yLabels}${xLabels}${missingBand}${points}`;
-  document.getElementById("plot-title").textContent = `${scoreMode === "raw" ? "Official success" : "Action-recorded success"} vs. ${efficiencyMetric === "cost" ? "API cost / task" : "mean agent time"}`;
+  document.getElementById("plot-title").textContent = `${scoreModeTitle()} vs. ${efficiencyMetric === "cost" ? "API cost / task" : "mean agent time"}`;
   document.getElementById("plot-axis-title-x").textContent = efficiencyMetric === "cost" ? "Average API cost per task attempt" : "Mean agent execution time per task attempt";
   document.getElementById("plot-note").textContent = efficiencyMetric === "cost"
     ? "Cost is averaged across 24 attempts. Gemini Carbon is estimated from €11.47 total account spend (≈ $12.68 at EUR 1 = USD 1.1052, ECB 13 Nov 2026), or about $0.53 per task."
@@ -726,7 +754,7 @@ function renderLeaderboard() {
     </div>`;
   }).join("");
   document.getElementById("axis").innerHTML = [0,20,40,60,80,100].map(value => `<span style="left:${value}%">${value}%</span>`).join("");
-  document.getElementById("score-head").textContent = scoreMode === "raw" ? "Official score" : "Action score";
+  document.getElementById("score-head").textContent = scoreModeLabel();
   document.getElementById("metric-head").textContent = efficiencyMetric === "cost" ? "Cost / task" : "Mean time";
   renderEfficiencyPlot(rows);
   bindTooltips();
@@ -747,8 +775,8 @@ function bindLeaderboardControls() {
 
 function renderTakeaways() {
   document.getElementById("takeaway-list").innerHTML = DATA.takeaways.map(item => `<li><b>${escapeHtml(item.title)}</b><span>${escapeHtml(item.detail)}</span></li>`).join("");
-  const leader = DATA.models.filter(model => model.status === "complete").sort((left, right) => right.score - left.score)[0];
-  document.getElementById("quote-score").textContent = percent(leader.score);
+  const leader = DATA.models.filter(model => model.status === "complete").sort((left, right) => right.pass_rate - left.pass_rate)[0];
+  document.getElementById("quote-score").textContent = percent(leader.pass_rate);
   document.getElementById("quote-model").textContent = leader.name;
   document.getElementById("quote-icon").innerHTML = ICONS[leader.provider] || "";
 }
@@ -811,7 +839,7 @@ function renderTrajectories() {
 function modelTooltipMarkup(model) {
   const selectedScore = displayedScore(model);
   const selectedStddev = displayedStddev(model);
-  const scoreLabel = scoreMode === "raw" ? "Official score" : "Action-recorded score";
+  const scoreLabel = scoreModeLabel();
   const cost = model.cost_per_attempt == null ? "Unpriced" : `$${model.cost_per_attempt.toFixed(2)} / task${model.cost_type?.startsWith("estimated") ? " · est." : ""}`;
   return `<div class="tip-head"><span class="tip-logo">${ICONS[model.provider] || ""}</span><div><b>${escapeHtml(model.name)}</b><span>${escapeHtml(model.provider)} · mini-SWE-agent</span></div></div>
     <div class="tip-primary"><div><span>${scoreLabel}</span><strong class="mono">${percent(selectedScore)}</strong></div><small class="mono">± ${(selectedStddev * 100).toFixed(1)} pp</small></div>

@@ -6,10 +6,10 @@ implicit-action-bench tests whether AI agents correctly apply implicit business 
 
 **Production:** [implicit-action-bench.vercel.app](https://implicit-action-bench.vercel.app)
 
-The static leaderboard is served from [`index.html`](./index.html). Its first view reports the official raw success score beside average API cost per task attempt. Two controls let readers:
+The static leaderboard is served from [`index.html`](./index.html). Its first view reports the strict full-pass rate beside average API cost per task attempt. Two controls let readers:
 
 - switch the efficiency axis from **cost** to **mean agent time**;
-- switch from the official **raw result** to the diagnostic **action-recorded result**.
+- switch among **full pass**, the official **raw result**, and the diagnostic **action-recorded result**.
 
 The action-recorded view uses attempts whose business action is preserved in verifier metadata or confirmed from the mini-SWE-agent trajectory. It helps separate decision quality from agent-loop completion, but it is not the official ranking.
 
