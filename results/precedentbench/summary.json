@@ -29,7 +29,8 @@
       "mean": 1.0,
       "mean_lo": 1.0,
       "mean_hi": 1.0
-     }
+     },
+     "mean_agent_minutes": 2.5251666666666663
     },
     {
      "id": "anthropic/claude-opus-5-5",
@@ -54,7 +55,8 @@
       "mean": 1.0,
       "mean_lo": 1.0,
       "mean_hi": 1.0
-     }
+     },
+     "mean_agent_minutes": 1.3210833333333334
     },
     {
      "id": "anthropic/claude-sonnet-5-5",
@@ -79,7 +81,8 @@
       "mean": 1.0,
       "mean_lo": 1.0,
       "mean_hi": 1.0
-     }
+     },
+     "mean_agent_minutes": 0.7115000000000001
     },
     {
      "id": "openai/gpt-6.1-sol",
@@ -104,7 +107,8 @@
       "mean": 1.0,
       "mean_lo": 1.0,
       "mean_hi": 1.0
-     }
+     },
+     "mean_agent_minutes": 0.8987499999999999
     },
     {
      "id": "openai/gpt-6-astra",
@@ -129,12 +133,21 @@
       "mean": 1.0,
       "mean_lo": 1.0,
       "mean_hi": 1.0
-     }
+     },
+     "mean_agent_minutes": 1.1427500000000004
     }
    ],
    "told": {
     "k": 25,
     "n": 25
+   },
+   "top3_four_rules": {
+    "k": 14,
+    "n": 15
+   },
+   "top3_eight_rules": {
+    "k": 12,
+    "n": 60
    },
    "cards": [
     {

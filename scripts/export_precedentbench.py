@@ -14,9 +14,11 @@ The told control (all 8 habits stated in the instruction) is the fairness line.
 
 from __future__ import annotations
 
+import concurrent.futures as cf
 import json
 import math
 import random
+import subprocess
 import sys
 from pathlib import Path
 
@@ -91,6 +93,42 @@ CARDS = [
 ]
 
 
+def agent_seconds(rows: list[dict]) -> dict[str, float]:
+    """Wall time of the agent per attempt, from the plain agent's own "end" log event (cached)."""
+    cache_path = OUT_DIR / "timing_cache.json"
+    cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
+    todo = [r for r in rows if f"{r['run_id']}|{r['task']}" not in cache]
+
+    def fetch(r: dict) -> tuple[str, float | None]:
+        out = subprocess.run(["valkyrie", "run", "logs", r["run_id"], "--task-id", r["task"]],
+                             capture_output=True, text=True, cwd="/tmp").stdout
+        secs = None
+        for line in out.splitlines():
+            i = line.find("{")
+            if i < 0 or '"end"' not in line:
+                continue
+            try:
+                e = json.loads(line[i:])
+            except json.JSONDecodeError:
+                continue
+            if e.get("type") == "end" and e.get("seconds") is not None:
+                secs = float(e["seconds"])
+        return f"{r['run_id']}|{r['task']}", secs
+
+    with cf.ThreadPoolExecutor(20) as pool:
+        for key, secs in pool.map(fetch, todo):
+            cache[key] = secs
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(json.dumps(cache, indent=1))
+    return cache
+
+
+def level_pass(rows: list[dict], versions_pred) -> dict:
+    xs = [r for r in rows if versions_pred(r)]
+    k = sum(r["reward"] == 1 for r in xs)
+    return {"k": k, "n": len(xs)}
+
+
 def main() -> None:
     src = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_SRC
     rows = [r for r in json.loads((src / "morning_v3.json").read_text())
@@ -100,7 +138,16 @@ def main() -> None:
         main_rows = [r for r in rows if r["model"] == key and r.get("version") in MAIN_VERSIONS]
         told_rows = [r for r in rows if r["model"] == key and r.get("version") == TOLD_VERSION]
         models.append({"id": mid, "name": name, "provider": provider,
-                       "main": stats(main_rows), "told": stats(told_rows)})
+                       "main": stats(main_rows), "told": stats(told_rows), "_rows": main_rows})
+    timing = agent_seconds([r for m in models for r in m["_rows"]])
+    for m in models:
+        secs = [timing.get(f"{r['run_id']}|{r['task']}") for r in m.pop("_rows")]
+        secs = [x for x in secs if x is not None]
+        m["mean_agent_minutes"] = sum(secs) / len(secs) / 60 if secs else None
+    top3 = ("gpt-6.1-sol", "claude-fable-5-2", "gpt-6-astra")
+    four = level_pass(rows, lambda r: r["model"] in top3 and r.get("version", "").startswith("morning3-")
+                      and not r.get("handbook") and not r.get("told") and r.get("dose") == 3)
+    eight = level_pass(rows, lambda r: r["model"] in top3 and r.get("version") in MAIN_VERSIONS)
     told_k = sum(m["told"]["k"] for m in models)
     told_n = sum(m["told"]["n"] for m in models)
     out = {
@@ -112,6 +159,8 @@ def main() -> None:
                 "metric": "whole morning right: all 15 invoices",
                 "models": models,
                 "told": {"k": told_k, "n": told_n},
+                "top3_four_rules": four,
+                "top3_eight_rules": eight,
                 "cards": CARDS,
             },
             # "refunds": {...}  (second job, added later in the same shape)
