@@ -560,12 +560,13 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
 
   <section class="hero">
     <h1>The benchmark for the rules<br>nobody writes down.</h1>
-    <div class="with">Built on <b>Valkyrie</b><span>·</span><b>mini-SWE-agent</b><span class="team-credit">· by Yaya &amp; Vivi team</span></div>
+    <div class="with">Built on <b>Valkyrie</b><span>·</span><b>one simple agent for every model</b><span class="team-credit">· by Yaya &amp; Vivi team</span></div>
     <p>Top AI agents struggle with how a company actually works. Two parts, one company: in <b>implicit-action-bench</b> the rule is buried somewhere in the records; in <b>PrecedentBench</b> it only shows in how the team handled past work. Both are hard, both are graded fairly, and every model passes when it is told the rule.</p>
     <div class="buttons"><a class="button primary" href="#leaderboard">Explore leaderboard</a><a class="button" href="#method">Read methodology</a></div>
   </section>
 
-  <section class="stats">__STATS__</section>
+  <section class="stats" id="stats-iab">__STATS__</section>
+  <section class="stats" id="stats-pb" hidden></section>
 
   <section class="leaderboard" id="leaderboard">
     <div class="leaderboard-intro">
@@ -766,7 +767,7 @@ function renderPrecedent() {
     const token = PROVIDER_TOKEN[m.provider] || "google";
     const tip = `${m.name}|Whole job right: ${m.main.k}/${m.main.n} (95%: ${percent(m.main.pass_lo)}–${percent(m.main.pass_hi)})|Invoices right: ${percent(m.main.mean)}|Told the 8 habits: ${m.told.k}/${m.told.n} fully right`;
     return `<div class="leader-row" tabindex="0" data-tip="${escapeHtml(tip)}">
-      <div class="leader-top"><span class="model-name">${ICONS[m.provider] || ""}${escapeHtml(m.name)}<span class="model-tag">${escapeHtml(m.provider)}</span></span><span class="model-score mono">${percent(val(m))}<small>${percent(lo(m))}–${percent(hi(m))}</small></span><span class="model-metric mono">${m.main.k}/${m.main.n}<small>whole job right</small></span></div>
+      <div class="leader-top"><span class="model-name">${ICONS[m.provider] || ""}${escapeHtml(m.name)}<span class="model-tag">${escapeHtml(m.provider)}</span></span><span class="model-score mono">${percent(val(m))}<small>${percent(lo(m))}–${percent(hi(m))}</small></span><span class="model-metric mono">${m.main.k}/${m.main.n}</span></div>
       <div class="leader-bar"><div class="leader-fill" style="width:${Math.max(val(m) * 100, .8)}%;background:linear-gradient(90deg,var(--${token}-a),var(--${token}-b))"></div></div>
     </div>`;
   }).join("");
@@ -787,8 +788,21 @@ function renderPrecedentSection() {
   </article>`).join("");
 }
 
+function pbStats() {
+  if (!PB) return;
+  const best = PB.models.reduce((a, b) => (b.main.k / b.main.n > a.main.k / a.main.n ? b : a));
+  const tries = Math.max(...PB.models.map(m => m.main.n));
+  const st = [[String(PB.models.length), "frontier models"], [String(tries), "tries / model"],
+              ["8", "team habits, none written down"], [percent(best.main.k / best.main.n), "best whole-job pass rate"]];
+  document.getElementById("stats-pb").innerHTML = st.map(([v, k]) =>
+    `<div class="stat"><div class="value mono">${escapeHtml(v)}</div><div class="key">${escapeHtml(k)}</div></div>`).join("");
+}
+
 function setBench(next) {
   bench = next;
+  pbStats();
+  document.getElementById("stats-iab").hidden = bench === "pb";
+  document.getElementById("stats-pb").hidden = bench !== "pb";
   document.querySelectorAll("[data-bench]").forEach(item => item.setAttribute("aria-pressed", String(item.dataset.bench === bench)));
   const pb = bench === "pb";
   document.getElementById("lb-body-iab").hidden = pb;
