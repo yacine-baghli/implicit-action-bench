@@ -8,30 +8,12 @@
 <style>
 .viz-root {
   color-scheme: light;
-  --surface-1:#FBF8F2; --surface-2:#F4EDE0; --card:#FFFDF8; --line:#DED6C8; --track:#EDE4D3;
-  --text-primary:#14213D; --text-secondary:#3E4A64; --text-muted:#6B7488; --accent:#F2523F;
-  --anthropic-a:#FFB3AA; --anthropic-b:#F2523F; --anthropic-c:#C2412F;
-  --openai-a:#8ED4C7; --openai-b:#2D927E; --openai-c:#176859;
-  --google-a:#AABCE0; --google-b:#5D78B2; --google-c:#304F8C;
-  --success:#176859; --warning:#A85B14; --danger:#B64034; --quote-bg:#14213D; --quote-ink:#F4EDE0;
-}
-@media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme="light"])).viz-root {
-    color-scheme:dark; --surface-1:#0A1226; --surface-2:#0F1A33; --card:#14213D; --line:#33415E; --track:#1D2A46;
-    --text-primary:#F4EDE0; --text-secondary:#D5CDBF; --text-muted:#9AA3B5; --accent:#FF6B5B;
-    --anthropic-a:#7A3029; --anthropic-b:#FF6B5B; --anthropic-c:#FFB3AA;
-    --openai-a:#185447; --openai-b:#42A994; --openai-c:#8ED4C7;
-    --google-a:#30405F; --google-b:#738FC8; --google-c:#B9C7E4;
-    --success:#8ED4C7; --warning:#F0B46A; --danger:#FF9A90; --quote-bg:#F4EDE0; --quote-ink:#14213D;
-  }
-}
-:root[data-theme="dark"].viz-root {
-  color-scheme:dark; --surface-1:#0A1226; --surface-2:#0F1A33; --card:#14213D; --line:#33415E; --track:#1D2A46;
-  --text-primary:#F4EDE0; --text-secondary:#D5CDBF; --text-muted:#9AA3B5; --accent:#FF6B5B;
-  --anthropic-a:#7A3029; --anthropic-b:#FF6B5B; --anthropic-c:#FFB3AA;
-  --openai-a:#185447; --openai-b:#42A994; --openai-c:#8ED4C7;
-  --google-a:#30405F; --google-b:#738FC8; --google-c:#B9C7E4;
-  --success:#8ED4C7; --warning:#F0B46A; --danger:#FF9A90; --quote-bg:#F4EDE0; --quote-ink:#14213D;
+  --surface-1:#FFFFFF; --surface-2:#F7F8FA; --card:#FFFFFF; --line:#E5E7EB; --track:#F1F5F9;
+  --text-primary:#111827; --text-secondary:#475569; --text-muted:#94A3B8; --accent:#4F46E5;
+  --anthropic-a:#FED7C3; --anthropic-b:#F28C5C; --anthropic-c:#B9522B;
+  --openai-a:#A7E3CF; --openai-b:#38A77C; --openai-c:#147A59;
+  --google-a:#C7D7FE; --google-b:#7C83EE; --google-c:#4F46B8;
+  --success:#147A59; --warning:#B7791F; --danger:#C2413B; --quote-bg:#111827; --quote-ink:#F8FAFC;
 }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; overflow-x:hidden; }
@@ -42,7 +24,7 @@ a { color:inherit; }
 nav.top { border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; background:color-mix(in srgb,var(--surface-1) 92%,transparent); backdrop-filter:blur(12px); }
 nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 .brand { display:flex; align-items:center; gap:9px; font-weight:650; font-size:16px; letter-spacing:-.01em; text-decoration:none; }
-.brand-mark { width:22px; height:22px; border-radius:6px; background:linear-gradient(135deg,#FFB3AA,var(--accent)); display:inline-block; box-shadow:inset 0 0 0 1px rgba(20,33,61,.08); }
+.brand-mark { width:22px; height:22px; border-radius:6px; background:linear-gradient(135deg,#A5B4FC,var(--accent)); display:inline-block; box-shadow:inset 0 0 0 1px rgba(17,24,39,.06); }
 .navlinks { display:flex; gap:30px; font-size:14px; }
 .navlinks a { text-decoration:none; }
 .navlinks a:hover { color:var(--accent); }
@@ -58,7 +40,7 @@ nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 .hero p { color:var(--text-secondary); max-width:760px; margin:0 auto 26px; font-size:16px; }
 .buttons { display:flex; gap:10px; justify-content:center; }
 .button { font:inherit; font-size:13px; padding:9px 18px; border-radius:6px; text-decoration:none; background:var(--surface-2); border:1px solid var(--line); }
-.button.primary { background:var(--accent); color:#14213D; border-color:var(--accent); font-weight:550; }
+.button.primary { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:550; }
 .stats { display:grid; grid-template-columns:repeat(4,1fr); padding:28px 0 82px; }
 .stat { text-align:center; border-left:1px solid var(--line); padding:6px 0; }
 .stat:first-child { border-left:0; }
@@ -74,7 +56,9 @@ nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .chips { display:flex; gap:8px; margin-top:26px; flex-wrap:wrap; }
 .chips a { font-size:13px; background:var(--surface-2); border-radius:6px; padding:6px 12px; text-decoration:none; }
-.card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:32px 38px 34px; box-shadow:0 18px 60px color-mix(in srgb,var(--text-primary) 5%,transparent); }
+.card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:32px 38px 34px; box-shadow:0 14px 44px rgba(15,23,42,.055); }
+.ranking-card { margin-bottom:24px; }
+.plot-card { max-width:1040px; margin:0 auto; }
 .control-bar { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding-bottom:22px; margin-bottom:8px; border-bottom:1px solid var(--line); }
 .control-group > span { display:block; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.07em; margin-bottom:7px; }
 .segmented { display:inline-flex; padding:3px; gap:2px; border-radius:7px; background:var(--surface-2); border:1px solid var(--line); }
@@ -103,14 +87,14 @@ h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .axis span:first-child { transform:none; }
 .axis span:last-child { transform:translateX(-100%); }
 .card-foot { display:flex; justify-content:space-between; align-items:center; margin-top:28px; gap:12px; color:var(--text-muted); font-size:12px; }
-.plot-shell { border-top:1px solid var(--line); margin-top:30px; padding-top:28px; }
+.plot-shell { margin:0; padding:0; }
 .plot-head { display:flex; justify-content:space-between; gap:16px; align-items:baseline; margin-bottom:20px; }
 .plot-head b { font-size:18px; font-weight:520; letter-spacing:-.01em; }
 .plot-head span { color:var(--text-muted); font-size:12px; }
 .plot-stage { position:relative; padding-left:20px; }
 .plot-axis-title-y { position:absolute; left:-26px; top:50%; transform:rotate(-90deg) translateX(-50%); transform-origin:left top; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; white-space:nowrap; }
 .plot-axis-title-x { color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; text-align:center; margin:40px 0 0; }
-.efficiency-plot { position:relative; height:520px; margin:0 24px 0 56px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); background-image:linear-gradient(to top,var(--line) 1px,transparent 1px),linear-gradient(to right,var(--line) 1px,transparent 1px); background-size:100% 25%,20% 100%; }
+.efficiency-plot { position:relative; height:390px; margin:0 24px 0 56px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); background-image:linear-gradient(to top,var(--line) 1px,transparent 1px),linear-gradient(to right,var(--line) 1px,transparent 1px); background-size:100% 25%,20% 100%; }
 .plot-y-label { position:absolute; left:-50px; color:var(--text-muted); font-size:11px; transform:translateY(50%); }
 .plot-x-label { position:absolute; bottom:-30px; color:var(--text-muted); font-size:11px; transform:translateX(-50%); }
 .plot-point { position:absolute; transform:translate(-50%,50%); display:flex; align-items:center; gap:10px; z-index:2; cursor:default; transition:z-index .15s ease; }
@@ -201,7 +185,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   .navlinks { display:none; }
   .wrap { padding:0 22px; }
   .task-list { grid-template-columns:1fr; }
-  .efficiency-plot { height:440px; margin-right:6px; }
+  .efficiency-plot { height:360px; margin-right:6px; }
 }
 @media (max-width:620px) {
   body { width:100vw; max-width:100vw; overflow-x:hidden; }
@@ -228,7 +212,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   .plot-head { align-items:flex-start; flex-direction:column; }
   .plot-stage { padding-left:0; }
   .plot-axis-title-y { display:none; }
-  .efficiency-plot { margin-left:38px; height:340px; }
+  .efficiency-plot { margin-left:38px; height:300px; }
   .plot-label { display:none; }
   .plot-logo { width:42px; height:42px; }
   .plot-logo svg { width:23px; height:23px; }
@@ -263,7 +247,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
         <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
       </div>
     </div>
-    <div class="card">
+    <div class="card ranking-card">
       <div class="control-bar">
         <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="raw" aria-pressed="true">Official score</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
         <div class="control-group"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
@@ -271,6 +255,9 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
       <div class="card-head leader-columns"><span>Model</span><span id="score-head">Official score</span><span id="metric-head">Cost / task</span></div>
       <div id="leader-rows"></div>
       <div class="axis" id="axis"></div>
+      <div class="card-foot"><span>Official and action-recorded rankings</span><span class="mono">24 attempts / model</span></div>
+    </div>
+    <div class="card plot-card">
       <div class="plot-shell">
         <div class="plot-head"><b id="plot-title">Official success vs. cost</b><span>Hover or focus a model for complete results</span></div>
         <div class="plot-stage"><span class="plot-axis-title-y">Success rate</span><div class="efficiency-plot" id="efficiency-plot"></div></div>
