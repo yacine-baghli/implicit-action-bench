@@ -1,0 +1,56 @@
+{
+  "communicate": [
+    "channel",
+    "recipient",
+    "subject_id",
+    "content",
+    "status"
+  ],
+  "configure_system": [
+    "subject_id",
+    "setting",
+    "value",
+    "details"
+  ],
+  "create_work_item": [
+    "subject_id",
+    "work_type",
+    "owner",
+    "details",
+    "status"
+  ],
+  "draft_artifact": [
+    "subject_id",
+    "artifact_type",
+    "details",
+    "status"
+  ],
+  "execute_operation": [
+    "subject_id",
+    "operation",
+    "destination",
+    "details",
+    "status"
+  ],
+  "request_review": [
+    "subject_id",
+    "review_type",
+    "reviewer",
+    "details",
+    "status"
+  ],
+  "stage_artifact": [
+    "subject_id",
+    "destination",
+    "access",
+    "details",
+    "status"
+  ],
+  "update_record": [
+    "system",
+    "subject_id",
+    "field",
+    "value",
+    "details"
+  ]
+}

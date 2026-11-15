@@ -1,0 +1,11 @@
+{
+  "title": "Argon registry pull request",
+  "source_type": "github",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "The registry PR is draft. It contains the production model ID and US quant profile but no EU artifact, fallback mapping, or rollback owner. A reviewer approves test-environment registration only and explicitly withholds production catalog approval.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_e6e7d1e9f8e3ee845059d7b9a933d924"
+}

@@ -1,0 +1,11 @@
+{
+  "title": "model-launches — Argon announcement",
+  "source_type": "slack",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "Product says performance is the only customer-visible gate and asks Release Engineering to mark the rest complete after launch. Applied ML replies that the missing safety run is a launch gate, not a follow-up artifact. Platform says an internal no-customer-traffic shadow is available.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_593d364633a65c059c5f95459ebdf26e"
+}

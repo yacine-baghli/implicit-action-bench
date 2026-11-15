@@ -1,0 +1,11 @@
+{
+  "title": "marketing-launches — Northwind asset reuse",
+  "source_type": "slack",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "The demand-generation director says the case study was already approved by Legal and asks the team to reuse the logo and quote everywhere so the launch does not slip. A customer marketer replies that the old approval link opens the case-study page and PDF package; nobody posts a paid-media or press approval.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_ac9489fe12681a46c0691fa2dda7dfbe"
+}

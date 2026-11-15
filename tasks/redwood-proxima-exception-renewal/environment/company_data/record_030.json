@@ -1,0 +1,11 @@
+{
+  "title": "Proxima prior exception dashboard export",
+  "source_type": "google_drive",
+  "created_at": "2026-11-10",
+  "last_updated": "2026-11-10",
+  "body": "The export shows healthy enterprise latency during the old exception. Its annotations identify us-east and the original two routes. It contains no data for eu-west, rerank, or operation beyond the approved fourteen-day window.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_b9056c1ef26163215713643c94bb239a"
+}

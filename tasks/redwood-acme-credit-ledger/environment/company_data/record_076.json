@@ -1,0 +1,11 @@
+{
+  "title": "Acme asks for one clean revised invoice",
+  "source_type": "gmail",
+  "created_at": "2026-11-13",
+  "last_updated": "2026-11-13",
+  "body": "Acme requests that Redwood replace the February invoice rather than show a separate credit. The customer references both the January incident and a later retry window as one problem. No one from Redwood accepts that accounting treatment in the thread.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_2cbe002bea6f4779f035c7deadbe1398"
+}

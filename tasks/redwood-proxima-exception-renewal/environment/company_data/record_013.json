@@ -1,0 +1,11 @@
+{
+  "title": "PROXIMA-BURST-30 draft change",
+  "source_type": "jira",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "A draft change copies the old flag values but expands region, duration, and route scope. Canary, alert confirmation, and rollback fields are blank. The ticket is unassigned and has no approval state.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_27eb6fbf7e10adc07fec119f06ff9463"
+}

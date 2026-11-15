@@ -1,0 +1,11 @@
+{
+  "title": "ARGON-70B-LAUNCH release card",
+  "source_type": "linear",
+  "created_at": "2026-11-12",
+  "last_updated": "2026-11-12",
+  "body": "Runtime compatibility and the primary latency benchmark are complete. License review is marked pending restrictions, the jailbreak suite has no linked run, the EU quant profile is missing, and the rollout ticket lacks a named rollback owner. Product nevertheless labels the announcement date fixed.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_a23bec486f3ccf21121f18290296ca2c"
+}

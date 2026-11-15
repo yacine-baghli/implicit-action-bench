@@ -1,0 +1,837 @@
+{
+  "task_id": "redwood-acme-credit-ledger",
+  "corpus": "onyx-dot-app/EnterpriseRAG-Bench",
+  "corpus_revision": "d36685e273713975ee20299bbf1ab64165575b3c",
+  "authentic_document_count": 128,
+  "overlay_document_count": 4,
+  "critical_doc_ids": [
+    "dsid_37befab212ae4ed9be7ebe612d942658",
+    "dsid_602422b841b94f5c8089555015df0ed8",
+    "dsid_c52c609c0cdf4211a7e8c57bb1da72e4",
+    "dsid_dc8da53aae4c4a81be13ae8e519cd42d",
+    "dsid_4587f467ecf646b7926dbd6b886f9f23",
+    "dsid_38e7aac0d2ed4545b7a92c2c441825a1",
+    "dsid_d04dea2d736445c3af6934b900a12ef9",
+    "dsid_2f1f0358b85148f19d38f619891bfb15"
+  ],
+  "overlays": [
+    {
+      "doc_id": "dsid_b23ad7be3ff68545a8616af22c4cca64",
+      "source_type": "hubspot",
+      "title": "Acme renewal risk — billing concession request",
+      "sha256": "74449c3b47f53907449b57d213259040fc99ac39872f73cfdba59e74605a3700"
+    },
+    {
+      "doc_id": "dsid_2cbe002bea6f4779f035c7deadbe1398",
+      "source_type": "gmail",
+      "title": "Acme asks for one clean revised invoice",
+      "sha256": "ed4359b7a9074c83ae496ac98b9d8698ec5d00d06378dd0d817927884d1842d3"
+    },
+    {
+      "doc_id": "dsid_142a9a49ab2cdc36f5bca24ff50da362",
+      "source_type": "slack",
+      "title": "billing-escalations — make Acme whole",
+      "sha256": "3e67cc4ad36866c5457619459031b2bac8842b227118fc10619fc523cc6e8061"
+    },
+    {
+      "doc_id": "dsid_97675c06cce00471d2c24661c3c3c898",
+      "source_type": "google_drive",
+      "title": "Acme later-window estimate",
+      "sha256": "64ff53c012f69b2ca9d8c28e05e5bd8a7417792ffb8833ab7f51c70f5462e54c"
+    }
+  ],
+  "files": [
+    {
+      "filename": "record_001.json",
+      "doc_id": "dsid_ab4d985b30884245af538029576d3be9",
+      "provenance": "source",
+      "sha256": "03d60a7c0c5e3733380523a31ca311139799f7ebec537bd96e426e4503339953"
+    },
+    {
+      "filename": "record_002.json",
+      "doc_id": "dsid_24d5d1f28b0d4103a14722022c623a40",
+      "provenance": "source",
+      "sha256": "aca954c66d3524196ad5bd9dab1db87a2c25b9ec5efdfe4bbf48aa990486b9a2"
+    },
+    {
+      "filename": "record_003.json",
+      "doc_id": "dsid_142a9a49ab2cdc36f5bca24ff50da362",
+      "provenance": "overlay",
+      "sha256": "3f5b4dfe8f20b72e033fb8df83a693ed80f4745dae74a3a18c8622dd56fbed64"
+    },
+    {
+      "filename": "record_004.json",
+      "doc_id": "dsid_da7ed4107f4d4b25a1166a7a9a92e470",
+      "provenance": "source",
+      "sha256": "a5ef19977c75d4bc6e5d7290344aa3dba4b182daeba46bca3771d66c98d230a4"
+    },
+    {
+      "filename": "record_005.json",
+      "doc_id": "dsid_7b9482cb1c2f4eedb6f581725c1b790a",
+      "provenance": "source",
+      "sha256": "fa31a2421a97e099888e7f0b3da7f8c3253501d093f8843e585a2ba8cbecf6a9"
+    },
+    {
+      "filename": "record_006.json",
+      "doc_id": "dsid_dc8da53aae4c4a81be13ae8e519cd42d",
+      "provenance": "source",
+      "sha256": "24e2cf4b0bbc4d062137d2766a7bcc53be887fced7eb73753222aa7962abc0d8"
+    },
+    {
+      "filename": "record_007.json",
+      "doc_id": "dsid_293e4a9ff9154a93826b30d5a3a21ad6",
+      "provenance": "source",
+      "sha256": "7fe10952bacf7d90848c39445698b13a7febdbab7899f9f2e79fa1f255533c10"
+    },
+    {
+      "filename": "record_008.json",
+      "doc_id": "dsid_224ff317e70d495185712de97adfaa51",
+      "provenance": "source",
+      "sha256": "e6e7945a38f8a3d61a1c9ddcf20d84587f831c2f0f98aec137b6632f0e0f1f7e"
+    },
+    {
+      "filename": "record_009.json",
+      "doc_id": "dsid_2f1f0358b85148f19d38f619891bfb15",
+      "provenance": "source",
+      "sha256": "710646826a4c877c3e4ba6139a32db904f8fa382f3b317f16daeb7f2ee7da84c"
+    },
+    {
+      "filename": "record_010.json",
+      "doc_id": "dsid_8713bd3fcec4424393675e568fcabbcb",
+      "provenance": "source",
+      "sha256": "7663e71807fdba8a62789d96a38882178e259ed93fc4f23c6aa9a4cfe04034cb"
+    },
+    {
+      "filename": "record_011.json",
+      "doc_id": "dsid_1d7e1ba39443465f81fb4fc46ea23be5",
+      "provenance": "source",
+      "sha256": "e40c164e66ba87843346624bfabc9d825e02aa20e4f9d9897b9469f7635ab1bd"
+    },
+    {
+      "filename": "record_012.json",
+      "doc_id": "dsid_d04dea2d736445c3af6934b900a12ef9",
+      "provenance": "source",
+      "sha256": "648c77a58553ffbd29ce0e4cfbc940cd5ec6b42619497c569ae0edbb52c9d9db"
+    },
+    {
+      "filename": "record_013.json",
+      "doc_id": "dsid_c52c609c0cdf4211a7e8c57bb1da72e4",
+      "provenance": "source",
+      "sha256": "8a1740f4d3ff1e392ce2cad0cc4f66e9a8d80da27a5741f81f20841d1c251a2e"
+    },
+    {
+      "filename": "record_014.json",
+      "doc_id": "dsid_a60299e3688a40f491f697c32c4bf329",
+      "provenance": "source",
+      "sha256": "270c8aa5a4edcb3d62a6332f157401fc6b163870812060540153ac79d03ffaa3"
+    },
+    {
+      "filename": "record_015.json",
+      "doc_id": "dsid_3942319c931a4b09a951c0ec5a09dd38",
+      "provenance": "source",
+      "sha256": "ca7fcb304e59343c51c7156b46b37dae7dae18c56cf325c2b5d80a78c3cf1169"
+    },
+    {
+      "filename": "record_016.json",
+      "doc_id": "dsid_5757c3b13c2947519680317e92c9b660",
+      "provenance": "source",
+      "sha256": "1fe3089c8cb95b40b81a7adbb7b87fb2c8bc321051e946f9fe538c072cf55ace"
+    },
+    {
+      "filename": "record_017.json",
+      "doc_id": "dsid_05a60210ab534e51b2b4147d6684eba1",
+      "provenance": "source",
+      "sha256": "626c78eaf27e1f3fc14a5370521120baffe8cd182df165df6aafc373dcd6121d"
+    },
+    {
+      "filename": "record_018.json",
+      "doc_id": "dsid_8a826d339baa4b95ab618342bb040f17",
+      "provenance": "source",
+      "sha256": "01244cbab57cb5e616526d23a20c9acaa6d1b54e0bca8363396229d9c12dc7eb"
+    },
+    {
+      "filename": "record_019.json",
+      "doc_id": "dsid_b1b0f7decd6c45a0a0f69436827da5be",
+      "provenance": "source",
+      "sha256": "f366227f2a297c9c92749d9d605519000a8a0e591d7a995e9c90613dee0635a7"
+    },
+    {
+      "filename": "record_020.json",
+      "doc_id": "dsid_f2af19288bef4b0dbb60448ad3f95506",
+      "provenance": "source",
+      "sha256": "ed82a74b27ae13cd17afd68813316c367fc2ed0b397dbb94251ef649bdc20186"
+    },
+    {
+      "filename": "record_021.json",
+      "doc_id": "dsid_baa2f54c3a854c76bcb2b6e52a6c098f",
+      "provenance": "source",
+      "sha256": "20876e18247c5d92c4393646bf360fdf0e74219e92f420b6991f95fc08a73545"
+    },
+    {
+      "filename": "record_022.json",
+      "doc_id": "dsid_4587f467ecf646b7926dbd6b886f9f23",
+      "provenance": "source",
+      "sha256": "27996ceb4e0afa285024a51bd0255289149cf4a7dfb6defdc58929a14c42ae8f"
+    },
+    {
+      "filename": "record_023.json",
+      "doc_id": "dsid_732b35a9a1534f2482882fae5d913c4b",
+      "provenance": "source",
+      "sha256": "78f585df83e44842acf54a76f8ac48d133cbcb17588cae90c82c0c4726ec9a09"
+    },
+    {
+      "filename": "record_024.json",
+      "doc_id": "dsid_60dc80cde5f74230a0b9712729aa25fd",
+      "provenance": "source",
+      "sha256": "1ebe964bbd6d4f1fddc0fc89db8bb6f0c0e315b1d528be70bd97900aeb9de891"
+    },
+    {
+      "filename": "record_025.json",
+      "doc_id": "dsid_1c6ce2fbbbef4f4fb7bf24f43aa874e8",
+      "provenance": "source",
+      "sha256": "5904eddb7b64b92a645fe11745843b835e132c925732072374cd2c17ec9d0a29"
+    },
+    {
+      "filename": "record_026.json",
+      "doc_id": "dsid_cf8a7b6f405e43bd8bdcd4136b40013e",
+      "provenance": "source",
+      "sha256": "ee9af00d94cc12095864ed4413f9d534b1d4494f94c0c89f61b7c59490b84af6"
+    },
+    {
+      "filename": "record_027.json",
+      "doc_id": "dsid_90d082507b0943ff9f0f056cf5ee051a",
+      "provenance": "source",
+      "sha256": "211d2f08f90f56ffdb64d73a0504136625603d14bec26577461fdf441f04c717"
+    },
+    {
+      "filename": "record_028.json",
+      "doc_id": "dsid_d6c66a1213404346aee656c7dc5891bc",
+      "provenance": "source",
+      "sha256": "c54856ff5b08ed9b6428a30f5e9c67e05461dab3c82e310fd306672e8c36b38d"
+    },
+    {
+      "filename": "record_029.json",
+      "doc_id": "dsid_0e9c4d9d4aec4f8a9851fea9bfe614ce",
+      "provenance": "source",
+      "sha256": "dfb9da1ef393b0e7c6ead79ae815e1024e5ac46cd1fb0151c0ff81ca35fd60f1"
+    },
+    {
+      "filename": "record_030.json",
+      "doc_id": "dsid_939eea1a52f84393b0f87492b9aba8c2",
+      "provenance": "source",
+      "sha256": "c2a89af755502a45d6ff80ab915ca8b5a398696cfdfbb37ea8381289de9b2c27"
+    },
+    {
+      "filename": "record_031.json",
+      "doc_id": "dsid_5de4a65fadc6410ba70ae8ff168078fe",
+      "provenance": "source",
+      "sha256": "53e29e609bbabab67b451886f944bd17c9b1bb81fc7b72814323441d84340333"
+    },
+    {
+      "filename": "record_032.json",
+      "doc_id": "dsid_6c11c29924cc4b99a01475af3e79ffd1",
+      "provenance": "source",
+      "sha256": "81c0e13b333c9c2cc5fae669927cb7336d935b42d1de68ba5b230db1261755e2"
+    },
+    {
+      "filename": "record_033.json",
+      "doc_id": "dsid_a592f24d2f3b4c21ba507b20c832d069",
+      "provenance": "source",
+      "sha256": "7330847c422c2cdb6db382b5e761cacb4f5b2a031876a69a79b7b05504dfbfd5"
+    },
+    {
+      "filename": "record_034.json",
+      "doc_id": "dsid_be1aab07f5f844bfa346d4231a1935c6",
+      "provenance": "source",
+      "sha256": "415108c2eaafb5979c04e1e8c01fcc16f6571b7916ab2d0f61d2cca56ad30087"
+    },
+    {
+      "filename": "record_035.json",
+      "doc_id": "dsid_340c1f407f844ec089fddc2297c8d178",
+      "provenance": "source",
+      "sha256": "eff664fce87d4f20f9553740fb09985621e9829c9d67208c3a2628eeae679871"
+    },
+    {
+      "filename": "record_036.json",
+      "doc_id": "dsid_b23ad7be3ff68545a8616af22c4cca64",
+      "provenance": "overlay",
+      "sha256": "a5af25c4a34e7682657561a7eee3661195279d584ab7c01ece320225032b3de6"
+    },
+    {
+      "filename": "record_037.json",
+      "doc_id": "dsid_ccab56ccd52a46cdbc484db3a02b7c98",
+      "provenance": "source",
+      "sha256": "0ccb0921b62b9f52207af931df0dcd8cf249f73b063585afe44dfe0fe2b26cfa"
+    },
+    {
+      "filename": "record_038.json",
+      "doc_id": "dsid_092c8672a6d14131a3cc2067f8ab93b3",
+      "provenance": "source",
+      "sha256": "a05ccd980c03a7da7cbacf7dcd4275728ca81c5e59a7e532b7eee1f8b0ab9386"
+    },
+    {
+      "filename": "record_039.json",
+      "doc_id": "dsid_a1286c0550124ebcbd8ba76b9f3822c1",
+      "provenance": "source",
+      "sha256": "2dfecd3e01dadfd8f45eb16ed70a0ef529be4b4f979792afd2a76cd6fa4df8f9"
+    },
+    {
+      "filename": "record_040.json",
+      "doc_id": "dsid_345bd7b19d5048b59093e5936c84539a",
+      "provenance": "source",
+      "sha256": "4d1c6edd2a2f2a179e3f6a869ff7526dae841dd041d153260b4ddc988291ebd6"
+    },
+    {
+      "filename": "record_041.json",
+      "doc_id": "dsid_9ec04efe8dc249b586ef1a522b061aa4",
+      "provenance": "source",
+      "sha256": "63464b7c938cd84f288180c0e7ac37eae858680d606db56c354846befafd645a"
+    },
+    {
+      "filename": "record_042.json",
+      "doc_id": "dsid_3eaa4f1a4e5c46e7814837ef5ce01167",
+      "provenance": "source",
+      "sha256": "300daf775041b5d8793c4ba774a84c45784a872b7f2ea5fedba448d4513c5d7e"
+    },
+    {
+      "filename": "record_043.json",
+      "doc_id": "dsid_8b2cad1090454f9790003096069dc0b1",
+      "provenance": "source",
+      "sha256": "2581ea9d27ac64008546656e56b4c5ce2adedccff816c3154707ce07f432afb3"
+    },
+    {
+      "filename": "record_044.json",
+      "doc_id": "dsid_a6971cb613ca4de89d28a12ee81e778e",
+      "provenance": "source",
+      "sha256": "1ee84801680428151fc055c96e296707d3ef7fa8d4c1bc260f8d1f41bba2e287"
+    },
+    {
+      "filename": "record_045.json",
+      "doc_id": "dsid_64052c7039e542dbaa837cca6a34d042",
+      "provenance": "source",
+      "sha256": "ba982baf0ace0c30296b8cb5fb5c447f1eaeab1b3e5030483fb4b0d87962a8ab"
+    },
+    {
+      "filename": "record_046.json",
+      "doc_id": "dsid_aa7d980ac8ed4595a7218643f0981cd2",
+      "provenance": "source",
+      "sha256": "ed5d2254ce30d76b7a1640e2093b68841e3c8faf0ba33a5f98a1eb0b755bcdc5"
+    },
+    {
+      "filename": "record_047.json",
+      "doc_id": "dsid_955a368cfa8742209346de0b2cd1f7ac",
+      "provenance": "source",
+      "sha256": "1529215761f076fcb9196fe64974b85e6913c2bffb1bb9504014a063b2df655a"
+    },
+    {
+      "filename": "record_048.json",
+      "doc_id": "dsid_d44396eff70140948e6e036d675dc45a",
+      "provenance": "source",
+      "sha256": "21412d02c8929a6d4da27b0ac8ea2a940931b03d31767e0d7d73a1b74c907dd7"
+    },
+    {
+      "filename": "record_049.json",
+      "doc_id": "dsid_38e7aac0d2ed4545b7a92c2c441825a1",
+      "provenance": "source",
+      "sha256": "e7fdea15c11fd5de79896dbb0d98a08e10379775cb0edfc2d93e76ad79be424c"
+    },
+    {
+      "filename": "record_050.json",
+      "doc_id": "dsid_3d8149ca83614445a3ddcec37b401f04",
+      "provenance": "source",
+      "sha256": "4eb3c928185ec0a3e9b3b6a3975556f808bd65438e2736c9a6a8ae8a208082c0"
+    },
+    {
+      "filename": "record_051.json",
+      "doc_id": "dsid_6a79b7f64b8b42d9b12f7cada6063c8a",
+      "provenance": "source",
+      "sha256": "c23e1774de1eb0ec6d082c1022a89ca830332dc039af2211500f821822d5c66b"
+    },
+    {
+      "filename": "record_052.json",
+      "doc_id": "dsid_cb46946bdd1a457fb9529a55b008d95a",
+      "provenance": "source",
+      "sha256": "55c7ea0f7423d3df30829e0a18bbd01c9aab9b7e5bec2e1c7b0e9cafb5fdb7b4"
+    },
+    {
+      "filename": "record_053.json",
+      "doc_id": "dsid_91b82f5a6565412a89c50a518171ae24",
+      "provenance": "source",
+      "sha256": "553df75df3a908ce526eed375ee01b9027202feb7300e0cd34667862cd6946ea"
+    },
+    {
+      "filename": "record_054.json",
+      "doc_id": "dsid_1a22e40be91e44b8ab29d0f0ad0475a6",
+      "provenance": "source",
+      "sha256": "533cc4601518a156c373232cb1798e5c96e3b110b85d5307a5174b05cde4a259"
+    },
+    {
+      "filename": "record_055.json",
+      "doc_id": "dsid_47b6fe4c2fb044eeb8bc5f0334fa25dc",
+      "provenance": "source",
+      "sha256": "eb7769b56642a714c37a9e772624d386b6780cb807f557d6b37c9f16b4982ae4"
+    },
+    {
+      "filename": "record_056.json",
+      "doc_id": "dsid_62e6cf3e2e1147d88eb056e19272d3d1",
+      "provenance": "source",
+      "sha256": "745f0cb887021dd7f15c03743e964d283842c9909bc32c53f7b69f4622569a1b"
+    },
+    {
+      "filename": "record_057.json",
+      "doc_id": "dsid_21e23a0f12b14e17ae72e84140eca5c3",
+      "provenance": "source",
+      "sha256": "298e1957c0d46bc9e54718c6e1061a5fd231facc289e0fc3a9cf385fe610354e"
+    },
+    {
+      "filename": "record_058.json",
+      "doc_id": "dsid_64470f7c6b15433c9f67cc78b51b16fc",
+      "provenance": "source",
+      "sha256": "60d0b17e82698c924d5164474c8698fa957e8d8616a179256e5485898cc10092"
+    },
+    {
+      "filename": "record_059.json",
+      "doc_id": "dsid_a7baddf163ef4946a97b4765bf1cf08b",
+      "provenance": "source",
+      "sha256": "e791299a8c7b50967ad61a10edb492111c2ce062b667a28d2496e42ab326faba"
+    },
+    {
+      "filename": "record_060.json",
+      "doc_id": "dsid_54b422957765466d8ecd3846407891e4",
+      "provenance": "source",
+      "sha256": "467360b290b58daeb1cc9914fe38935ab5903cf1fc040ccc4aff0911009db6a3"
+    },
+    {
+      "filename": "record_061.json",
+      "doc_id": "dsid_1f95a85fa749456ea68be6fa712aa4a9",
+      "provenance": "source",
+      "sha256": "e7012b878f74d31467b5c191e94cdd268b5b65fd5c8aff5db60113c0b5997d87"
+    },
+    {
+      "filename": "record_062.json",
+      "doc_id": "dsid_38244962882a4e8ca4c5b96e99d36577",
+      "provenance": "source",
+      "sha256": "4241a81bc20de9709ed54372809b820f6f93eebda788507feefc174e0d71f617"
+    },
+    {
+      "filename": "record_063.json",
+      "doc_id": "dsid_10987c6bdcb44be18fdab33d2922c588",
+      "provenance": "source",
+      "sha256": "358ec096c2fd265f928485a892ccb135557f3765f5e98ed808115d0c78fde5d2"
+    },
+    {
+      "filename": "record_064.json",
+      "doc_id": "dsid_602422b841b94f5c8089555015df0ed8",
+      "provenance": "source",
+      "sha256": "3a7fc52c10463ceacaede382f71bcc1b9d4dd7b21113aeda57e01e71c2c38792"
+    },
+    {
+      "filename": "record_065.json",
+      "doc_id": "dsid_d448d85aff8e42a781dacd29644f55f9",
+      "provenance": "source",
+      "sha256": "1a48b7868ce0752f543dd54f6ad0446d8eec2840f7804743fb981e81a107110e"
+    },
+    {
+      "filename": "record_066.json",
+      "doc_id": "dsid_3c4175e2eb2e49d998654ef13ff8a978",
+      "provenance": "source",
+      "sha256": "6aacbee9bec9620eebf11f44c5187b79eea61f38d9d0fc15bebe796a7a6ccb50"
+    },
+    {
+      "filename": "record_067.json",
+      "doc_id": "dsid_4657e125f00d421db6e1f86159625d55",
+      "provenance": "source",
+      "sha256": "4b1e65a9546e5053d703d07464d1da7d494b245fdfe3ec45ece5af7503488ea0"
+    },
+    {
+      "filename": "record_068.json",
+      "doc_id": "dsid_d9623be3f18c475ab5aa1d9f84dbc7fc",
+      "provenance": "source",
+      "sha256": "a06dd5f37c722d74eebbb499a82cab15b5746777aaf55cbbf409730dba3584e1"
+    },
+    {
+      "filename": "record_069.json",
+      "doc_id": "dsid_80a3b812d10546588421f42991873d20",
+      "provenance": "source",
+      "sha256": "6cff76f7155fd5d3ab0f0d253c6b0b6c1a9db2ce34cfeab903d8ef3a85bc74b7"
+    },
+    {
+      "filename": "record_070.json",
+      "doc_id": "dsid_cc19d0f72d7d4e65a918f739c676fa0e",
+      "provenance": "source",
+      "sha256": "32adcd296f593ccd594c820bf89afaa98ad574cb5db8a22f513bfba59aa0bc0d"
+    },
+    {
+      "filename": "record_071.json",
+      "doc_id": "dsid_aa280cadb39e43a9977c32b193e7f483",
+      "provenance": "source",
+      "sha256": "ece75eac3fd49e9443b289c8ac048e2844cf1add1d8aeec874f60ae3e6aef212"
+    },
+    {
+      "filename": "record_072.json",
+      "doc_id": "dsid_7098a2e6a0954f3a9e6cd17bd9ed6a20",
+      "provenance": "source",
+      "sha256": "c2584843ce5ea3414e6732f7c8a46bdccfd7bdbf5ec0a810ab77f3818e8ec709"
+    },
+    {
+      "filename": "record_073.json",
+      "doc_id": "dsid_93320a2f19b045a895d2d0141fa4d78c",
+      "provenance": "source",
+      "sha256": "9607c22effa574b038b440644c2e7b2533f66a73b52300cfe464ca46b1f8c64e"
+    },
+    {
+      "filename": "record_074.json",
+      "doc_id": "dsid_8c5f64c0524244f89db0f91c2294f35b",
+      "provenance": "source",
+      "sha256": "799a2abae2d4c53b5078c6be599c14d1996645bd977a9d8d78d90621592db138"
+    },
+    {
+      "filename": "record_075.json",
+      "doc_id": "dsid_1c062b44d6af47f6b9e5907bf3c5138a",
+      "provenance": "source",
+      "sha256": "8a2f1ba3496ea61326462adc02e752611a9459784ce145bdc6fc51763ea3a142"
+    },
+    {
+      "filename": "record_076.json",
+      "doc_id": "dsid_2cbe002bea6f4779f035c7deadbe1398",
+      "provenance": "overlay",
+      "sha256": "8046cedb6e9e36aaad144a93e86ea935ca7417c1aeba394eabf572ed8cd2358b"
+    },
+    {
+      "filename": "record_077.json",
+      "doc_id": "dsid_359580108acf4b56819679a4a4bd50a3",
+      "provenance": "source",
+      "sha256": "650ac360523ed4a6ce0c7df3b8d9fe10f7e5cb58630cd0c667ec96f20f025a1c"
+    },
+    {
+      "filename": "record_078.json",
+      "doc_id": "dsid_7fdaa931585946a6847c94c764f40a9a",
+      "provenance": "source",
+      "sha256": "06bfc9b55ebfb9c91745af18dfb0aad297adb5de4f0a7faf1af1a43ed2afc875"
+    },
+    {
+      "filename": "record_079.json",
+      "doc_id": "dsid_2e25451f99f44af3820f03c0602c40d8",
+      "provenance": "source",
+      "sha256": "156fe835a856db8ac594aae919fecdff3ff1c21ed37d8860f64dae9faa3a2bbc"
+    },
+    {
+      "filename": "record_080.json",
+      "doc_id": "dsid_aee6cdaddb8b4fcb903a7d5865b12c62",
+      "provenance": "source",
+      "sha256": "69b9a65cba7a4d2094d5a3db4980edd7acea2b6e04c3c6567b677de187987d25"
+    },
+    {
+      "filename": "record_081.json",
+      "doc_id": "dsid_f78e91b3e6854c5c8db4213238b3d1ab",
+      "provenance": "source",
+      "sha256": "10ed3b7a7006981c37bbd24e299d0b36ffbd5a2b619fa414aeda2640d0034308"
+    },
+    {
+      "filename": "record_082.json",
+      "doc_id": "dsid_cc85738317d14945ac9a22c8a53cdca5",
+      "provenance": "source",
+      "sha256": "747cadeddb233a3ffaf23b3d599c4d0cd97802d8088f258352c50e919f332240"
+    },
+    {
+      "filename": "record_083.json",
+      "doc_id": "dsid_f1c02175520b442198fd489400ad9b7b",
+      "provenance": "source",
+      "sha256": "89272ea908643e282ca1c50cc4c221fa0b6517bad60f4131937df10e1b02b3f8"
+    },
+    {
+      "filename": "record_084.json",
+      "doc_id": "dsid_1ce86e240ac343bebf947f866392be36",
+      "provenance": "source",
+      "sha256": "0d7eda2c5746c855b69bc2dc884106cef60d71a08bedec0d67bf00681a086f92"
+    },
+    {
+      "filename": "record_085.json",
+      "doc_id": "dsid_f135281121bd4352937626eba7924c87",
+      "provenance": "source",
+      "sha256": "4a75c17c977e33df90afa356971910b8bf0c08e7c442733c605b9ad6f4720520"
+    },
+    {
+      "filename": "record_086.json",
+      "doc_id": "dsid_4ffb0ae36999435b9c14f5b136ad8fa6",
+      "provenance": "source",
+      "sha256": "0100e4e7d66f22e402a3733c9e75680900afbab358caaa6721d48e0154583c1c"
+    },
+    {
+      "filename": "record_087.json",
+      "doc_id": "dsid_b0462981fafc442392ab1b6d982c2f07",
+      "provenance": "source",
+      "sha256": "f2286d5119a46a036de3beecdf0f6d5e686ad5e6e6d1fecd8a60823df85220fe"
+    },
+    {
+      "filename": "record_088.json",
+      "doc_id": "dsid_bc79496316d747958103891aedc274b0",
+      "provenance": "source",
+      "sha256": "74b5853f16555dce5ca382d03182cd0c0615ec7bc3e90dc4cfd1d43ebddf1f74"
+    },
+    {
+      "filename": "record_089.json",
+      "doc_id": "dsid_6aea1ea62cd14982ac4018fd29a8f394",
+      "provenance": "source",
+      "sha256": "f5975125c6d13188be397fa159208eb28e22c17738133d18ca3f820dcddf6b76"
+    },
+    {
+      "filename": "record_090.json",
+      "doc_id": "dsid_e8c33c9af2f0406f874871fb2e23a62e",
+      "provenance": "source",
+      "sha256": "adb586353d339e385ad061f8141e7db033ba85affbd996b8bb85ca258bd8b776"
+    },
+    {
+      "filename": "record_091.json",
+      "doc_id": "dsid_22cf75c2a0ec4786ad7d32374a05cfaf",
+      "provenance": "source",
+      "sha256": "b00bb5c1e9ccc4ba66dc8d81112e0125ba27a93c84461a180bd5b2bcc6aa9ce1"
+    },
+    {
+      "filename": "record_092.json",
+      "doc_id": "dsid_fe6a96ec0e6d47af822f8726551add00",
+      "provenance": "source",
+      "sha256": "188383c90c7b344891e51a88c9db870f36fe7b49431ede0d68cd521f4dd4cebe"
+    },
+    {
+      "filename": "record_093.json",
+      "doc_id": "dsid_33a4940b29e9463f87591f5da5f7632f",
+      "provenance": "source",
+      "sha256": "c4307e8aa435e934e9c8187bef5f702bacf076f8074e8f73b5ee51e7904ba47e"
+    },
+    {
+      "filename": "record_094.json",
+      "doc_id": "dsid_ca3944355c3547078c09982877ee757d",
+      "provenance": "source",
+      "sha256": "e4fcfd087d1d7dbeb92d7f6ff568b4ae022db7d803a6f969ef32845b157bbb8f"
+    },
+    {
+      "filename": "record_095.json",
+      "doc_id": "dsid_0ae782635a37479d9616d96aa1f0b22f",
+      "provenance": "source",
+      "sha256": "eb60bbe61aad99b1cba1057582b9555b6754587cb01d8613e38d980cb1c3080e"
+    },
+    {
+      "filename": "record_096.json",
+      "doc_id": "dsid_ee340fec5c504faeadce61ae99b6de5e",
+      "provenance": "source",
+      "sha256": "871da96e3262deb666b64822ecd2217386ed53912bfe21c64053c4a2475fd6aa"
+    },
+    {
+      "filename": "record_097.json",
+      "doc_id": "dsid_3a1f6951df694270beffed49a6a3cabc",
+      "provenance": "source",
+      "sha256": "6f730a4d86b002731aa766151021d0aa78d603bbab11a432392551ee08c3b067"
+    },
+    {
+      "filename": "record_098.json",
+      "doc_id": "dsid_5eeb45c1c1564fc89da2c9d610ff0e25",
+      "provenance": "source",
+      "sha256": "cfa51980ad7cd51d3d821a0231d6defbad062755e4aa89f87d8c468deb5832f6"
+    },
+    {
+      "filename": "record_099.json",
+      "doc_id": "dsid_9ce6a26ab7bb4ad89dc0acdfee6d29c1",
+      "provenance": "source",
+      "sha256": "fd7aeecbcacbd34273a8e76828bf8eba7eb530f4865ca948e9752c46ad7459ce"
+    },
+    {
+      "filename": "record_100.json",
+      "doc_id": "dsid_37b10bb68e60472bb9b45d35afd7c2d1",
+      "provenance": "source",
+      "sha256": "17e510d896578c5985d0d958e73f923ebe79ad95e6e46d9e97b56a6a8a56e806"
+    },
+    {
+      "filename": "record_101.json",
+      "doc_id": "dsid_d0f97bb6110c47d5968c7f5ccbe52862",
+      "provenance": "source",
+      "sha256": "daf760c5396b9b8160f4fe876d76af840870454e6214e6d78da64d646f9747f5"
+    },
+    {
+      "filename": "record_102.json",
+      "doc_id": "dsid_c341d009686345469f3dc9702c8a9ab5",
+      "provenance": "source",
+      "sha256": "8e774c0782aab32beae50ef6230e8a55fb6bc8b31e806816fecbfe04b96cb997"
+    },
+    {
+      "filename": "record_103.json",
+      "doc_id": "dsid_04887b29c4bc4ae3a22e5ac90a48f34e",
+      "provenance": "source",
+      "sha256": "65269ee0f14e15aea1fd0082b0612c1ac2065b1140fb98717fea82b4a9fbb865"
+    },
+    {
+      "filename": "record_104.json",
+      "doc_id": "dsid_3ab4ca9e1df74c99881d4ff0dac4e16a",
+      "provenance": "source",
+      "sha256": "4a73b97ce54a11564fbb248c6189221b79529bbbebea9383e429ff7b3843e3b9"
+    },
+    {
+      "filename": "record_105.json",
+      "doc_id": "dsid_a86e5e270f2d45118bb9db7493838f19",
+      "provenance": "source",
+      "sha256": "995524373a537c563d2770ae71ead4694e89bdef81b67d6d688157b9962c3353"
+    },
+    {
+      "filename": "record_106.json",
+      "doc_id": "dsid_df1a8c93d30649c49212a293a11ef76b",
+      "provenance": "source",
+      "sha256": "88ae8010ca247b6804014452a67fa8989fc5b325414547066920c636311186cc"
+    },
+    {
+      "filename": "record_107.json",
+      "doc_id": "dsid_a652eefaaf71488aabba8acccbb6c6bd",
+      "provenance": "source",
+      "sha256": "d2a16a54e40df15a460850476c493e1ab19e19a37b3444b833a062a8f3891bf2"
+    },
+    {
+      "filename": "record_108.json",
+      "doc_id": "dsid_950e93b1513b45ce87c05ae57582cc48",
+      "provenance": "source",
+      "sha256": "f0a684eccc6842fe5a062f97171cb46c630bf3f7233852c6fa0053a56764a456"
+    },
+    {
+      "filename": "record_109.json",
+      "doc_id": "dsid_f94eddd70c7e4a028e16c760809e9333",
+      "provenance": "source",
+      "sha256": "a0cb251a0dc355852d1790c61ee372be2e4ec972e2558bf9cda82f775cc0ae5c"
+    },
+    {
+      "filename": "record_110.json",
+      "doc_id": "dsid_763fc64595ed43ee964def16ac5e4dfa",
+      "provenance": "source",
+      "sha256": "bdb93e8038237b8e35c347d7b56159b84f5c7816d23c6aaee6d39dcbdd1edac6"
+    },
+    {
+      "filename": "record_111.json",
+      "doc_id": "dsid_f16fd1177659439d8b1a4729cc49dbbf",
+      "provenance": "source",
+      "sha256": "4b7a38f5e949cf15c347b28276185b412446d6e5fc63fcd9a64a9746f54723a4"
+    },
+    {
+      "filename": "record_112.json",
+      "doc_id": "dsid_f74ea62de6044f62a5edf81683af0889",
+      "provenance": "source",
+      "sha256": "8bde6829e871dcb8c7f904df9f58526a73cff7d22ac39a74ce506b6324a39b02"
+    },
+    {
+      "filename": "record_113.json",
+      "doc_id": "dsid_4e20ef20d6544518bb8a8643a6e971a1",
+      "provenance": "source",
+      "sha256": "a9413f71aaebed99412b8a96e4edee6ada1bba3900066956f1cbd68d30469b37"
+    },
+    {
+      "filename": "record_114.json",
+      "doc_id": "dsid_885de0788375407e9090b959b5e6320d",
+      "provenance": "source",
+      "sha256": "23b1916f7d7118f996b528e6fb68185b126dad7d2f9274547c6cbb8e684ebc9a"
+    },
+    {
+      "filename": "record_115.json",
+      "doc_id": "dsid_1c6c09cbee7a47d6a593f75efc7f4b1d",
+      "provenance": "source",
+      "sha256": "64e10fe0c60ebfd73b7cfe1eab2d22c8bc56c45e64dcad97835c60d43f9c8481"
+    },
+    {
+      "filename": "record_116.json",
+      "doc_id": "dsid_55c2c58ad23e4b50b0b4c0268a1d1fa0",
+      "provenance": "source",
+      "sha256": "89f3e4e9cdb9753fad0390bdda68f769e85bd3d3df439c0187981042d2d4abeb"
+    },
+    {
+      "filename": "record_117.json",
+      "doc_id": "dsid_26de7be81fcd45259de9cb28930f650e",
+      "provenance": "source",
+      "sha256": "85e75039413222d2e466072ef1ff882340dacde5ff54ea3da46bb9288579296b"
+    },
+    {
+      "filename": "record_118.json",
+      "doc_id": "dsid_69405b339b9046fead71c2c38c8bda0e",
+      "provenance": "source",
+      "sha256": "ea85918f00b6d7f8718232458609acdfccced18a8e2476c26e9dab846fd86b54"
+    },
+    {
+      "filename": "record_119.json",
+      "doc_id": "dsid_3417c31dff344436a3f1969c6c20db47",
+      "provenance": "source",
+      "sha256": "4f53386ef4c4991943ca11ff20b5302f8b4ca0d6cb4f019b89476d45c25ec301"
+    },
+    {
+      "filename": "record_120.json",
+      "doc_id": "dsid_b9f7f22beef04b44a106b8eaf008d681",
+      "provenance": "source",
+      "sha256": "8d6106f8a701a040bcfc0b3d83ee6a0d4a22832758af85250252a5d475e38c29"
+    },
+    {
+      "filename": "record_121.json",
+      "doc_id": "dsid_37befab212ae4ed9be7ebe612d942658",
+      "provenance": "source",
+      "sha256": "cdf40ffb9bb6d7590799002c4709b60770e54cb6cd65408198633e21d44ab2bf"
+    },
+    {
+      "filename": "record_122.json",
+      "doc_id": "dsid_97675c06cce00471d2c24661c3c3c898",
+      "provenance": "overlay",
+      "sha256": "eb0a99079fbffc7c3a854fb53664bf6f7d7d2b77a8453d43afd53ef96230eb75"
+    },
+    {
+      "filename": "record_123.json",
+      "doc_id": "dsid_dfbe0b947b91421e889a217761afb218",
+      "provenance": "source",
+      "sha256": "b387003d6b4e8b15dca86515b7cfb8b367b3528c7a6fac421f67af62ba7bd5c5"
+    },
+    {
+      "filename": "record_124.json",
+      "doc_id": "dsid_5448c029ce53473588c6511ff7ad1c5c",
+      "provenance": "source",
+      "sha256": "9912daa32717dd5d08adb05a3e529c000a20fa4f53ee2c6de4dd54aa71b492de"
+    },
+    {
+      "filename": "record_125.json",
+      "doc_id": "dsid_30d39e1e98164d1a930a92b657c57169",
+      "provenance": "source",
+      "sha256": "bca91217bf8448e8746e7324ff39df1a1b3f0aa32e7a3db1f6af5caf89b31e4c"
+    },
+    {
+      "filename": "record_126.json",
+      "doc_id": "dsid_2ae4478ecb574487b90c90ae99e24cdd",
+      "provenance": "source",
+      "sha256": "17f32f1303868c89286dbcda819d9d3d84d1abf968bfda9ea315ad2ac383601d"
+    },
+    {
+      "filename": "record_127.json",
+      "doc_id": "dsid_c7c1a4b9b9ee4edc8915669212407cce",
+      "provenance": "source",
+      "sha256": "a7827575ce36f6d3700929be4192b5af38fa8a1740444eb1b7010c2b94dc7f35"
+    },
+    {
+      "filename": "record_128.json",
+      "doc_id": "dsid_f31338494d0e4ba99bee4cbb1ca1e2ed",
+      "provenance": "source",
+      "sha256": "20c1b5d4598b229569f24ca0929f8f8f4cc07b998867ee61206eaf96b8e4f5e4"
+    },
+    {
+      "filename": "record_129.json",
+      "doc_id": "dsid_7f57014e9b6445c68f849ac4e152e406",
+      "provenance": "source",
+      "sha256": "8a4316e217e008c4e996dde37cf1bf1f0a64eec0195940035665b036bd370976"
+    },
+    {
+      "filename": "record_130.json",
+      "doc_id": "dsid_4f107705024149b8b2a6de48f1ebdc79",
+      "provenance": "source",
+      "sha256": "db878dc8f95aa938f0c139bb46bb769bbcfdd0c2833b7b5325eba0f9f3f9f8e2"
+    },
+    {
+      "filename": "record_131.json",
+      "doc_id": "dsid_21d4a16b779f442c9a7d67e1fa417a17",
+      "provenance": "source",
+      "sha256": "307c15396ddd6ada9374cacdf8792589900cf110bd178d3e8c8e6a82c20fcbe0"
+    },
+    {
+      "filename": "record_132.json",
+      "doc_id": "dsid_64a9837eb8f643bdbb152c92fa3dfdf1",
+      "provenance": "source",
+      "sha256": "a5929ae0110019944e18ce0c9b4ab630d2c25896be11c893124f6664296c76b7"
+    }
+  ]
+}

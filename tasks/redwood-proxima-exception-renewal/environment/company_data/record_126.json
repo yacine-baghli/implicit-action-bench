@@ -1,0 +1,11 @@
+{
+  "title": "customer-escalations — reuse Proxima override",
+  "source_type": "slack",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "The account director asks Platform to copy the old flag because dashboards stayed healthy. An SRE notes that the old approval ticket was for us-east, chat plus embeddings, and a fourteen-day campaign. The request owner says rerank was not part of the prior test.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_24ea71d5452423da90fc85946d2b85b7"
+}

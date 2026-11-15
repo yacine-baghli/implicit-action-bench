@@ -1,0 +1,11 @@
+{
+  "title": "Concordia export draft",
+  "source_type": "jira",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "The draft export job requests fifteen months with destination support attachment. Its legal_hold_id field is empty. A dry run reports records only inside the normal retention window and warns that the older range is unavailable.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_2769e67d9768ed8c1d0c89c0fad768ce"
+}

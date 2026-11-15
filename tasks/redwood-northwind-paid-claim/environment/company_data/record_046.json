@@ -1,0 +1,11 @@
+{
+  "title": "Northwind 24-hour latency snapshot",
+  "source_type": "google_drive",
+  "created_at": "2026-11-13",
+  "last_updated": "2026-11-13",
+  "body": "A dashboard export compares one post-rollout day with the interview-day baseline and reports a 42% p95 reduction. The export includes the maintenance interval and does not apply the seven-day rolling window used by the published case study. A footnote says the snapshot is directional and has not been approved for external use.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_636edb0d6d03eabc18b594110b17fe2d"
+}

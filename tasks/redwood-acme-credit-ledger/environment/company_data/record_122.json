@@ -1,0 +1,11 @@
+{
+  "title": "Acme later-window estimate",
+  "source_type": "google_drive",
+  "created_at": "2026-11-10",
+  "last_updated": "2026-11-10",
+  "body": "A working spreadsheet calculates 7.9% for a narrow seven-day sample after the January event. Its header says estimate only, excludes cached traffic, and is not an invoice-wide adjustment. The amount does not reconcile to the previously approved $1,842.17 credit memo.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_97675c06cce00471d2c24661c3c3c898"
+}

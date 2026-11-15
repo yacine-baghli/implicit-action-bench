@@ -1,0 +1,11 @@
+{
+  "title": "Acme renewal risk — billing concession request",
+  "source_type": "hubspot",
+  "created_at": "2026-11-11",
+  "last_updated": "2026-11-11",
+  "body": "The renewal owner says Acme expects a corrected bill before signing. A note links the January retry incident and a later seven-day analysis. The owner writes '7.9% seems defensible' but the approval field is empty and the note does not identify which invoice lines or dates the percentage covers.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_b23ad7be3ff68545a8616af22c4cca64"
+}

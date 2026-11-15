@@ -1,0 +1,11 @@
+{
+  "title": "deal-desk — Nordbank signature timing",
+  "source_type": "slack",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "Sales says Security already approved EU residency wording and asks Deal Desk to close the item. A solutions architect notes that the approval was for Customer Content processing in Hosted EU, while the new redline also names operational metadata and personnel.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_30dd5890891ee44e2652977941dd896b"
+}

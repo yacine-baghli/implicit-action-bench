@@ -1,0 +1,11 @@
+{
+  "title": "Proxima seasonal burst request",
+  "source_type": "hubspot",
+  "created_at": "2026-11-12",
+  "last_updated": "2026-11-12",
+  "body": "Proxima expects a month-long campaign across North America and Europe. The request asks for chat, embeddings, and rerank and cites last quarter's successful exception. The deal record contains no current SRE approval and lists Dedicated capacity as the long-term option.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_d0b4cda73530e9451aff52a44679a228"
+}

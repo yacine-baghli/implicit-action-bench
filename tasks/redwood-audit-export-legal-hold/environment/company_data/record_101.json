@@ -1,0 +1,11 @@
+{
+  "title": "CONCORDIA-AUDIT-15M legal intake",
+  "source_type": "linear",
+  "created_at": "2026-11-13",
+  "last_updated": "2026-11-13",
+  "body": "Compliance has opened a legal-hold request but no hold identifier or preserved dataset is present. The ticket says the current-retention subset may be prepared separately, while older material must not be represented as available until hold confirmation.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_3e3d047a1778eb26ab1240cc3af14d3c"
+}

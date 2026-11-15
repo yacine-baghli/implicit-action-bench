@@ -1,0 +1,23 @@
+{
+  "dataset": "bic-bench-v3/enterprise-overlays-pilot8@2",
+  "harness": "mini-swe-bic-v2.4.6-all",
+  "runs": [],
+  "historical_runs": [
+    {
+      "model": "gemini/gemini-4-carbon",
+      "run_ids": [
+        "36d993da-d4a8-451f-9c6c-ad862f399b83",
+        "21862585-1960-46a8-9676-814cbc7cc8fa",
+        "ab9dc598-9784-4732-aa8c-496c1bfb512f",
+        "61a3079f-b23f-4b32-b6f2-a743d62bfb0c",
+        "faa351a8-c6ca-4162-ab58-df6452f9270f"
+      ],
+      "status": "quota_blocked",
+      "completed_model_tasks": 0,
+      "provider_error": "RESOURCE_EXHAUSTED: free-tier request and input-token daily limits exceeded",
+      "retry_after_observed": "83001 seconds (approximately 23 hours)",
+      "last_verified_at": "2026-11-15T08:56:39Z",
+      "action": "Resolved with a replacement Gemini key. The blocked attempts remain historical and are excluded from scoring."
+    }
+  ]
+}

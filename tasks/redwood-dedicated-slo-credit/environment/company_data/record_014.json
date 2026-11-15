@@ -1,0 +1,11 @@
+{
+  "title": "HELIOS-SLO-118 evidence intake",
+  "source_type": "jira",
+  "created_at": "2026-11-13",
+  "last_updated": "2026-11-13",
+  "body": "The deployment was streaming-heavy and spans the period before and after the streaming counter fix. The ticket includes region and tier but not finalized completion-token exports, exclusion analysis, or an SRE breach determination. The customer screenshot uses the old throughput panel.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_a1667e8c519e3c5f8e2ba575bcd918f7"
+}

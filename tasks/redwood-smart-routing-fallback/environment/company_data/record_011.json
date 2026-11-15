@@ -1,0 +1,11 @@
+{
+  "title": "ATLAS-503-FALLBACK support evidence",
+  "source_type": "jira",
+  "created_at": "2026-11-13",
+  "last_updated": "2026-11-13",
+  "body": "Recent failures carry reason code GATEWAY_ADMISSION_OVERLOAD and show no router decision ID. Earlier tests with ROUTER_UPSTREAM_BREAKER_OPEN did invoke the tenant's configured same-region fallback. The customer groups both responses together as 503 overload.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_92914f06fd5b082f478610ac49e35c8c"
+}

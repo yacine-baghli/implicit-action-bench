@@ -1,0 +1,11 @@
+{
+  "title": "Atlas overload dashboard",
+  "source_type": "google_drive",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "The dashboard shows a high 503 rate but the headline panel does not split reason codes. A lower panel shows the spike is predominantly gateway admission rejection; router breaker-open events are rare and their bounded fallback succeeds.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_d8b4d068d7c3d71700df1cf7088b3d27"
+}

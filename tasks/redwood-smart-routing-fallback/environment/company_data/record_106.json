@@ -1,0 +1,11 @@
+{
+  "title": "Atlas fallback entitlement",
+  "source_type": "hubspot",
+  "created_at": "2026-11-12",
+  "last_updated": "2026-11-12",
+  "body": "Atlas is approved for same-region fallback between two named chat models. Cross-region routing, embeddings, rerank, and arbitrary model substitution are not in the order form. The account owner asks for a fast fix but has not changed the entitlement.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_f52f367b6d987cca8e39d800766af238"
+}

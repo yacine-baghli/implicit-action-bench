@@ -1,0 +1,11 @@
+{
+  "title": "billing-escalations — make Acme whole",
+  "source_type": "slack",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "The sales vice president asks Billing to make Acme whole today and says not to lose the renewal over presentation. A controller replies with a link to the approved January memo and says any additional period still needs quantification. The thread never authorizes reopening a closed month.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_142a9a49ab2cdc36f5bca24ff50da362"
+}

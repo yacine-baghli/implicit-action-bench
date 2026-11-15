@@ -1,0 +1,11 @@
+{
+  "title": "support-escalations — hide Atlas 503s",
+  "source_type": "slack",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "Support asks Platform to flip global fallback so the customer sees fewer errors. Gateway replies that admission rejection occurs before Smart Routing and therefore cannot invoke fallback. Routing offers to verify the existing bounded policy while SRE investigates admission thresholds and capacity.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_129da1c963d9c9e986b79ba01eadf882"
+}

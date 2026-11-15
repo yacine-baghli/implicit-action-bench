@@ -1,0 +1,11 @@
+{
+  "title": "security-ops — super-admin archive label",
+  "source_type": "slack",
+  "created_at": "2026-11-14",
+  "last_updated": "2026-11-14",
+  "body": "An engineer says the console still shows a button called super-admin archive export. Another engineer explains that the legacy label now launches the role-aware exporter and does not bypass retention; old records resolve only through a legal-hold dataset reference.",
+  "content_field_names": [
+    "body"
+  ],
+  "dataset_doc_uuid": "dsid_6e5217cbb0a45763d6f3ce90040585bf"
+}
