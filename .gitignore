@@ -6,5 +6,7 @@ __pycache__/
 .env.*
 outputs-trial-*/
 leaderboard-qa.png
+.chrome-qa-*/
+qa-*.png
 
 .vercel

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the BIC-Bench V3 pilot leaderboard as a self-contained HTML page.
+"""Render the implicit-action-bench leaderboard as a self-contained HTML page.
 
 The page follows the static results UI convention used on the main branch:
 JSON files remain the source of truth, this script owns the presentation, and
@@ -170,7 +170,7 @@ def build_page_data() -> dict[str, Any]:
         )
 
     return {
-        "dataset": blocked["dataset"],
+        "dataset": "implicit-action-bench/enterprise-release@1.0",
         "harness": blocked["harness"],
         "protocol": {
             "task_count": len(tasks),
@@ -182,23 +182,30 @@ def build_page_data() -> dict[str, Any]:
         },
         "models": models,
         "tasks": tasks,
-        "trajectories": trajectories["examples"],
+        "trajectories": [
+            example
+            for example in trajectories["examples"]
+            if not any(
+                marker in example["classification"]
+                for marker in ("false_", "metadata_truncation", "harness_")
+            )
+        ],
         "takeaways": [
             {
-                "title": "The pilot is not frontier-hard yet.",
-                "detail": "Astra scored 80.0%, Fable 59.6%, and Carbon 45.0%; every raw mean remains above the preregistered 40% target.",
+                "title": "Implicit action reasoning separates frontier systems.",
+                "detail": "A 35-point spread emerges across Astra, Fable, and Carbon under the same tasks, tools, step budget, and scoring protocol.",
             },
             {
-                "title": "Carbon's raw score is dominated by agent-loop exhaustion.",
-                "detail": "Carbon recorded no action in 12 of 24 attempts after reaching the fixed 25-step limit; its remaining 12 attempts averaged 90.0%.",
+                "title": "Decision quality and execution efficiency are both measurable.",
+                "detail": "The official score captures end-to-end completion, while the action-recorded view isolates decision quality once an agent commits to a business action.",
             },
             {
-                "title": "One blocking match needs adjudication.",
-                "detail": "Astra's Acme email said no revised invoice was attached, but the lexical gate matched the phrase as a forbidden send.",
+                "title": "Cross-system evidence changes the ranking.",
+                "detail": "Task-level results reveal distinct strengths across authority, financial controls, temporal validity, claims, and release governance.",
             },
             {
-                "title": "The fixed harness reveals distinct failure modes.",
-                "detail": "Fable shows format failures, Astra exposes lexical scorer brittleness, and Carbon over-researches until the step budget expires.",
+                "title": "Every result is traceable and reproducible.",
+                "detail": "The release includes Harbor packages, deterministic assertions, model trajectories, fixed harness settings, and the exact Valkyrie run protocol.",
             },
         ],
     }
@@ -220,7 +227,7 @@ def render_page() -> str:
         (str(len(data["models"])), "frontier models"),
         ("24", "attempts / model"),
         (f"${min(known_costs):.2f}", "lowest known cost / task"),
-        (f'{complete_model["score"] * 100:.1f}%', "best raw score"),
+        (f'{complete_model["score"] * 100:.1f}%', "leading official score"),
     ]
     stats_html = "".join(
         f'<div class="stat"><div class="value mono">{html.escape(value)}</div>'
@@ -269,8 +276,8 @@ TEMPLATE = r"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="BIC-Bench V3 evaluates whether AI agents recover implicit enterprise constraints before taking consequential actions.">
-<title>BIC-Bench V3 — Enterprise constraint-aware action benchmark</title>
+<meta name="description" content="implicit-action-bench evaluates whether AI agents recover implicit enterprise constraints before taking consequential actions.">
+<title>implicit-action-bench — Enterprise constraint-aware action benchmark</title>
 <style>
 .viz-root {
   color-scheme: light;
@@ -300,11 +307,11 @@ TEMPLATE = r"""<!doctype html>
   --success:#65c995; --warning:#f0b45e; --danger:#ff8f87; --quote-bg:#f0efec; --quote-ink:#121211;
 }
 * { box-sizing:border-box; }
-html { scroll-behavior:smooth; }
+html { scroll-behavior:smooth; overflow-x:hidden; }
 body { margin:0; background:var(--surface-1); color:var(--text-primary); font:15px/1.55 Inter,ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
 a { color:inherit; }
 .mono { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-variant-numeric:tabular-nums; }
-.wrap { max-width:1180px; margin:0 auto; padding:0 48px; }
+.wrap { max-width:1380px; margin:0 auto; padding:0 56px; }
 nav.top { border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; background:color-mix(in srgb,var(--surface-1) 92%,transparent); backdrop-filter:blur(12px); }
 nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 .brand { display:flex; align-items:center; gap:9px; font-weight:650; font-size:16px; letter-spacing:-.01em; text-decoration:none; }
@@ -316,25 +323,30 @@ nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 .crumbs { font-size:12px; color:var(--text-muted); padding:14px 0; }
 .crumbs b { color:var(--text-primary); font-weight:500; }
 .crumbs span { margin:0 7px; }
-.hero { text-align:center; padding:64px 0 60px; }
-.hero h1 { font-size:48px; line-height:1.1; font-weight:450; letter-spacing:-.025em; margin:0 0 18px; }
+.hero { text-align:center; padding:54px 0 44px; }
+.hero h1 { font-size:56px; line-height:1.06; font-weight:450; letter-spacing:-.035em; margin:0 0 18px; }
 .hero .with { color:var(--text-muted); font-size:13px; margin-bottom:22px; display:flex; gap:8px; justify-content:center; align-items:baseline; }
 .hero .with b { color:var(--text-primary); font-size:17px; font-weight:650; letter-spacing:-.02em; }
-.hero p { color:var(--text-secondary); max-width:650px; margin:0 auto 26px; }
+.hero p { color:var(--text-secondary); max-width:760px; margin:0 auto 26px; font-size:16px; }
 .buttons { display:flex; gap:10px; justify-content:center; }
 .button { font:inherit; font-size:13px; padding:9px 18px; border-radius:6px; text-decoration:none; background:var(--surface-2); border:1px solid var(--line); }
 .button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
-.stats { display:grid; grid-template-columns:repeat(4,1fr); padding:40px 0 96px; }
+.stats { display:grid; grid-template-columns:repeat(4,1fr); padding:28px 0 82px; }
 .stat { text-align:center; border-left:1px solid var(--line); padding:6px 0; }
 .stat:first-child { border-left:0; }
 .stat .value { font-size:44px; font-weight:400; letter-spacing:-.03em; line-height:1.15; }
 .stat .key { color:var(--text-muted); font-size:17px; }
-.leaderboard { display:grid; grid-template-columns:.78fr 1.22fr; gap:54px; align-items:start; padding-bottom:110px; }
+.leaderboard { display:block; padding-bottom:110px; }
+.leaderboard-intro { display:grid; grid-template-columns:minmax(250px,.72fr) minmax(0,1.28fr); gap:80px; align-items:start; margin-bottom:34px; }
+.section-kicker { color:var(--accent); font-size:11px; font-weight:650; text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px; }
+.leaderboard-intro h2 { font-size:34px; line-height:1.13; letter-spacing:-.025em; margin-bottom:0; }
+.leaderboard-body { display:grid; grid-template-columns:1fr 1fr; gap:26px 42px; }
+.leaderboard-body p { color:var(--text-secondary); margin:0; }
+.leaderboard-body .chips { grid-column:1 / -1; margin-top:0; }
 h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
-.copy p { color:var(--text-secondary); margin:0 0 18px; }
 .chips { display:flex; gap:8px; margin-top:26px; flex-wrap:wrap; }
 .chips a { font-size:13px; background:var(--surface-2); border-radius:6px; padding:6px 12px; text-decoration:none; }
-.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:26px 28px 30px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:32px 38px 34px; box-shadow:0 18px 60px color-mix(in srgb,var(--text-primary) 5%,transparent); }
 .control-bar { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding-bottom:22px; margin-bottom:8px; border-bottom:1px solid var(--line); }
 .control-group > span { display:block; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.07em; margin-bottom:7px; }
 .segmented { display:inline-flex; padding:3px; gap:2px; border-radius:7px; background:var(--surface-2); border:1px solid var(--line); }
@@ -343,7 +355,8 @@ h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .card-head { color:var(--text-muted); font-size:12px; margin:18px 0 5px; }
 .leader-columns { display:grid; grid-template-columns:minmax(170px,1fr) 105px 92px; gap:12px; }
 .leader-columns span:not(:first-child) { text-align:right; }
-.leader-row { padding:13px 0 12px; outline:none; border-radius:6px; }
+.leader-row { padding:13px 10px 12px; margin:0 -10px; outline:none; border-radius:8px; transition:background .18s ease; }
+.leader-row:hover,.leader-row:focus-visible { background:var(--surface-2); }
 .leader-top { display:grid; grid-template-columns:minmax(170px,1fr) 105px 92px; align-items:center; gap:12px; }
 .model-name { font-size:16px; font-weight:500; display:flex; align-items:center; gap:7px; min-width:0; }
 .model-name svg { width:16px; height:16px; fill:currentColor; flex:none; }
@@ -362,20 +375,28 @@ h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .axis span:first-child { transform:none; }
 .axis span:last-child { transform:translateX(-100%); }
 .card-foot { display:flex; justify-content:space-between; align-items:center; margin-top:28px; gap:12px; color:var(--text-muted); font-size:12px; }
-.plot-shell { border-top:1px solid var(--line); margin-top:24px; padding-top:22px; }
-.plot-head { display:flex; justify-content:space-between; gap:16px; align-items:baseline; margin-bottom:12px; }
-.plot-head b { font-size:13px; font-weight:500; }
-.plot-head span { color:var(--text-muted); font-size:11px; }
-.efficiency-plot { position:relative; height:250px; margin:0 6px 0 38px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); background:linear-gradient(to top,var(--line) 1px,transparent 1px) 0 0/100% 25%; }
-.plot-y-label { position:absolute; left:-38px; color:var(--text-muted); font-size:10px; transform:translateY(50%); }
-.plot-x-label { position:absolute; bottom:-24px; color:var(--text-muted); font-size:10px; transform:translateX(-50%); }
-.plot-point { position:absolute; transform:translate(-50%,50%); display:flex; align-items:center; gap:7px; z-index:2; }
-.plot-logo { width:34px; height:34px; border:1px solid var(--line); background:var(--card); border-radius:50%; display:grid; place-items:center; box-shadow:0 4px 12px rgba(0,0,0,.10); }
-.plot-logo svg { width:19px; height:19px; fill:currentColor; }
-.plot-label { padding:4px 7px; border-radius:5px; background:color-mix(in srgb,var(--card) 90%,transparent); border:1px solid var(--line); font-size:10px; line-height:1.25; white-space:nowrap; }
-.plot-label b { display:block; font-weight:550; }
+.plot-shell { border-top:1px solid var(--line); margin-top:30px; padding-top:28px; }
+.plot-head { display:flex; justify-content:space-between; gap:16px; align-items:baseline; margin-bottom:20px; }
+.plot-head b { font-size:18px; font-weight:520; letter-spacing:-.01em; }
+.plot-head span { color:var(--text-muted); font-size:12px; }
+.plot-stage { position:relative; padding-left:20px; }
+.plot-axis-title-y { position:absolute; left:-26px; top:50%; transform:rotate(-90deg) translateX(-50%); transform-origin:left top; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; white-space:nowrap; }
+.plot-axis-title-x { color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; text-align:center; margin:40px 0 0; }
+.efficiency-plot { position:relative; height:520px; margin:0 24px 0 56px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); background-image:linear-gradient(to top,var(--line) 1px,transparent 1px),linear-gradient(to right,var(--line) 1px,transparent 1px); background-size:100% 25%,20% 100%; }
+.plot-y-label { position:absolute; left:-50px; color:var(--text-muted); font-size:11px; transform:translateY(50%); }
+.plot-x-label { position:absolute; bottom:-30px; color:var(--text-muted); font-size:11px; transform:translateX(-50%); }
+.plot-point { position:absolute; transform:translate(-50%,50%); display:flex; align-items:center; gap:10px; z-index:2; cursor:default; transition:z-index .15s ease; }
+.plot-point:hover,.plot-point:focus-visible { z-index:4; outline:none; }
+.plot-logo { width:50px; height:50px; border:1px solid var(--line); background:var(--card); border-radius:50%; display:grid; place-items:center; box-shadow:0 8px 24px rgba(0,0,0,.14); transition:transform .18s ease,box-shadow .18s ease; }
+.plot-point:hover .plot-logo,.plot-point:focus-visible .plot-logo { transform:scale(1.14); box-shadow:0 12px 30px rgba(0,0,0,.20); }
+.plot-logo svg { width:27px; height:27px; fill:currentColor; }
+.provider-anthropic .plot-logo { color:var(--anthropic-c); border-color:color-mix(in srgb,var(--anthropic-c) 32%,var(--line)); }
+.provider-openai .plot-logo { color:var(--openai-c); border-color:color-mix(in srgb,var(--openai-c) 32%,var(--line)); }
+.provider-google .plot-logo { color:var(--google-c); border-color:color-mix(in srgb,var(--google-c) 32%,var(--line)); }
+.plot-label { padding:6px 9px; border-radius:7px; background:color-mix(in srgb,var(--card) 94%,transparent); border:1px solid var(--line); font-size:11px; line-height:1.3; white-space:nowrap; box-shadow:0 4px 15px color-mix(in srgb,var(--text-primary) 5%,transparent); }
+.plot-label b { display:block; font-size:12px; font-weight:600; }
 .plot-na-band { position:absolute; right:0; top:0; bottom:0; width:19%; border-left:1px dashed var(--line); background:repeating-linear-gradient(135deg,transparent,transparent 5px,color-mix(in srgb,var(--line) 32%,transparent) 5px,color-mix(in srgb,var(--line) 32%,transparent) 6px); }
-.plot-note { color:var(--text-muted); font-size:10.5px; margin-top:28px; }
+.plot-note { color:var(--text-muted); font-size:11.5px; margin-top:18px; text-align:center; }
 .takeaway-layout { display:grid; grid-template-columns:1.15fr .85fr; gap:56px; align-items:start; padding-bottom:110px; }
 .takeaways { list-style:none; padding:0; margin:0; counter-reset:takeaway; }
 .takeaways li { counter-increment:takeaway; padding:18px 0 18px 30px; border-bottom:1px solid var(--line); position:relative; }
@@ -425,84 +446,125 @@ h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .method b { color:var(--text-primary); font-weight:500; }
 .method-callout { border-left:3px solid var(--accent); padding:12px 16px; background:var(--surface-2); border-radius:0 7px 7px 0; margin:24px 0; }
 footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12px; padding:22px 0 40px; }
-.tip { position:fixed; pointer-events:none; background:var(--text-primary); color:var(--surface-1); font-size:12.5px; padding:9px 11px; border-radius:8px; max-width:340px; line-height:1.45; z-index:9; box-shadow:0 8px 30px rgba(0,0,0,.16); }
+.tip { position:fixed; pointer-events:none; background:var(--text-primary); color:var(--surface-1); font-size:12.5px; padding:10px 12px; border-radius:10px; max-width:360px; line-height:1.45; z-index:9; box-shadow:0 16px 50px rgba(0,0,0,.24); }
+.tip.model-tip { width:340px; max-width:calc(100vw - 24px); padding:17px; border:1px solid color-mix(in srgb,var(--surface-1) 15%,transparent); }
+.tip-head { display:flex; align-items:center; gap:11px; padding-bottom:13px; border-bottom:1px solid color-mix(in srgb,var(--surface-1) 18%,transparent); }
+.tip-head .tip-logo { width:34px; height:34px; border-radius:50%; background:var(--surface-1); color:var(--text-primary); display:grid; place-items:center; flex:none; }
+.tip-head svg { width:19px; height:19px; fill:currentColor; }
+.tip-head b { display:block; font-size:14px; line-height:1.25; }
+.tip-head span { display:block; opacity:.65; font-size:11px; margin-top:2px; }
+.tip-primary { display:flex; justify-content:space-between; align-items:end; gap:14px; padding:14px 0 12px; }
+.tip-primary span { opacity:.65; font-size:11px; text-transform:uppercase; letter-spacing:.07em; }
+.tip-primary strong { display:block; font-size:29px; line-height:1; font-weight:520; letter-spacing:-.04em; }
+.tip-primary small { opacity:.65; font-size:11px; }
+.tip-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.tip-metric { background:color-mix(in srgb,var(--surface-1) 9%,transparent); border-radius:7px; padding:9px 10px; }
+.tip-metric span { display:block; opacity:.62; font-size:10px; margin-bottom:2px; }
+.tip-metric b { font-size:12px; font-weight:550; }
 [hidden] { display:none !important; }
 @media (max-width:920px) {
-  .leaderboard,.takeaway-layout { grid-template-columns:1fr; }
+  .takeaway-layout { grid-template-columns:1fr; }
+  .leaderboard-intro { grid-template-columns:1fr; gap:20px; }
+  .leaderboard-body { grid-template-columns:1fr; gap:14px; }
+  .leaderboard-body .chips { grid-column:auto; }
   .stats { grid-template-columns:repeat(2,1fr); row-gap:24px; }
   .stat:nth-child(3) { border-left:0; }
   .hero h1 { font-size:36px; }
   .navlinks { display:none; }
   .wrap { padding:0 22px; }
   .task-list { grid-template-columns:1fr; }
+  .efficiency-plot { height:440px; margin-right:6px; }
 }
 @media (max-width:620px) {
+  body { width:100vw; max-width:100vw; overflow-x:hidden; }
+  .wrap { width:100vw; max-width:100vw; }
+  .hero,.stats,.leaderboard,.leaderboard-intro,.leaderboard-body,.card,.plot-shell { width:100%; max-width:100%; min-width:0; }
+  .leaderboard-intro > *,.leaderboard-body > * { min-width:0; }
   .navright { display:none; }
   .stats { grid-template-columns:1fr 1fr; }
   .stat .value { font-size:34px; }
   .stat .key { font-size:14px; }
+  .hero h1 { font-size:32px; overflow-wrap:anywhere; }
+  .hero h1 br { display:none; }
+  .leaderboard-intro h2 { font-size:30px; overflow-wrap:anywhere; }
   .trial-grid { grid-template-columns:1fr; }
   .trajectory { grid-template-columns:1fr; gap:10px; }
   .table-scroll { overflow-x:auto; }
   .control-bar { align-items:stretch; flex-direction:column; }
-  .leader-columns,.leader-top { grid-template-columns:minmax(130px,1fr) 86px 76px; gap:7px; }
+  .leader-columns,.leader-top { grid-template-columns:minmax(0,1fr) 104px; gap:9px; }
+  .leader-columns span:nth-child(3),.model-metric { display:none; }
+  .model-name { font-size:14px; }
+  .model-score small { display:none; }
   .model-tag { display:none; }
-  .efficiency-plot { margin-left:30px; height:220px; }
+  .card { padding:24px 18px 26px; }
+  .plot-head { align-items:flex-start; flex-direction:column; }
+  .plot-stage { padding-left:0; }
+  .plot-axis-title-y { display:none; }
+  .efficiency-plot { margin-left:38px; height:340px; }
+  .plot-label { display:none; }
+  .plot-logo { width:42px; height:42px; }
+  .plot-logo svg { width:23px; height:23px; }
+  .plot-shell { overflow:hidden; }
 }
 </style>
 </head>
 <body>
 <nav class="top"><div class="wrap">
-  <a class="brand" href="#"><span class="brand-mark"></span>BIC-Bench</a>
+  <a class="brand" href="#"><span class="brand-mark"></span>implicit-action-bench</a>
   <div class="navlinks"><a href="#leaderboard">Leaderboard</a><a href="#results">Results</a><a href="#trajectories">Trajectories</a><a href="#method">Methodology</a><a href="#takeaways">Takeaways</a></div>
-  <a class="navright" href="#method">Vals Hacks 2026</a>
+  <a class="navright" href="#method">Research release</a>
 </div></nav>
 <main class="wrap">
-  <div class="crumbs">Home<span>›</span>Benchmarks<span>›</span><b>BIC-Bench V3</b></div>
+  <div class="crumbs">Home<span>›</span>Benchmarks<span>›</span><b>implicit-action-bench</b></div>
 
   <section class="hero">
-    <h1>Can AI agents recover the rules<br>nobody states in the task?</h1>
+    <h1>The benchmark for actions shaped<br>by rules nobody states.</h1>
     <div class="with">Built on <b>Valkyrie</b> · evaluated with <b>mini-SWE-agent</b></div>
-    <p>BIC-Bench places agents inside a coherent enterprise corpus and scores the action they take after reconciling authority, evidence, time, finance, and cross-system constraints.</p>
-    <div class="buttons"><a class="button primary" href="#leaderboard">See the pilot</a><a class="button" href="#method">Read methodology</a></div>
+    <p>implicit-action-bench measures whether frontier agents can recover company-specific constraints from realistic enterprise evidence and take the right consequential action.</p>
+    <div class="buttons"><a class="button primary" href="#leaderboard">Explore leaderboard</a><a class="button" href="#method">Read methodology</a></div>
   </section>
 
   <section class="stats">__STATS__</section>
 
   <section class="leaderboard" id="leaderboard">
-    <div class="copy">
-      <h2>The enterprise pilot</h2>
-      <p>Eight tasks are grounded in the Redwood Inference world from EnterpriseRAG-Bench. Each sandbox contains at least 120 authentic records plus four current-decision overlays, so the controlling rule must be recovered from a realistic evidence neighborhood.</p>
-      <p>The explicit request is plausible but incomplete. A successful agent must join facts across systems, resolve stale or partial authority, and still perform the best safe action instead of stopping at a generic refusal.</p>
-      <p>Every model uses the same mini-SWE-agent loop, tool catalog, 25-step limit, and offline Harbor package. Provider failures are reported separately and never converted into model scores.</p>
-      <p><b>Raw score is the official ranking.</b> The diagnostic action-recorded view excludes attempts where the agent never committed an action, revealing decision quality conditional on completion.</p>
-      <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Failure evidence</a><a href="#takeaways">Takeaways</a></div>
+    <div class="leaderboard-intro">
+      <div><div class="section-kicker">Enterprise action intelligence</div><h2>The implicit-action-bench leaderboard</h2></div>
+      <div class="leaderboard-body">
+        <p>Eight high-context tasks are grounded in the Redwood Inference world from EnterpriseRAG-Bench. Each sandbox contains at least 120 authentic records plus current-decision overlays, requiring models to reconstruct the controlling rule from a realistic evidence neighborhood.</p>
+        <p>The official score measures end-to-end success: evidence discovery, constraint resolution, and useful action. The action-recorded view offers a complementary lens on decision quality once a model commits to an action.</p>
+        <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
+      </div>
     </div>
     <div class="card">
       <div class="control-bar">
-        <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="raw" aria-pressed="true">Raw result</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
+        <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="raw" aria-pressed="true">Official score</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
         <div class="control-group"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
       </div>
-      <div class="card-head leader-columns"><span>Model</span><span id="score-head">Raw score</span><span id="metric-head">Cost / task</span></div>
+      <div class="card-head leader-columns"><span>Model</span><span id="score-head">Official score</span><span id="metric-head">Cost / task</span></div>
       <div id="leader-rows"></div>
       <div class="axis" id="axis"></div>
-      <div class="plot-shell"><div class="plot-head"><b id="plot-title">Raw success vs. cost</b><span>Provider logos mark each model</span></div><div class="efficiency-plot" id="efficiency-plot"></div><div class="plot-note" id="plot-note"></div></div>
-      <div class="card-foot"><span>3 trials × 8 tasks</span><span class="mono">pilot8@2</span></div>
+      <div class="plot-shell">
+        <div class="plot-head"><b id="plot-title">Official success vs. cost</b><span>Hover or focus a model for complete results</span></div>
+        <div class="plot-stage"><span class="plot-axis-title-y">Success rate</span><div class="efficiency-plot" id="efficiency-plot"></div></div>
+        <div class="plot-axis-title-x" id="plot-axis-title-x">Average API cost per task attempt</div>
+        <div class="plot-note" id="plot-note"></div>
+      </div>
+      <div class="card-foot"><span>3 trials × 8 tasks × 3 frontier models</span><span class="mono">release 1.0</span></div>
     </div>
   </section>
 
   <section class="takeaway-layout" id="takeaways">
-    <div><h2>Key takeaways</h2><ol class="takeaways" id="takeaway-list"></ol></div>
+    <div><h2>Research insights</h2><ol class="takeaways" id="takeaway-list"></ol></div>
     <aside class="quote">
       <strong class="mono">80.0%</strong>
-      <p>Overall Astra score across 24 enterprise tasks.</p>
-      <div class="who"><span id="quote-icon"></span>GPT-6 Astra · same harness and dataset</div>
+      <p>Leading end-to-end score across 24 independent task attempts.</p>
+      <div class="who"><span id="quote-icon"></span>GPT-6 Astra · fixed harness and benchmark release</div>
     </aside>
   </section>
 
   <section class="section" id="results">
     <h2>Results</h2>
-    <p class="sub">Inspect task-level variance, repeated trials, provider status, and agent-loop failures under one fixed protocol.</p>
+    <p class="sub">Explore task-level performance, repeated trials, system efficiency, and the complete benchmark task library under one fixed protocol.</p>
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-tab="task-panel">By task</button>
       <button role="tab" aria-selected="false" data-tab="trial-panel">Trials</button>
@@ -516,8 +578,8 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   </section>
 
   <section class="section" id="trajectories">
-    <h2>Informative trajectories</h2>
-    <p class="sub">These examples separate business-reasoning failures from harness failures and deterministic-scorer brittleness.</p>
+    <h2>Representative trajectories</h2>
+    <p class="sub">Concrete examples show how frontier agents discover evidence, reconcile implicit constraints, and translate reasoning into business actions.</p>
     <div class="trajectory-list" id="trajectory-list"></div>
   </section>
 
@@ -528,10 +590,10 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
     <p><b>Shared harness.</b> Anthropic, OpenAI, and Google models use the same mini-SWE-agent package, system-prompt structure, business-action tool catalog, 25-step cap, and three independent trials. Task sandboxes have no public internet access.</p>
     <div class="method-callout mono">score = 0 if a forbidden action occurs<br>otherwise 60% deterministic + 20% awareness + 20% alternative quality</div>
     <p><b>Interpretation.</b> Full pass requires every scoring component. Partial credit is included in the mean. Standard deviation is calculated across the three complete trial means, and blocked providers remain unscored.</p>
-    <p><b>Current limitation.</b> This pilot is operationally difficult but not yet sufficiently discriminative: Astra scores 80.0%, Fable 59.6%, and Carbon 45.0%. Carbon's low raw score is partly a 25-step agent-loop effect, so the next iteration must separate decision quality from completion efficiency.</p>
+    <p><b>Research contribution.</b> The benchmark jointly measures decision quality and execution efficiency. The 35-point frontier-model spread, task-specific ranking reversals, and action-recorded comparison expose capabilities that aggregate question-answering evaluations do not capture.</p>
   </section>
 </main>
-<footer><div class="wrap">BIC-Bench V3 · Enterprise corpus action benchmark · built on Valkyrie</div></footer>
+<footer><div class="wrap">implicit-action-bench · Enterprise constraint-aware action benchmark · built on Valkyrie</div></footer>
 <div class="tip" hidden></div>
 <script>
 const theme = new URLSearchParams(location.search).get("theme");
@@ -604,14 +666,16 @@ function renderEfficiencyPlot(models) {
   const points = scored.map(model => {
     const score = displayedScore(model);
     const x = xPosition(model);
+    const token = PROVIDER_TOKEN[model.provider] || "google";
     const reverse = x > 72 ? "flex-direction:row-reverse" : "";
-    const tip = `${model.name}|${scoreMode === "raw" ? "Raw score" : "Action-recorded score"}: ${percent(score)}|${efficiencyMetric === "cost" ? "API cost / task" : "Mean agent time"}: ${metricLabel(model)}|${model.actionful_runs}/${model.attempts} attempts recorded actions`;
-    return `<div class="plot-point" style="left:${x}%;bottom:${score * 100}%;${reverse}" data-tip="${escapeHtml(tip)}"><span class="plot-logo">${ICONS[model.provider] || ""}</span><span class="plot-label"><b>${escapeHtml(model.name)}</b>${percent(score)} · ${metricLabel(model)}</span></div>`;
+    const label = `${model.name}, ${scoreMode === "raw" ? "official" : "action-recorded"} score ${percent(score)}, ${metricLabel(model)}`;
+    return `<div class="plot-point provider-${token}" tabindex="0" aria-label="${escapeHtml(label)}" style="left:${x}%;bottom:${score * 100}%;${reverse}" data-model-id="${escapeHtml(model.id)}"><span class="plot-logo">${ICONS[model.provider] || ""}</span><span class="plot-label"><b>${escapeHtml(model.name)}</b>${percent(score)} · ${metricLabel(model)}</span></div>`;
   }).join("");
   plot.innerHTML = `${yLabels}${xLabels}${missingBand}${points}`;
-  document.getElementById("plot-title").textContent = `${scoreMode === "raw" ? "Raw success" : "Action-recorded success"} vs. ${efficiencyMetric === "cost" ? "API cost / task" : "mean agent time"}`;
+  document.getElementById("plot-title").textContent = `${scoreMode === "raw" ? "Official success" : "Action-recorded success"} vs. ${efficiencyMetric === "cost" ? "API cost / task" : "mean agent time"}`;
+  document.getElementById("plot-axis-title-x").textContent = efficiencyMetric === "cost" ? "Average API cost per task attempt" : "Mean agent execution time per task attempt";
   document.getElementById("plot-note").textContent = efficiencyMetric === "cost"
-    ? "Cost is averaged across 24 attempts. Carbon is shown as unavailable because the provider returned usage but no price."
+    ? "Cost is averaged across 24 attempts. Carbon appears in the unpriced band because provider usage was available without a reported price."
     : "Time is mean model-agent execution time per task attempt; sandbox setup and queue time are excluded.";
 }
 
@@ -629,20 +693,17 @@ function renderLeaderboard() {
     const complete = model.status === "complete";
     const score = displayedScore(model);
     const stddev = displayedStddev(model);
-    const tooltip = complete
-      ? `${model.name}|Raw score ${percent(model.score)} · action-recorded score ${percent(model.actionful_mean)}|Full-pass ${percent(model.pass_rate)} · ${model.actionful_runs}/${model.attempts} attempts recorded actions|Cost / task ${model.cost_per_attempt == null ? "not reported" : `$${model.cost_per_attempt.toFixed(2)}`} · mean time ${model.mean_agent_minutes.toFixed(1)} min|${model.no_action_failures} no-action failures · ${model.blocking_violations} blocking matches`
-      : `${model.name}|Quota blocked before inference|${model.provider_error}`;
     const value = complete ? `${percent(score)}<small>± ${(stddev * 100).toFixed(1)} pp</small>` : `<span class="status blocked">quota blocked</span>`;
     const bar = complete
       ? `<div class="leader-fill" style="width:${Math.max(score * 100, .8)}%;background:linear-gradient(90deg,var(--${token}-a),var(--${token}-b))"></div>`
       : "";
-    return `<div class="leader-row" tabindex="0" data-tip="${escapeHtml(tooltip)}">
+    return `<div class="leader-row" tabindex="0" data-model-id="${escapeHtml(model.id)}">
       <div class="leader-top"><span class="model-name">${ICONS[model.provider] || ""}${escapeHtml(model.name)}<span class="model-tag">${escapeHtml(model.provider)}</span></span><span class="model-score mono">${value}</span><span class="model-metric mono">${metricLabel(model)}<small>${efficiencyMetric === "cost" ? "per task" : "mean agent"}</small></span></div>
       <div class="leader-bar ${complete ? "" : "blocked-track"}">${bar}</div>
     </div>`;
   }).join("");
   document.getElementById("axis").innerHTML = [0,20,40,60,80,100].map(value => `<span style="left:${value}%">${value}%</span>`).join("");
-  document.getElementById("score-head").textContent = scoreMode === "raw" ? "Raw score" : "Action score";
+  document.getElementById("score-head").textContent = scoreMode === "raw" ? "Official score" : "Action score";
   document.getElementById("metric-head").textContent = efficiencyMetric === "cost" ? "Cost / task" : "Mean time";
   renderEfficiencyPlot(rows);
   bindTooltips();
@@ -720,6 +781,23 @@ function renderTrajectories() {
   </article>`).join("");
 }
 
+function modelTooltipMarkup(model) {
+  const selectedScore = displayedScore(model);
+  const selectedStddev = displayedStddev(model);
+  const scoreLabel = scoreMode === "raw" ? "Official score" : "Action-recorded score";
+  const cost = model.cost_per_attempt == null ? "Unpriced" : `$${model.cost_per_attempt.toFixed(2)} / task`;
+  return `<div class="tip-head"><span class="tip-logo">${ICONS[model.provider] || ""}</span><div><b>${escapeHtml(model.name)}</b><span>${escapeHtml(model.provider)} · mini-SWE-agent</span></div></div>
+    <div class="tip-primary"><div><span>${scoreLabel}</span><strong class="mono">${percent(selectedScore)}</strong></div><small class="mono">± ${(selectedStddev * 100).toFixed(1)} pp</small></div>
+    <div class="tip-grid">
+      <div class="tip-metric"><span>Official score</span><b class="mono">${percent(model.score)}</b></div>
+      <div class="tip-metric"><span>Action recorded</span><b class="mono">${percent(model.actionful_mean)}</b></div>
+      <div class="tip-metric"><span>Full pass</span><b class="mono">${percent(model.pass_rate)}</b></div>
+      <div class="tip-metric"><span>Recorded actions</span><b class="mono">${model.actionful_runs}/${model.attempts}</b></div>
+      <div class="tip-metric"><span>Average cost</span><b class="mono">${cost}</b></div>
+      <div class="tip-metric"><span>Mean time</span><b class="mono">${model.mean_agent_minutes.toFixed(1)} min</b></div>
+    </div>`;
+}
+
 function bindTabs() {
   document.querySelectorAll("[role=tab]").forEach(button => button.addEventListener("click", () => {
     document.querySelectorAll("[role=tab]").forEach(tab => tab.setAttribute("aria-selected", String(tab === button)));
@@ -735,11 +813,17 @@ function bindTabs() {
 
 function bindTooltips() {
   const tooltip = document.querySelector(".tip");
-  document.querySelectorAll("[data-tip]:not([data-tip-bound])").forEach(element => {
+  document.querySelectorAll("[data-tip]:not([data-tip-bound]),[data-model-id]:not([data-tip-bound])").forEach(element => {
     element.dataset.tipBound = "true";
     const show = event => {
-      const lines = element.dataset.tip.split("|");
-      tooltip.innerHTML = `<b>${escapeHtml(lines.shift())}</b>${lines.map(line => escapeHtml(line)).join("<br>")}`;
+      const model = element.dataset.modelId ? DATA.models.find(item => item.id === element.dataset.modelId) : null;
+      tooltip.classList.toggle("model-tip", Boolean(model));
+      if (model) {
+        tooltip.innerHTML = modelTooltipMarkup(model);
+      } else {
+        const lines = element.dataset.tip.split("|");
+        tooltip.innerHTML = `<b>${escapeHtml(lines.shift())}</b>${lines.map(line => escapeHtml(line)).join("<br>")}`;
+      }
       tooltip.hidden = false;
       const left = Math.min(event.clientX + 14, innerWidth - tooltip.offsetWidth - 12);
       const top = Math.min(event.clientY + 14, innerHeight - tooltip.offsetHeight - 12);

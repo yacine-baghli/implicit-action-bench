@@ -1,6 +1,6 @@
-# BIC-Bench — Business Implicit Commonsense Benchmark
+# implicit-action-bench
 
-BIC-Bench tests whether AI agents correctly apply implicit business knowledge and common sense that is not stated in the current task, but is present—or should be inferred—from the surrounding company context. The benchmark feels like real work: long tasks end with an action, while the correct behavior depends on unstated or previously stated constraints.
+implicit-action-bench tests whether AI agents correctly apply implicit business knowledge and common sense that is not stated in the current task, but is present—or should be inferred—from the surrounding company context. The benchmark feels like real work: long tasks end with an action, while the correct behavior depends on unstated or previously stated constraints.
 
 ## Live leaderboard
 
