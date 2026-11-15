@@ -553,16 +553,21 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   .plot-logo svg { width:23px; height:23px; }
   .plot-shell { overflow:hidden; }
 }
+.brand { display:flex; align-items:center; gap:10px; }
+.logo-mark { width:26px; height:26px; flex:none; }
+.track-sub { font-size:12.5px; color:var(--text-muted); margin-top:8px; max-width:420px; }
+.method-list { display:grid; grid-template-columns:200px 1fr; gap:14px 28px; margin:18px 0 0; }
+.method-list dt { font-weight:600; color:var(--text-primary); }
+.method-list dd { margin:0; color:var(--text-secondary); line-height:1.6; }
+.method-list dd b { color:var(--text-primary); font-weight:600; }
+@media (max-width:760px) { .method-list { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
 <nav class="top"><div class="wrap">
-  <a class="brand" href="#"><span class="brand-mark"></span>Implicit Action Bench</a>
-  <div class="navlinks"><a href="#leaderboard">Leaderboard</a><a href="#takeaways">Key findings</a><a href="#results">Results</a><a href="#trajectories">Example runs</a><a href="#method">Methodology</a></div>
-  <a class="navright" href="#method">Research release</a>
+  <a class="brand" href="#"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#4f46e5"/><path d="M8 22h16" stroke="#c7d2fe" stroke-width="2.4" stroke-linecap="round"/><path d="M8 16h9" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M8 10h5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="22" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M24.4 14.4l2.6 2.6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span>Implicit Action Bench</span></a>
 </div></nav>
 <main class="wrap">
-  <div class="crumbs">Home<span>›</span>Benchmarks<span>›</span><b>Implicit Action Bench</b></div>
 
   <section class="hero">
     <h1>The tacit knowledge benchmark<br>for AI agents.</h1>
@@ -576,7 +581,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
 
   <section class="leaderboard" id="leaderboard">
     <div class="leaderboard-intro">
-      <div><div class="section-kicker" id="lb-kicker">Leaderboard</div><h2 id="lb-title">Request breaks a hidden rule</h2></div>
+      <div><div class="section-kicker" id="lb-kicker">Leaderboard</div><h2 id="lb-title">Track 1 · Hidden policy</h2></div>
       <div class="leaderboard-body" id="lb-body-iab">
         <p>Eight business tasks at a real-looking company. Each ends with a tempting request that breaks a rule buried in the company's records. The agent has to find the rule and do the right thing instead.</p>
       </div>
@@ -586,18 +591,18 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
     </div>
     <div class="card ranking-card">
       <div class="control-bar">
-        <div class="control-group"><span>Benchmark</span><div class="segmented" id="bench-toggle"><button type="button" data-bench="iab" aria-pressed="true">Request breaks a hidden rule</button><button type="button" data-bench="pb" aria-pressed="false">Rule learned from past work</button></div></div>
-        <div class="control-group" id="iab-score-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="pass" aria-pressed="true">Full pass</button><button type="button" data-score-mode="raw" aria-pressed="false">End-to-end</button><button type="button" data-score-mode="actionful" aria-pressed="false" id="dq-button">Decision quality</button></div></div>
+        <div class="control-group"><span>Track</span><div class="segmented" id="bench-toggle"><button type="button" data-bench="iab" aria-pressed="true">Track 1 · Hidden policy</button><button type="button" data-bench="pb" aria-pressed="false">Track 2 · Unwritten team habits</button></div><div class="track-sub" id="track-sub">A request quietly breaks a rule buried in company records.</div></div>
+        <div class="control-group" id="iab-score-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="pass" aria-pressed="true">Full pass</button><button type="button" data-score-mode="raw" aria-pressed="false">Average score</button><button type="button" data-score-mode="actionful" aria-pressed="false" id="dq-button">Decision quality</button></div><div class="track-sub" id="score-def">Full pass: every check right in one attempt (pass@1).</div></div>
       </div>
       <div class="card-head leader-columns"><span>Model</span><span id="score-head">Full pass</span><span id="metric-head">Cost / task</span></div>
       <div id="leader-rows"></div>
       <div class="axis" id="axis"></div>
-      <div class="card-foot"><span id="foot-left">Full-pass, end-to-end, and decision-quality rankings</span><span class="mono" id="foot-right">24 attempts / model</span></div>
+      <div class="card-foot"><span id="foot-left">Full pass, average score and decision quality</span><span class="mono" id="foot-right">24 attempts / model</span></div>
     </div>
     <div class="card plot-card" id="plot-card">
       <div class="plot-shell">
         <div class="plot-head">
-          <div class="plot-heading"><b id="plot-title">Full-pass success vs. cost</b><span>Hover or focus a model for complete results</span></div>
+          <div class="plot-heading"><div class="section-kicker">Score vs cost</div><b id="plot-title">Full pass vs. cost</b><span>Hover or focus a model for complete results</span></div>
           <div class="control-group plot-control"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
         </div>
         <div class="plot-stage"><span class="plot-axis-title-y">Success rate</span><div class="efficiency-plot" id="efficiency-plot"></div></div>
@@ -618,8 +623,8 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   </section>
 
   <section class="section" id="results">
-    <h2>Results by task</h2>
-    <p class="sub">Average score of each model on each task of the "Request breaks a hidden rule" part.</p>
+    <h2>Track 1 results by task</h2>
+    <p class="sub">Average score of each model on each of the eight Track 1 tasks.</p>
     <div class="tabs" role="tablist" hidden>
       <button role="tab" aria-selected="true" data-tab="task-panel">By task</button>
       <button role="tab" aria-selected="false" data-tab="trial-panel">Trials</button>
@@ -632,29 +637,24 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
     <div id="task-library-panel" hidden><div class="task-list" id="task-list"></div></div>
   </section>
 
-  <section class="section" id="trajectories">
-    <h2>Example runs</h2>
-    <p class="sub">What agents actually did, from the "Request breaks a hidden rule" part.</p>
-    <div class="trajectory-list" id="trajectory-list"></div>
-  </section>
-
-  <section class="section method" id="habits">
-    <h2>Rule learned from past work: example runs</h2>
-    <p class="sub">The agent logs fifteen invoices for a finance team. Eight team rules decide each one (who reviews it, a cutoff that moved in October, a supplier exempt after its contract...). Each rule shows in at least three recent past invoices, so a careful new hire could get every invoice right.</p>
-    <div class="trajectory-list" id="habits-cards"></div>
-  </section>
-
   <section class="section method" id="method">
     <h2>Methodology</h2>
-    <p><b>How we keep it fair.</b></p>
-    <ul class="fair-list">
-      <li><b>Same agent for every model.</b> Within each part, every model runs in the same agent, with the same instructions, tools and step limit.</li>
-      <li><b>Graded by code, not by another AI.</b> Each answer is checked against a fixed answer key.</li>
-      <li><b>Solvable when told.</b> <span id="pb-fair"></span></li>
-      <li><b>No answer in the box.</b> We checked that nothing the agent can see gives the answer away.</li>
-    </ul>
-    <p><b>Request breaks a hidden rule.</b> Eight tasks built on a real company dataset (Redwood Inference, EnterpriseRAG-Bench). The agent searches Slack, Gmail, CRM, Jira and Drive records; no single record states the full rule. Doing the forbidden action scores 0; otherwise 60% exact checks, 20% awareness, 20% quality of the alternative. 3 attempts per task, mini-SWE-agent, 25-step limit, no internet.</p>
-    <p><b>Rule learned from past work.</b> Same company. The agent logs 15 invoices; eight team rules (some conditional, some changed in October) only show in nine months of past invoices, with or without last year's outdated policy doc. Full pass = every invoice right. 20 attempts per model, one plain agent with a terminal tool, reasoning effort high.</p>
+    <p class="sub">Both tracks are built on the same company (Redwood Inference, from the EnterpriseRAG-Bench corpus) and graded by code against a fixed answer key.</p>
+    <dl class="method-list">
+      <dt>Fairness controls</dt>
+      <dd>Same agent, instructions, tools and step limit for every model within a track. Deterministic grading, no AI judge; graders are tested against the obvious wrong answers before any run. A leak check confirms nothing the agent can see contains the answer. <span id="pb-fair"></span></dd>
+      <dt>Track 1 · Hidden policy</dt>
+      <dd><b>Tasks.</b> 8 business tasks, each with 120+ real company records (Slack, Gmail, CRM, Jira, Drive) plus a few authored records. Each instruction ends with a tempting request that breaks a rule no single record states.
+      <b>Scoring.</b> Taking the forbidden action scores 0. Otherwise 60% exact checks, 20% awareness of the rule, 20% quality of the safe alternative. Full pass = every check right.
+      <b>Runs.</b> 3 attempts per task, 24 per model. mini-SWE-agent, 25-step limit, no internet.</dd>
+      <dt>Track 2 · Unwritten team habits</dt>
+      <dd><b>Tasks.</b> Log 15 supplier invoices for the finance team. Eight team rules decide each invoice: some depend on two conditions, some changed in October. The history (three quarterly trackers) is generated from the rules themselves, so the ground truth is exact; about 2,500 real emails, Slack threads and tickets surround it. Each rule is shown by 3 recent examples; half the attempts also include last year's policy doc.
+      <b>Scoring.</b> Full pass = all 15 invoices right in one attempt (pass@1). Average score = share of invoices right. 95% Wilson intervals on pass rates.
+      <b>Runs.</b> 20 attempts per model, each in a fresh sandbox. One plain agent for every model: same system prompt, one terminal tool, reasoning effort high, 80-step limit, no fallback model.
+      <b>Controls.</b> Told the 8 rules in the instruction: <span id="pb-told"></span>. Scripted non-AI strategies (copy the last decision, follow the old doc, majority vote, do nothing) score 0% full pass. On an earlier version of this track, the vendors' own agents (Claude Code, Codex) did not score higher than the plain agent.</dd>
+      <dt>Limitations</dt>
+      <dd>One company and one domain per track. Track 2's history is synthetic (by design, so the answer is known exactly). Small samples: 20 to 24 attempts per model, so close scores overlap. Track 1 and Track 2 use different agents and graders; their scores are not averaged.</dd>
+    </dl>
   </section>
 </main>
 <footer><div class="wrap">Implicit Action Bench · the tacit knowledge benchmark for AI agents · built on Valkyrie</div></footer>
@@ -690,12 +690,16 @@ function displayedStddev(model) {
 
 function scoreModeLabel() {
   if (scoreMode === "pass") return "Full pass";
-  return scoreMode === "raw" ? "End-to-end score" : "Decision quality";
+  return scoreMode === "raw" ? "Average score" : "Decision quality";
 }
 
-function scoreModeTitle() {
-  if (scoreMode === "pass") return "Full pass";
-  return scoreMode === "raw" ? "End-to-end performance" : "Decision quality";
+function scoreModeTitle() { return scoreModeLabel(); }
+
+function updateScoreDef() {
+  const defs = {pass: "Full pass: every check right in one attempt (pass@1).",
+                raw: "Average score: share of checks right, partial credit.",
+                actionful: "Decision quality: average score, counting only attempts where the agent took an action."};
+  document.getElementById("score-def").textContent = defs[scoreMode];
 }
 
 function metricValue(model) {
@@ -741,13 +745,19 @@ function renderEfficiencyPlot(models) {
     return `<span class="plot-x-label mono" style="left:${position}%">${label}</span>`;
   }).join("");
   const missingBand = hasMissing && efficiencyMetric === "cost" ? `<div class="plot-na-band"><span class="plot-x-label mono" style="left:50%">not reported</span></div>` : "";
-  const points = scored.map(model => {
+  const placed = [];
+  const points = [...scored].sort((a, b) => displayedScore(a) - displayedScore(b) || xPosition(a) - xPosition(b)).map(model => {
     const score = displayedScore(model);
     const x = xPosition(model);
     const token = PROVIDER_TOKEN[model.provider] || "google";
     const reverse = x > 72 ? "flex-direction:row-reverse" : "";
     const label = `${model.name}, ${scoreModeLabel().toLowerCase()} ${percent(score)}, ${metricLabel(model)}`;
-    return `<div class="plot-point provider-${token}" tabindex="0" aria-label="${escapeHtml(label)}" style="left:${x}%;bottom:${score * 100}%;${reverse}" data-model-id="${escapeHtml(model.id)}"><span class="plot-logo">${ICONS[model.provider] || ""}</span><span class="plot-label"><b>${escapeHtml(model.name)}</b>${percent(score)} · ${metricLabel(model)}</span></div>`;
+    const near = placed.some(([px, ps]) => Math.abs(px - x) < 16 && Math.abs(ps - score) < .09);
+    placed.push([x, score]);
+    const nudge = "";
+    const labelStyle = near ? ` style="transform:translateY(-44px)"` : "";
+    const hook = model.tip ? `data-tip="${escapeHtml(model.tip)}"` : `data-model-id="${escapeHtml(model.id)}"`;
+    return `<div class="plot-point provider-${token}" tabindex="0" aria-label="${escapeHtml(label)}" style="left:${x}%;bottom:${score * 100}%;${reverse}${nudge}" ${hook}><span class="plot-logo">${ICONS[model.provider] || ""}</span><span class="plot-label"${labelStyle}><b>${escapeHtml(model.name)}</b>${percent(score)} · ${metricLabel(model)}</span></div>`;
   }).join("");
   plot.innerHTML = `${yLabels}${xLabels}${missingBand}${points}`;
   document.getElementById("plot-title").textContent = `${scoreModeTitle()} vs. ${efficiencyMetric === "cost" ? "API cost / task" : "mean agent time"}`;
@@ -766,7 +776,7 @@ function renderPrecedent() {
   const rows = [...PB.models].sort((a, b) => val(b) - val(a) || b.main.mean - a.main.mean);
   document.getElementById("leader-rows").innerHTML = rows.map(m => {
     const token = PROVIDER_TOKEN[m.provider] || "google";
-    const tip = `${m.name}|Full pass: ${m.main.k} of ${m.main.n} attempts (95%: ${percent(m.main.pass_lo)}–${percent(m.main.pass_hi)})|End-to-end: ${percent(m.main.mean)} of invoices right|Told the 8 rules: ${m.told.k} of ${m.told.n} attempts fully right`;
+    const tip = `${m.name}|Full pass: ${m.main.k} of ${m.main.n} attempts (95%: ${percent(m.main.pass_lo)}–${percent(m.main.pass_hi)})|Average score: ${percent(m.main.mean)} of invoices right|Told the 8 rules: ${m.told.k} of ${m.told.n} attempts fully right`;
     return `<div class="leader-row" tabindex="0" data-tip="${escapeHtml(tip)}">
       <div class="leader-top two"><span class="model-name">${ICONS[m.provider] || ""}${escapeHtml(m.name)}<span class="model-tag">${escapeHtml(m.provider)}</span></span><span class="model-score mono">${percent(val(m))}<small>${percent(lo(m))}–${percent(hi(m))}</small></span></div>
       <div class="leader-bar"><div class="leader-fill" style="width:${Math.max(val(m) * 100, .8)}%;background:linear-gradient(90deg,var(--${token}-a),var(--${token}-b))"></div></div>
@@ -775,33 +785,34 @@ function renderPrecedent() {
   document.getElementById("axis").innerHTML = [0,20,40,60,80,100].map(value => `<span style="left:${value}%">${value}%</span>`).join("");
   document.getElementById("score-head").textContent = scoreModeLabel();
   document.getElementById("metric-head").textContent = "";
-  document.getElementById("foot-left").textContent = scoreMode === "pass" ? "Full pass = every one of the 15 invoices right" : "End-to-end = share of invoices right";
+  document.getElementById("foot-left").textContent = scoreMode === "pass" ? "Full pass = every one of the 15 invoices right" : "Average score = share of invoices right";
   document.getElementById("foot-right").textContent = `${PB.models[0].main.n} attempts / model`;
   renderPbPlot();
   bindTooltips();
 }
 
 function renderPbPlot() {
-  const saved = [scoreMode, efficiencyMetric];
-  efficiencyMetric = "time";
-  const adapted = PB.models.map(m => ({ id: m.id, name: m.name, provider: m.provider, status: "complete",
+  const hasCost = PB.models.every(m => m.cost_per_attempt != null);
+  if (!hasCost) efficiencyMetric = "time";
+  const adapted = PB.models.map(m => ({ id: "pb:" + m.id, name: m.name, provider: m.provider, status: "complete",
     pass_rate: m.main.pass, score: m.main.mean, actionful_mean: m.main.mean,
-    cost_per_attempt: null, mean_agent_minutes: m.mean_agent_minutes }));
+    cost_per_attempt: m.cost_per_attempt, mean_agent_minutes: m.mean_agent_minutes,
+    tip: `${m.name}|Full pass: ${m.main.k} of ${m.main.n} attempts|Average score: ${percent(m.main.mean)}|Estimated cost: ${m.cost_per_attempt == null ? "n/a" : "$" + m.cost_per_attempt.toFixed(2)} per attempt|Agent time: ${m.mean_agent_minutes == null ? "n/a" : m.mean_agent_minutes.toFixed(1) + " min"} per attempt` }));
   renderEfficiencyPlot(adapted);
-  [scoreMode, efficiencyMetric] = saved;
-  document.getElementById("plot-title").textContent = `${scoreModeTitle()} vs. agent time`;
-  document.getElementById("plot-axis-title-x").textContent = "Average agent time per attempt";
+  const cost = efficiencyMetric === "cost";
+  document.getElementById("plot-title").textContent = `${scoreModeTitle()} vs. ${cost ? "cost" : "agent time"}`;
+  document.getElementById("plot-axis-title-x").textContent = cost ? "Estimated list cost per attempt" : "Average agent time per attempt";
   document.getElementById("plot-foot").textContent = `${PB.models[0].main.n} attempts × ${PB.models.length} frontier models`;
-  document.getElementById("plot-note").textContent = "Time is the agent's own run time per attempt, averaged over 20 attempts. Cost is not shown for this part: list prices for every model were not available.";
+  document.getElementById("plot-note").textContent = cost
+    ? "Estimated: each attempt's token count times the model's effective price per token from Track 1's recorded spend (prompt caching included). Sonnet 5.5 is not in Track 1, so it is scaled from Opus 5.5 by list price."
+    : "Time is the agent's own run time per attempt; sandbox setup and queue time are excluded.";
 }
 
 function renderPrecedentSection() {
   if (!PB) return;
-  document.getElementById("pb-fair").textContent = `In "Rule learned from past work", when the 8 team rules are written in the instruction, every model gets ${PB.told.k} of ${PB.told.n} attempts fully right. So when they fail without them, it is the missing knowledge, not the task.`;
-  document.getElementById("habits-cards").innerHTML = PB.cards.map(c => `<article class="trajectory">
-    <div><div class="eyebrow">${escapeHtml(c.label)}</div><h3>${escapeHtml(c.model)}</h3><div class="eyebrow">${escapeHtml(c.setting)}</div></div>
-    <div><p><b>Observed.</b> ${escapeHtml(c.observed)}</p><p><b>Why it matters.</b> ${escapeHtml(c.why)}</p><code>${escapeHtml(c.run)}</code></div>
-  </article>`).join("");
+  document.getElementById("pb-fair").textContent = `Track 2 solvability: with the 8 team rules written in the instruction, every model gets ${PB.told.k} of ${PB.told.n} attempts fully right, so failures without them come from the missing knowledge, not the task.`;
+  document.getElementById("pb-told").textContent = `${PB.told.k} of ${PB.told.n} attempts fully right across all models`;
+
 }
 
 function pbStats() {
@@ -824,15 +835,19 @@ function setBench(next) {
   document.querySelectorAll("[data-bench]").forEach(item => item.setAttribute("aria-pressed", String(item.dataset.bench === bench)));
   document.getElementById("lb-body-iab").hidden = pb;
   document.getElementById("lb-body-pb").hidden = !pb;
-  document.getElementById("lb-title").textContent = pb ? "Rule learned from past work" : "Request breaks a hidden rule";
+  document.getElementById("lb-title").textContent = pb ? "Track 2 · Unwritten team habits" : "Track 1 · Hidden policy";
+  document.getElementById("track-sub").textContent = pb ? "The rule only shows in how the team handled past work." : "A request quietly breaks a rule buried in company records.";
+  document.getElementById("results").hidden = pb;
   const dq = document.getElementById("dq-button");
   dq.disabled = pb;
-  dq.title = pb ? "Not measured in this part" : "";
-  document.getElementById("metric-toggle").closest(".control-group").hidden = pb;
+  dq.title = pb ? "Not measured in Track 2" : "";
+  if (pb && scoreMode === "actionful") scoreMode = "pass";
+  updateScoreDef();
+  document.getElementById("metric-toggle").closest(".control-group").hidden = pb && !PB.models.every(m => m.cost_per_attempt != null);
   document.querySelectorAll(".leader-columns").forEach(el => el.classList.toggle("two", pb));
   renderTakeaways();
   if (pb) { renderPrecedent(); return; }
-  document.getElementById("foot-left").textContent = "Full pass, end-to-end and decision quality";
+  document.getElementById("foot-left").textContent = "Full pass, average score and decision quality";
   document.getElementById("plot-foot").textContent = `3 trials × 8 tasks × ${DATA.models.filter(m => m.status === "complete").length} frontier models`;
   document.getElementById("foot-right").textContent = "24 attempts / model";
   renderLeaderboard();
@@ -875,12 +890,13 @@ function bindLeaderboardControls() {
     if (button.disabled) return;
     scoreMode = button.dataset.scoreMode;
     document.querySelectorAll("[data-score-mode]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+    updateScoreDef();
     bench === "pb" ? renderPrecedent() : renderLeaderboard();
   }));
   document.querySelectorAll("[data-metric]").forEach(button => button.addEventListener("click", () => {
     efficiencyMetric = button.dataset.metric;
     document.querySelectorAll("[data-metric]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
-    renderLeaderboard();
+    bench === "pb" ? renderPrecedent() : renderLeaderboard();
   }));
 }
 
@@ -980,10 +996,10 @@ function modelTooltipMarkup(model) {
   const selectedStddev = displayedStddev(model);
   const scoreLabel = scoreModeLabel();
   const cost = model.cost_per_attempt == null ? "Unpriced" : `$${model.cost_per_attempt.toFixed(2)} / task${model.cost_type?.startsWith("estimated") ? " · est." : ""}`;
-  return `<div class="tip-head"><span class="tip-logo">${ICONS[model.provider] || ""}</span><div><b>${escapeHtml(model.name)}</b><span>${escapeHtml(model.provider)} · mini-SWE-agent</span></div></div>
+  return `<div class="tip-head"><span class="tip-logo">${ICONS[model.provider] || ""}</span><div><b>${escapeHtml(model.name)}</b><span>${escapeHtml(model.provider)} · Track 1</span></div></div>
     <div class="tip-primary"><div><span>${scoreLabel}</span><strong class="mono">${percent(selectedScore)}</strong></div><small class="mono">± ${(selectedStddev * 100).toFixed(1)} pp</small></div>
     <div class="tip-grid">
-      <div class="tip-metric"><span>End-to-end score</span><b class="mono">${percent(model.score)}</b></div>
+      <div class="tip-metric"><span>Average score</span><b class="mono">${percent(model.score)}</b></div>
       <div class="tip-metric"><span>Decision quality</span><b class="mono">${percent(model.actionful_mean)}</b></div>
       <div class="tip-metric"><span>Full pass</span><b class="mono">${percent(model.pass_rate)}</b></div>
       <div class="tip-metric"><span>Recorded actions</span><b class="mono">${model.actionful_runs}/${model.attempts}</b></div>
@@ -1042,7 +1058,6 @@ renderTaskTable();
 renderTrials();
 renderSystems();
 renderTaskLibrary();
-renderTrajectories();
 renderPrecedentSection();
 { const b0 = new URLSearchParams(location.search).get("bench"); if (PB && b0 === "pb") setBench("pb"); }
 bindTabs();
