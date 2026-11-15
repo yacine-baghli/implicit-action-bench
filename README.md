@@ -4,6 +4,8 @@ BIC-Bench tests whether AI agents correctly apply implicit business knowledge an
 
 ## Live leaderboard
 
+**Production:** [implicit-action-bench.vercel.app](https://implicit-action-bench.vercel.app)
+
 The static leaderboard is served from [`index.html`](./index.html). Its first view reports the official raw success score beside average API cost per task attempt. Two controls let readers:
 
 - switch the efficiency axis from **cost** to **mean agent time**;
