@@ -221,6 +221,12 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   .plot-logo svg { width:23px; height:23px; }
   .plot-shell { overflow:hidden; }
 }
+.both-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px; }
+.both-cell { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; }
+.both-label { font-size: 12px; color: var(--muted, #7a7f87); white-space: nowrap; }
+.both-track { height: 6px; border-radius: 3px; background: var(--track, #eef0f3); position: relative; overflow: hidden; }
+.both-fill { position: absolute; inset: 0 auto 0 0; border-radius: 3px; background: #4f46e5; }
+.both-val { font-size: 13px; min-width: 48px; text-align: right; }
 </style>
 </head>
 <body>
@@ -250,6 +256,10 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
         <p>The full-pass view applies the benchmark's strictest criterion: every scoring component must pass. End-to-end performance and decision quality remain available as complementary views of agent execution and business reasoning.</p>
         <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
       </div>
+      <div class="leaderboard-body" id="lb-body-both" hidden>
+        <p>Each model's full-pass rate in both parts, side by side. The parts use different agents and graders, so we show the two numbers next to each other instead of averaging them.</p>
+        <p>Every top model is strong somewhere and weak somewhere else. None of them reliably does both jobs a new hire would be expected to do.</p>
+      </div>
       <div class="leaderboard-body" id="lb-body-pb" hidden>
         <p>A normal Monday on Redwood Inference's finance team: fifteen supplier invoices to log, three quarters of invoice history and about 2,500 emails, Slack threads and tickets. Eight team habits decide how each invoice is logged. Some changed in October, some depend on two conditions, and none is written down. Every habit is shown by three recent examples.</p>
         <p>The view shows the hardest honest setting: the whole morning right, all fifteen invoices, with and without last year's policy doc. This part uses its own plain agent and deterministic grader, so its scores are not mixed with the first part.</p>
@@ -258,7 +268,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
     </div>
     <div class="card ranking-card">
       <div class="control-bar">
-        <div class="control-group"><span>Benchmark</span><div class="segmented" id="bench-toggle"><button type="button" data-bench="iab" aria-pressed="true">Rule written in the records</button><button type="button" data-bench="pb" aria-pressed="false">Rule only in the team's habits</button></div></div>
+        <div class="control-group"><span>Benchmark</span><div class="segmented" id="bench-toggle"><button type="button" data-bench="iab" aria-pressed="true">Rule written in the records</button><button type="button" data-bench="pb" aria-pressed="false">Rule only in the team's habits</button><button type="button" data-bench="both" aria-pressed="false">Both parts</button></div></div>
         <div class="control-group" id="pb-score-group" hidden><span>Score view</span><div class="segmented" id="pb-score-toggle"><button type="button" data-pb-mode="pass" aria-pressed="true">Whole job right</button><button type="button" data-pb-mode="mean" aria-pressed="false">Invoices right</button></div></div>
         <div class="control-group" id="iab-score-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="pass" aria-pressed="true">Full pass</button><button type="button" data-score-mode="raw" aria-pressed="false">End-to-end</button><button type="button" data-score-mode="actionful" aria-pressed="false">Decision quality</button></div></div>
       </div>
@@ -486,10 +496,41 @@ function setBench(next) {
   document.getElementById("plot-card").hidden = pb;
   document.getElementById("lb-kicker").textContent = pb ? "Company knowledge" : "Enterprise action intelligence";
   document.getElementById("lb-title").textContent = pb ? "The PrecedentBench leaderboard" : "The implicit-action-bench leaderboard";
+  const both = bench === "both";
+  document.getElementById("lb-body-both").hidden = !both;
+  if (both) {
+    document.getElementById("lb-body-iab").hidden = true;
+    document.getElementById("iab-score-group").hidden = true;
+    document.getElementById("plot-card").hidden = true;
+    document.getElementById("lb-kicker").textContent = "Both parts";
+    document.getElementById("lb-title").textContent = "Every top model struggles somewhere";
+    renderBoth(); return;
+  }
   if (pb) { renderPrecedent(); return; }
   document.getElementById("foot-left").textContent = "Full-pass, end-to-end, and decision-quality rankings";
   document.getElementById("foot-right").textContent = "24 attempts / model";
   renderLeaderboard();
+}
+
+function renderBoth() {
+  const ours = new Map((PB ? PB.models : []).map(m => [m.name, m]));
+  const names = [...new Set([...DATA.models.map(m => m.name), ...ours.keys()])];
+  const bar = (v, label) => v == null
+    ? `<div class="both-cell"><span class="both-label">${label}</span><span class="mono both-val">not run</span></div>`
+    : `<div class="both-cell"><span class="both-label">${label}</span><div class="both-track"><div class="both-fill" style="width:${Math.max(v * 100, 1)}%"></div></div><span class="mono both-val">${percent(v)}</span></div>`;
+  const rows = names.map(name => {
+    const a = DATA.models.find(m => m.name === name), b = ours.get(name);
+    const va = a && a.status === "complete" ? a.pass_rate : null, vb = b ? b.main.k / b.main.n : null;
+    const prov = (a || b).provider;
+    return { name, prov, va, vb, key: Math.max(va ?? 0, vb ?? 0) };
+  }).sort((x, y) => y.key - x.key);
+  document.getElementById("leader-rows").innerHTML = rows.map(r => `<div class="leader-row">
+    <div class="leader-top"><span class="model-name">${ICONS[r.prov] || ""}${escapeHtml(r.name)}<span class="model-tag">${escapeHtml(r.prov)}</span></span></div>
+    <div class="both-grid">${bar(r.va, "Rule in the records")}${bar(r.vb, "Rule only in habits")}</div></div>`).join("");
+  document.getElementById("score-head").textContent = "Full pass, each part";
+  document.getElementById("metric-head").textContent = "";
+  document.getElementById("foot-left").textContent = "Full-pass rate in each part, not averaged";
+  document.getElementById("foot-right").textContent = "Different agents per part";
 }
 
 function renderLeaderboard() {
@@ -674,7 +715,7 @@ renderSystems();
 renderTaskLibrary();
 renderTrajectories();
 renderPrecedentSection();
-if (PB && new URLSearchParams(location.search).get("bench") === "pb") setBench("pb");
+{ const b0 = new URLSearchParams(location.search).get("bench"); if (PB && (b0 === "pb" || b0 === "both")) setBench(b0); }
 bindTabs();
 bindTooltips();
 </script>
