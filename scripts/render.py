@@ -20,6 +20,9 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 RESULTS_DIR = ROOT_DIR / "results"
 BENCHMARK_DIR = ROOT_DIR / "benchmark"
 DEFAULT_OUTPUT = ROOT_DIR / "index.html"
+GEMINI_ACCOUNT_SPEND_EUR = 11.47
+EUR_TO_USD = 1.1052
+EUR_TO_USD_DATE = "2026-11-13"
 
 MODEL_NAMES = {
     "anthropic/claude-fable-5-2": "Claude Fable 5.2",
@@ -81,6 +84,10 @@ def build_page_data() -> dict[str, Any]:
         reported_cost = result["usage"].get("reported_cost_usd")
         cost_usd = estimated_cost or (reported_cost if reported_cost else None)
         attempts = len(result["rows"])
+        source_spend_eur = None
+        if model_id == "gemini/gemini-4-carbon" and cost_usd is None:
+            source_spend_eur = GEMINI_ACCOUNT_SPEND_EUR
+            cost_usd = GEMINI_ACCOUNT_SPEND_EUR * EUR_TO_USD
         durations = [
             row["agent_duration_seconds"]
             for row in result["rows"]
@@ -91,6 +98,8 @@ def build_page_data() -> dict[str, Any]:
             if estimated_cost is not None
             else "reported"
             if reported_cost
+            else "estimated from account spend"
+            if source_spend_eur is not None
             else None
         )
         models.append(
@@ -113,6 +122,9 @@ def build_page_data() -> dict[str, Any]:
                 "cost_usd": cost_usd,
                 "cost_per_attempt": cost_usd / attempts if cost_usd else None,
                 "cost_type": cost_type,
+                "source_spend_eur": source_spend_eur,
+                "eur_to_usd": EUR_TO_USD if source_spend_eur is not None else None,
+                "eur_to_usd_date": EUR_TO_USD_DATE if source_spend_eur is not None else None,
                 "mean_agent_minutes": statistics.mean(durations) / 60,
                 "wall_clock_seconds": result["wall_clock_seconds"],
                 "run_ids": result["runs"],
@@ -141,6 +153,9 @@ def build_page_data() -> dict[str, Any]:
                 "metadata_truncated": None,
                 "cost_usd": None,
                 "cost_type": None,
+                "source_spend_eur": None,
+                "eur_to_usd": None,
+                "eur_to_usd_date": None,
                 "wall_clock_seconds": None,
                 "run_ids": blocked_run["run_ids"],
                 "provider_error": blocked_run["provider_error"],
@@ -226,7 +241,7 @@ def render_page() -> str:
     stats = [
         (str(len(data["models"])), "frontier models"),
         ("24", "attempts / model"),
-        (f"${min(known_costs):.2f}", "lowest known cost / task"),
+        (f"${min(known_costs):.2f}", "lowest est. cost / task"),
         (f'{complete_model["score"] * 100:.1f}%', "leading official score"),
     ]
     stats_html = "".join(
@@ -320,18 +335,21 @@ nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 .stat .value { font-size:44px; font-weight:400; letter-spacing:-.03em; line-height:1.15; }
 .stat .key { color:var(--text-muted); font-size:17px; }
 .leaderboard { display:block; padding-bottom:110px; }
-.leaderboard-intro { display:grid; grid-template-columns:minmax(250px,.72fr) minmax(0,1.28fr); gap:80px; align-items:start; margin-bottom:34px; }
+.leaderboard-overview { display:grid; grid-template-columns:minmax(260px,.68fr) minmax(560px,1.32fr); gap:56px; align-items:start; margin-bottom:24px; }
 .section-kicker { color:var(--accent); font-size:11px; font-weight:650; text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px; }
-.leaderboard-intro h2 { font-size:34px; line-height:1.13; letter-spacing:-.025em; margin-bottom:0; }
+.leaderboard-title { padding-top:14px; }
+.leaderboard-title h2 { font-size:38px; line-height:1.1; letter-spacing:-.03em; margin-bottom:0; max-width:390px; }
 .leaderboard-body { display:grid; grid-template-columns:1fr 1fr; gap:26px 42px; }
 .leaderboard-body p { color:var(--text-secondary); margin:0; }
 .leaderboard-body .chips { grid-column:1 / -1; margin-top:0; }
+.research-context { max-width:960px; margin:30px auto 0; padding:28px 30px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2); }
 h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .chips { display:flex; gap:8px; margin-top:26px; flex-wrap:wrap; }
 .chips a { font-size:13px; background:var(--surface-2); border-radius:6px; padding:6px 12px; text-decoration:none; }
 .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:32px 38px 34px; box-shadow:0 14px 44px rgba(15,23,42,.055); }
-.ranking-card { margin-bottom:24px; }
-.plot-card { max-width:1040px; margin:0 auto; }
+.ranking-card { padding:24px 28px 26px; }
+.score-overview-title { font-size:16px; font-weight:600; margin:0 0 18px; letter-spacing:-.01em; }
+.plot-card { max-width:832px; margin:0 auto; }
 .control-bar { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding-bottom:22px; margin-bottom:8px; border-bottom:1px solid var(--line); }
 .control-group > span { display:block; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.07em; margin-bottom:7px; }
 .segmented { display:inline-flex; padding:3px; gap:2px; border-radius:7px; background:var(--surface-2); border:1px solid var(--line); }
@@ -367,14 +385,14 @@ h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .plot-stage { position:relative; padding-left:20px; }
 .plot-axis-title-y { position:absolute; left:-26px; top:50%; transform:rotate(-90deg) translateX(-50%); transform-origin:left top; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; white-space:nowrap; }
 .plot-axis-title-x { color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; text-align:center; margin:40px 0 0; }
-.efficiency-plot { position:relative; height:390px; margin:0 24px 0 56px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); background-image:linear-gradient(to top,var(--line) 1px,transparent 1px),linear-gradient(to right,var(--line) 1px,transparent 1px); background-size:100% 25%,20% 100%; }
+.efficiency-plot { position:relative; height:312px; margin:0 20px 0 52px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); background-image:linear-gradient(to top,var(--line) 1px,transparent 1px),linear-gradient(to right,var(--line) 1px,transparent 1px); background-size:100% 25%,20% 100%; }
 .plot-y-label { position:absolute; left:-50px; color:var(--text-muted); font-size:11px; transform:translateY(50%); }
 .plot-x-label { position:absolute; bottom:-30px; color:var(--text-muted); font-size:11px; transform:translateX(-50%); }
 .plot-point { position:absolute; transform:translate(-50%,50%); display:flex; align-items:center; gap:10px; z-index:2; cursor:default; transition:z-index .15s ease; }
 .plot-point:hover,.plot-point:focus-visible { z-index:4; outline:none; }
-.plot-logo { width:50px; height:50px; border:1px solid var(--line); background:var(--card); border-radius:50%; display:grid; place-items:center; box-shadow:0 8px 24px rgba(0,0,0,.14); transition:transform .18s ease,box-shadow .18s ease; }
+.plot-logo { width:44px; height:44px; border:1px solid var(--line); background:var(--card); border-radius:50%; display:grid; place-items:center; box-shadow:0 8px 24px rgba(0,0,0,.12); transition:transform .18s ease,box-shadow .18s ease; }
 .plot-point:hover .plot-logo,.plot-point:focus-visible .plot-logo { transform:scale(1.14); box-shadow:0 12px 30px rgba(0,0,0,.20); }
-.plot-logo svg { width:27px; height:27px; fill:currentColor; }
+.plot-logo svg { width:24px; height:24px; fill:currentColor; }
 .provider-anthropic .plot-logo { color:var(--anthropic-c); border-color:color-mix(in srgb,var(--anthropic-c) 32%,var(--line)); }
 .provider-openai .plot-logo { color:var(--openai-c); border-color:color-mix(in srgb,var(--openai-c) 32%,var(--line)); }
 .provider-google .plot-logo { color:var(--google-c); border-color:color-mix(in srgb,var(--google-c) 32%,var(--line)); }
@@ -449,7 +467,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
 [hidden] { display:none !important; }
 @media (max-width:920px) {
   .takeaway-layout { grid-template-columns:1fr; }
-  .leaderboard-intro { grid-template-columns:1fr; gap:20px; }
+  .leaderboard-overview { grid-template-columns:1fr; gap:20px; }
   .leaderboard-body { grid-template-columns:1fr; gap:14px; }
   .leaderboard-body .chips { grid-column:auto; }
   .stats { grid-template-columns:repeat(2,1fr); row-gap:24px; }
@@ -458,20 +476,20 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   .navlinks { display:none; }
   .wrap { padding:0 22px; }
   .task-list { grid-template-columns:1fr; }
-  .efficiency-plot { height:360px; margin-right:6px; }
+  .efficiency-plot { height:300px; margin-right:6px; }
 }
 @media (max-width:620px) {
   body { width:100vw; max-width:100vw; overflow-x:hidden; }
   .wrap { width:100vw; max-width:100vw; }
-  .hero,.stats,.leaderboard,.leaderboard-intro,.leaderboard-body,.card,.plot-shell { width:100%; max-width:100%; min-width:0; }
-  .leaderboard-intro > *,.leaderboard-body > * { min-width:0; }
+  .hero,.stats,.leaderboard,.leaderboard-overview,.leaderboard-body,.card,.plot-shell { width:100%; max-width:100%; min-width:0; }
+  .leaderboard-overview > *,.leaderboard-body > * { min-width:0; }
   .navright { display:none; }
   .stats { grid-template-columns:1fr 1fr; }
   .stat .value { font-size:34px; }
   .stat .key { font-size:14px; }
   .hero h1 { font-size:32px; overflow-wrap:anywhere; }
   .hero h1 br { display:none; }
-  .leaderboard-intro h2 { font-size:30px; overflow-wrap:anywhere; }
+  .leaderboard-title h2 { font-size:30px; overflow-wrap:anywhere; }
   .trial-grid { grid-template-columns:1fr; }
   .trajectory { grid-template-columns:1fr; gap:10px; }
   .table-scroll { overflow-x:auto; }
@@ -485,7 +503,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   .plot-head { align-items:flex-start; flex-direction:column; }
   .plot-stage { padding-left:0; }
   .plot-axis-title-y { display:none; }
-  .efficiency-plot { margin-left:38px; height:300px; }
+  .efficiency-plot { margin-left:38px; height:260px; }
   .plot-label { display:none; }
   .plot-logo { width:42px; height:42px; }
   .plot-logo svg { width:23px; height:23px; }
@@ -512,23 +530,19 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   <section class="stats">__STATS__</section>
 
   <section class="leaderboard" id="leaderboard">
-    <div class="leaderboard-intro">
-      <div><div class="section-kicker">Enterprise action intelligence</div><h2>The implicit-action-bench leaderboard</h2></div>
-      <div class="leaderboard-body">
-        <p>Eight high-context tasks are grounded in the Redwood Inference world from EnterpriseRAG-Bench. Each sandbox contains at least 120 authentic records plus current-decision overlays, requiring models to reconstruct the controlling rule from a realistic evidence neighborhood.</p>
-        <p>The official score measures end-to-end success: evidence discovery, constraint resolution, and useful action. The action-recorded view offers a complementary lens on decision quality once a model commits to an action.</p>
-        <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
+    <div class="leaderboard-overview">
+      <div class="leaderboard-title"><div class="section-kicker">Enterprise action intelligence</div><h2>The implicit-action-bench leaderboard</h2></div>
+      <div class="card ranking-card">
+        <h3 class="score-overview-title">Score overview</h3>
+        <div class="control-bar">
+          <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="raw" aria-pressed="true">Official score</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
+          <div class="control-group"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
+        </div>
+        <div class="card-head leader-columns"><span>Model</span><span id="score-head">Official score</span><span id="metric-head">Cost / task</span></div>
+        <div id="leader-rows"></div>
+        <div class="axis" id="axis"></div>
+        <div class="card-foot"><span>Official and action-recorded rankings</span><span class="mono">24 attempts / model</span></div>
       </div>
-    </div>
-    <div class="card ranking-card">
-      <div class="control-bar">
-        <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="raw" aria-pressed="true">Official score</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
-        <div class="control-group"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
-      </div>
-      <div class="card-head leader-columns"><span>Model</span><span id="score-head">Official score</span><span id="metric-head">Cost / task</span></div>
-      <div id="leader-rows"></div>
-      <div class="axis" id="axis"></div>
-      <div class="card-foot"><span>Official and action-recorded rankings</span><span class="mono">24 attempts / model</span></div>
     </div>
     <div class="card plot-card">
       <div class="plot-shell">
@@ -538,6 +552,11 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
         <div class="plot-note" id="plot-note"></div>
       </div>
       <div class="card-foot"><span>3 trials × 8 tasks × 3 frontier models</span><span class="mono">release 1.0</span></div>
+    </div>
+    <div class="research-context leaderboard-body">
+      <p>Eight high-context tasks are grounded in the Redwood Inference world from EnterpriseRAG-Bench. Each sandbox contains at least 120 authentic records plus current-decision overlays, requiring models to reconstruct the controlling rule from a realistic evidence neighborhood.</p>
+      <p>The official score measures end-to-end success: evidence discovery, constraint resolution, and useful action. The action-recorded view offers a complementary lens on decision quality once a model commits to an action.</p>
+      <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
     </div>
   </section>
 
@@ -663,7 +682,7 @@ function renderEfficiencyPlot(models) {
   document.getElementById("plot-title").textContent = `${scoreMode === "raw" ? "Official success" : "Action-recorded success"} vs. ${efficiencyMetric === "cost" ? "API cost / task" : "mean agent time"}`;
   document.getElementById("plot-axis-title-x").textContent = efficiencyMetric === "cost" ? "Average API cost per task attempt" : "Mean agent execution time per task attempt";
   document.getElementById("plot-note").textContent = efficiencyMetric === "cost"
-    ? "Cost is averaged across 24 attempts. Carbon appears in the unpriced band because provider usage was available without a reported price."
+    ? "Cost is averaged across 24 attempts. Gemini Carbon is estimated from €11.47 total account spend (≈ $12.68 at EUR 1 = USD 1.1052, ECB 13 Nov 2026), or about $0.53 per task."
     : "Time is mean model-agent execution time per task attempt; sandbox setup and queue time are excluded.";
 }
 
@@ -686,7 +705,7 @@ function renderLeaderboard() {
       ? `<div class="leader-fill" style="width:${Math.max(score * 100, .8)}%;background:linear-gradient(90deg,var(--${token}-a),var(--${token}-b))"></div>`
       : "";
     return `<div class="leader-row" tabindex="0" data-model-id="${escapeHtml(model.id)}">
-      <div class="leader-top"><span class="model-name">${ICONS[model.provider] || ""}${escapeHtml(model.name)}<span class="model-tag">${escapeHtml(model.provider)}</span></span><span class="model-score mono">${value}</span><span class="model-metric mono">${metricLabel(model)}<small>${efficiencyMetric === "cost" ? "per task" : "mean agent"}</small></span></div>
+      <div class="leader-top"><span class="model-name">${ICONS[model.provider] || ""}${escapeHtml(model.name)}<span class="model-tag">${escapeHtml(model.provider)}</span></span><span class="model-score mono">${value}</span><span class="model-metric mono">${metricLabel(model)}<small>${efficiencyMetric === "cost" ? (model.cost_type?.startsWith("estimated") ? "estimated" : "per task") : "mean agent"}</small></span></div>
       <div class="leader-bar ${complete ? "" : "blocked-track"}">${bar}</div>
     </div>`;
   }).join("");
@@ -773,7 +792,7 @@ function modelTooltipMarkup(model) {
   const selectedScore = displayedScore(model);
   const selectedStddev = displayedStddev(model);
   const scoreLabel = scoreMode === "raw" ? "Official score" : "Action-recorded score";
-  const cost = model.cost_per_attempt == null ? "Unpriced" : `$${model.cost_per_attempt.toFixed(2)} / task`;
+  const cost = model.cost_per_attempt == null ? "Unpriced" : `$${model.cost_per_attempt.toFixed(2)} / task${model.cost_type?.startsWith("estimated") ? " · est." : ""}`;
   return `<div class="tip-head"><span class="tip-logo">${ICONS[model.provider] || ""}</span><div><b>${escapeHtml(model.name)}</b><span>${escapeHtml(model.provider)} · mini-SWE-agent</span></div></div>
     <div class="tip-primary"><div><span>${scoreLabel}</span><strong class="mono">${percent(selectedScore)}</strong></div><small class="mono">± ${(selectedStddev * 100).toFixed(1)} pp</small></div>
     <div class="tip-grid">
