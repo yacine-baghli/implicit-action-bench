@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en" class="viz-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Implicit Action Bench · demo</title>
+<style>
+/* copied as-is from https://implicit-action-bench.vercel.app/ */
+
+.viz-root {
+  color-scheme: light;
+  --surface-1:#FFFFFF; --surface-2:#F7F8FA; --card:#FFFFFF; --line:#E5E7EB; --track:#F1F5F9;
+  --text-primary:#111827; --text-secondary:#475569; --text-muted:#94A3B8; --accent:#4F46E5;
+  --anthropic-a:#FED7C3; --anthropic-b:#F28C5C; --anthropic-c:#B9522B;
+  --openai-a:#A7E3CF; --openai-b:#38A77C; --openai-c:#147A59;
+  --google-a:#C7D7FE; --google-b:#7C83EE; --google-c:#4F46B8;
+  --success:#147A59; --warning:#B7791F; --danger:#C2413B; --quote-bg:#111827; --quote-ink:#F8FAFC;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; overflow-x:hidden; }
+body { margin:0; background:var(--surface-1); color:var(--text-primary); font:15px/1.55 Inter,ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+a { color:inherit; }
+.mono { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-variant-numeric:tabular-nums; }
+.wrap { max-width:1380px; margin:0 auto; padding:0 56px; }
+nav.top { border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; background:color-mix(in srgb,var(--surface-1) 92%,transparent); backdrop-filter:blur(12px); }
+nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
+.brand { display:flex; align-items:center; gap:9px; font-weight:650; font-size:16px; letter-spacing:-.01em; text-decoration:none; }
+.brand-mark { width:22px; height:22px; border-radius:6px; background:linear-gradient(135deg,#A5B4FC,var(--accent)); display:inline-block; box-shadow:inset 0 0 0 1px rgba(17,24,39,.06); }
+.navlinks { display:flex; gap:30px; font-size:14px; }
+.navlinks a { text-decoration:none; }
+.navlinks a:hover { color:var(--accent); }
+.navright { margin-left:auto; font-size:13px; border:1px solid var(--line); border-radius:6px; padding:7px 16px; text-decoration:none; }
+.crumbs { font-size:12px; color:var(--text-muted); padding:14px 0; }
+.crumbs b { color:var(--text-primary); font-weight:500; }
+.crumbs span { margin:0 7px; }
+.hero { text-align:center; padding:54px 0 44px; }
+.hero h1 { font-size:56px; line-height:1.06; font-weight:450; letter-spacing:-.035em; margin:0 0 18px; }
+.hero .with { color:var(--text-muted); font-size:13px; margin-bottom:22px; display:flex; gap:8px; justify-content:center; align-items:baseline; flex-wrap:wrap; }
+.hero .with b { color:var(--text-primary); font-size:17px; font-weight:650; letter-spacing:-.02em; }
+.hero .with .team-credit { font-size:11px; letter-spacing:.01em; }
+.hero p { color:var(--text-secondary); max-width:760px; margin:0 auto 26px; font-size:16px; }
+.buttons { display:flex; gap:10px; justify-content:center; }
+.button { font:inherit; font-size:13px; padding:9px 18px; border-radius:6px; text-decoration:none; background:var(--surface-2); border:1px solid var(--line); }
+.button.primary { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:550; }
+.stats { display:grid; grid-template-columns:repeat(4,1fr); padding:28px 0 82px; }
+.stat { text-align:center; border-left:1px solid var(--line); padding:6px 0; }
+.stat:first-child { border-left:0; }
+.stat .value { font-size:44px; font-weight:400; letter-spacing:-.03em; line-height:1.15; }
+.stat .key { color:var(--text-muted); font-size:17px; }
+.stat .hint { color:var(--text-muted); font-size:12.5px; margin-top:4px; opacity:.85; }
+.leader-columns.two, .leader-top.two { grid-template-columns:minmax(170px,1fr) 150px; }
+.segmented button[disabled] { opacity:.4; cursor:not-allowed; }
+.fair-list { margin:10px 0 18px; padding-left:20px; }
+.fair-list li { margin:6px 0; }
+.leaderboard { display:block; padding-bottom:110px; }
+.leaderboard-intro { display:grid; grid-template-columns:minmax(250px,.72fr) minmax(0,1.28fr); gap:80px; align-items:start; margin-bottom:34px; }
+.section-kicker { color:var(--accent); font-size:11px; font-weight:650; text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px; }
+.leaderboard-intro h2 { font-size:34px; line-height:1.13; letter-spacing:-.025em; margin-bottom:0; }
+.leaderboard-body { display:grid; grid-template-columns:1fr 1fr; gap:26px 42px; }
+.leaderboard-body p { color:var(--text-secondary); margin:0; }
+.leaderboard-body .chips { grid-column:1 / -1; margin-top:0; }
+h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
+.chips { display:flex; gap:8px; margin-top:26px; flex-wrap:wrap; }
+.chips a { font-size:13px; background:var(--surface-2); border-radius:6px; padding:6px 12px; text-decoration:none; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:32px 38px 34px; box-shadow:0 14px 44px rgba(15,23,42,.055); }
+.ranking-card { margin-bottom:24px; }
+.plot-card { max-width:1040px; margin:0 auto; }
+.control-bar { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding-bottom:22px; margin-bottom:8px; border-bottom:1px solid var(--line); }
+.control-group > span { display:block; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.07em; margin-bottom:7px; }
+.segmented { display:inline-flex; padding:3px; gap:2px; border-radius:7px; background:var(--surface-2); border:1px solid var(--line); }
+.segmented button { border:0; border-radius:5px; background:transparent; color:var(--text-secondary); font:inherit; font-size:12px; padding:6px 9px; cursor:pointer; }
+.segmented button[aria-pressed="true"] { background:var(--card); color:var(--text-primary); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.card-head { color:var(--text-muted); font-size:12px; margin:18px 0 5px; }
+.leader-columns { display:grid; grid-template-columns:minmax(170px,1fr) 105px 92px; gap:12px; }
+.leader-columns span:not(:first-child) { text-align:right; }
+.leader-row { padding:13px 10px 12px; margin:0 -10px; outline:none; border-radius:8px; transition:background .18s ease; }
+.leader-row:hover,.leader-row:focus-visible { background:var(--surface-2); }
+.leader-top { display:grid; grid-template-columns:minmax(170px,1fr) 105px 92px; align-items:center; gap:12px; }
+.model-name { font-size:16px; font-weight:500; display:flex; align-items:center; gap:7px; min-width:0; }
+.model-name svg { width:16px; height:16px; fill:currentColor; flex:none; }
+.model-tag { color:var(--text-muted); font-size:12.5px; font-weight:400; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.model-score,.model-metric { font-size:13px; white-space:nowrap; text-align:right; }
+.model-score small { color:var(--text-muted); font-size:12.5px; margin-left:7px; }
+.model-metric small { display:block; color:var(--text-muted); font-size:10px; }
+.status { font-size:11px; border-radius:999px; padding:3px 8px; background:var(--surface-2); color:var(--text-muted); }
+.status.complete { color:var(--success); }
+.status.blocked { color:var(--warning); }
+.leader-bar { position:relative; height:6px; margin-top:10px; background:var(--track); border-radius:3px; overflow:hidden; }
+.leader-fill { position:absolute; inset:0 auto 0 0; border-radius:3px; }
+.blocked-track { background:repeating-linear-gradient(135deg,var(--line),var(--line) 4px,var(--track) 4px,var(--track) 8px); }
+.axis { position:relative; height:24px; margin-top:30px; border-top:1px solid var(--line); }
+.axis span { position:absolute; top:9px; transform:translateX(-50%); color:var(--text-muted); font-size:12px; opacity:.8; }
+.axis span:first-child { transform:none; }
+.axis span:last-child { transform:translateX(-100%); }
+.card-foot { display:flex; justify-content:space-between; align-items:center; margin-top:28px; gap:12px; color:var(--text-muted); font-size:12px; }
+.plot-shell { margin:0; padding:0; }
+.plot-head { display:flex; justify-content:space-between; gap:24px; align-items:flex-end; margin-bottom:20px; }
+.plot-head b { font-size:18px; font-weight:520; letter-spacing:-.01em; }
+.plot-heading > span { display:block; color:var(--text-muted); font-size:12px; margin-top:4px; }
+.plot-control { flex:none; text-align:right; }
+.plot-stage { position:relative; padding-left:20px; }
+.plot-axis-title-y { position:absolute; left:-26px; top:50%; transform:rotate(-90deg) translateX(-50%); transform-origin:left top; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; white-space:nowrap; }
+.plot-axis-title-x { color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; text-align:center; margin:40px 0 0; }
+.efficiency-plot { position:relative; height:390px; margin:0 24px 0 56px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); background-image:linear-gradient(to top,var(--line) 1px,transparent 1px),linear-gradient(to right,var(--line) 1px,transparent 1px); background-size:100% 25%,20% 100%; }
+.plot-y-label { position:absolute; left:-50px; color:var(--text-muted); font-size:11px; transform:translateY(50%); }
+.plot-x-label { position:absolute; bottom:-30px; color:var(--text-muted); font-size:11px; transform:translateX(-50%); }
+.plot-point { position:absolute; transform:translate(-50%,50%); display:flex; align-items:center; gap:10px; z-index:2; cursor:default; transition:z-index .15s ease; }
+.plot-point:hover,.plot-point:focus-visible { z-index:4; outline:none; }
+.plot-logo { width:50px; height:50px; border:1px solid var(--line); background:var(--card); border-radius:50%; display:grid; place-items:center; box-shadow:0 8px 24px rgba(0,0,0,.14); transition:transform .18s ease,box-shadow .18s ease; }
+.plot-point:hover .plot-logo,.plot-point:focus-visible .plot-logo { transform:scale(1.14); box-shadow:0 12px 30px rgba(0,0,0,.20); }
+.plot-logo svg { width:27px; height:27px; fill:currentColor; }
+.provider-anthropic .plot-logo { color:var(--anthropic-c); border-color:color-mix(in srgb,var(--anthropic-c) 32%,var(--line)); }
+.provider-openai .plot-logo { color:var(--openai-c); border-color:color-mix(in srgb,var(--openai-c) 32%,var(--line)); }
+.provider-google .plot-logo { color:var(--google-c); border-color:color-mix(in srgb,var(--google-c) 32%,var(--line)); }
+.plot-label { padding:6px 9px; border-radius:7px; background:color-mix(in srgb,var(--card) 94%,transparent); border:1px solid var(--line); font-size:11px; line-height:1.3; white-space:nowrap; box-shadow:0 4px 15px color-mix(in srgb,var(--text-primary) 5%,transparent); }
+.plot-label b { display:block; font-size:12px; font-weight:600; }
+.plot-na-band { position:absolute; right:0; top:0; bottom:0; width:19%; border-left:1px dashed var(--line); background:repeating-linear-gradient(135deg,transparent,transparent 5px,color-mix(in srgb,var(--line) 32%,transparent) 5px,color-mix(in srgb,var(--line) 32%,transparent) 6px); }
+.plot-note { color:var(--text-muted); font-size:11.5px; margin-top:18px; text-align:center; }
+.takeaway-layout { display:grid; grid-template-columns:1.15fr .85fr; gap:56px; align-items:start; padding-bottom:110px; }
+.takeaways { list-style:none; padding:0; margin:0; counter-reset:takeaway; }
+.takeaways li { counter-increment:takeaway; padding:18px 0 18px 30px; border-bottom:1px solid var(--line); position:relative; }
+.takeaways li::before { content:counter(takeaway); position:absolute; left:8px; top:18px; color:var(--accent); font-size:15px; }
+.takeaways b { display:block; font-weight:500; font-size:16px; margin-bottom:4px; }
+.takeaways span { color:var(--text-secondary); font-size:13.5px; }
+.quote { background:var(--quote-bg); color:var(--quote-ink); border-radius:10px; padding:34px 32px; margin-top:40px; }
+.quote strong { display:block; font-size:42px; line-height:1; font-weight:450; letter-spacing:-.04em; }
+.quote p { font-size:18px; line-height:1.45; margin:16px 0 0; }
+.quote .who { margin-top:22px; font-size:13px; opacity:.7; display:flex; gap:8px; align-items:center; }
+.quote svg { width:14px; height:14px; fill:currentColor; }
+.section { padding:0 0 100px; }
+.sub { color:var(--text-secondary); margin:-10px 0 26px; max-width:700px; }
+.tabs { display:flex; gap:26px; border-bottom:1px solid var(--line); margin-bottom:30px; overflow-x:auto; }
+.tabs button { font:inherit; font-size:14px; background:none; border:0; padding:0 0 10px; color:var(--text-secondary); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap; }
+.tabs button[aria-selected="true"] { color:var(--accent); border-bottom-color:var(--accent); }
+.plain { width:100%; border-collapse:collapse; font-size:14px; }
+.plain th,.plain td { text-align:left; padding:11px 8px; border-bottom:1px solid var(--line); vertical-align:middle; }
+.plain th { color:var(--text-muted); font-weight:400; font-size:12.5px; }
+.plain td.score { text-align:right; }
+.plain th.score { text-align:right; }
+.score-pill { display:inline-flex; align-items:center; justify-content:center; min-width:58px; padding:5px 8px; border-radius:5px; font-size:12px; }
+.score-high { background:color-mix(in srgb,var(--success) 14%,var(--surface-1)); color:var(--success); }
+.score-mid { background:color-mix(in srgb,var(--warning) 14%,var(--surface-1)); color:var(--warning); }
+.score-low { background:color-mix(in srgb,var(--danger) 12%,var(--surface-1)); color:var(--danger); }
+.trial-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.trial-card { border:1px solid var(--line); border-radius:8px; padding:18px; }
+.trial-card .trial-score { font-size:32px; margin:8px 0 12px; }
+.mini-track { height:7px; background:var(--track); border-radius:4px; overflow:hidden; }
+.mini-track i { display:block; height:100%; background:linear-gradient(90deg,var(--anthropic-a),var(--anthropic-b)); }
+.task-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.task-card { border:1px solid var(--line); border-radius:8px; padding:18px; }
+.task-meta { display:flex; justify-content:space-between; gap:12px; color:var(--text-muted); font-size:12px; margin-bottom:8px; }
+.task-card h3 { font-size:16px; margin:0 0 6px; font-weight:550; }
+.task-card p { color:var(--text-secondary); font-size:13px; margin:0 0 12px; }
+.task-card details { border-top:1px solid var(--line); padding-top:10px; }
+.task-card summary { cursor:pointer; color:var(--accent); font-size:12px; }
+.task-card details p { margin:10px 0 0; }
+.trajectory-list { display:grid; gap:14px; }
+.trajectory { border:1px solid var(--line); border-radius:10px; padding:22px; display:grid; grid-template-columns:180px 1fr; gap:26px; }
+.trajectory .eyebrow { color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
+.trajectory h3 { font-size:17px; font-weight:550; margin:5px 0 8px; }
+.trajectory p { color:var(--text-secondary); margin:0 0 10px; }
+.trajectory code { color:var(--text-muted); font-size:11px; overflow-wrap:anywhere; }
+.method { color:var(--text-secondary); font-size:14px; max-width:860px; }
+.method p { margin:0 0 14px; }
+.method b { color:var(--text-primary); font-weight:500; }
+.method-callout { border-left:3px solid var(--accent); padding:12px 16px; background:var(--surface-2); border-radius:0 7px 7px 0; margin:24px 0; }
+footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12px; padding:22px 0 40px; }
+.tip { position:fixed; pointer-events:none; background:var(--text-primary); color:var(--surface-1); font-size:12.5px; padding:10px 12px; border-radius:10px; max-width:360px; line-height:1.45; z-index:9; box-shadow:0 16px 50px rgba(0,0,0,.24); }
+.tip.model-tip { width:340px; max-width:calc(100vw - 24px); padding:17px; border:1px solid color-mix(in srgb,var(--surface-1) 15%,transparent); }
+.tip-head { display:flex; align-items:center; gap:11px; padding-bottom:13px; border-bottom:1px solid color-mix(in srgb,var(--surface-1) 18%,transparent); }
+.tip-head .tip-logo { width:34px; height:34px; border-radius:50%; background:var(--surface-1); color:var(--text-primary); display:grid; place-items:center; flex:none; }
+.tip-head svg { width:19px; height:19px; fill:currentColor; }
+.tip-head b { display:block; font-size:14px; line-height:1.25; }
+.tip-head span { display:block; opacity:.65; font-size:11px; margin-top:2px; }
+.tip-primary { display:flex; justify-content:space-between; align-items:end; gap:14px; padding:14px 0 12px; }
+.tip-primary span { opacity:.65; font-size:11px; text-transform:uppercase; letter-spacing:.07em; }
+.tip-primary strong { display:block; font-size:29px; line-height:1; font-weight:520; letter-spacing:-.04em; }
+.tip-primary small { opacity:.65; font-size:11px; }
+.tip-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.tip-metric { background:color-mix(in srgb,var(--surface-1) 9%,transparent); border-radius:7px; padding:9px 10px; }
+.tip-metric span { display:block; opacity:.62; font-size:10px; margin-bottom:2px; }
+.tip-metric b { font-size:12px; font-weight:550; }
+[hidden] { display:none !important; }
+@media (max-width:920px) {
+  .takeaway-layout { grid-template-columns:1fr; }
+  .leaderboard-intro { grid-template-columns:1fr; gap:20px; }
+  .leaderboard-body { grid-template-columns:1fr; gap:14px; }
+  .leaderboard-body .chips { grid-column:auto; }
+  .stats { grid-template-columns:repeat(2,1fr); row-gap:24px; }
+  .stat:nth-child(3) { border-left:0; }
+  .hero h1 { font-size:36px; }
+  .navlinks { display:none; }
+  .wrap { padding:0 22px; }
+  .task-list { grid-template-columns:1fr; }
+  .efficiency-plot { height:360px; margin-right:6px; }
+}
+@media (max-width:620px) {
+  body { width:100vw; max-width:100vw; overflow-x:hidden; }
+  .wrap { width:100vw; max-width:100vw; }
+  .hero,.stats,.leaderboard,.leaderboard-intro,.leaderboard-body,.card,.plot-shell { width:100%; max-width:100%; min-width:0; }
+  .leaderboard-intro > *,.leaderboard-body > * { min-width:0; }
+  .navright { display:none; }
+  .stats { grid-template-columns:1fr 1fr; }
+  .stat .value { font-size:34px; }
+  .stat .key { font-size:14px; }
+  .hero h1 { font-size:32px; overflow-wrap:anywhere; }
+  .hero h1 br { display:none; }
+  .leaderboard-intro h2 { font-size:30px; overflow-wrap:anywhere; }
+  .trial-grid { grid-template-columns:1fr; }
+  .trajectory { grid-template-columns:1fr; gap:10px; }
+  .table-scroll { overflow-x:auto; }
+  .control-bar { align-items:stretch; flex-direction:column; }
+  .leader-columns,.leader-top { grid-template-columns:minmax(0,1fr) 104px; gap:9px; }
+  .leader-columns span:nth-child(3),.model-metric { display:none; }
+  .model-name { font-size:14px; }
+  .model-score small { display:none; }
+  .model-tag { display:none; }
+  .card { padding:24px 18px 26px; }
+  .plot-head { align-items:flex-start; flex-direction:column; }
+  .plot-stage { padding-left:0; }
+  .plot-axis-title-y { display:none; }
+  .efficiency-plot { margin-left:38px; height:300px; }
+  .plot-label { display:none; }
+  .plot-logo { width:42px; height:42px; }
+  .plot-logo svg { width:23px; height:23px; }
+  .plot-shell { overflow:hidden; }
+}
+.brand { display:flex; align-items:center; gap:10px; }
+.logo-mark { width:26px; height:26px; flex:none; }
+.track-sub { font-size:12.5px; color:var(--text-muted); margin-top:8px; max-width:420px; }
+.method-list { display:grid; grid-template-columns:200px 1fr; gap:14px 28px; margin:18px 0 0; }
+.method-list dt { font-weight:600; color:var(--text-primary); }
+.method-list dd { margin:0; color:var(--text-secondary); line-height:1.6; }
+.method-list dd b { color:var(--text-primary); font-weight:600; }
+@media (max-width:760px) { .method-list { grid-template-columns:1fr; } }
+
+/* deck mechanics on top of the live page's stylesheet */
+html, body { height:100%; overflow:hidden; background:#E9EBF0; }
+#stage { position:absolute; width:1600px; height:900px; transform-origin:0 0; background:var(--surface-1); overflow:hidden; }
+.slide { position:absolute; inset:0; padding:0 110px 60px; display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:opacity .35s; }
+.slide.on { opacity:1; pointer-events:auto; }
+.slide > nav.top { margin:0 -110px 34px; position:relative; }
+.slide > nav.top .wrap { max-width:none; padding:0 110px; }
+.slide .pg { margin-left:auto; font-size:13px; color:var(--text-muted); }
+.slide .hero { margin:auto 0; padding:0 0 40px; }
+.slide .hero h1 { font-size:76px; }
+.slide .hero p { font-size:22px; max-width:900px; }
+.slide .leaderboard-intro { display:block; margin-bottom:28px; }
+.slide .leaderboard-intro h2 { font-size:46px; }
+#cap { font-size:38px; line-height:1.15; letter-spacing:-.03em; min-height:92px; transition:opacity .3s; }
+#cap.off { opacity:0; }
+#chart text { font-family:Inter,-apple-system,Helvetica,sans-serif; }
+.dot, .rule { transition:opacity .4s, fill .4s; }
+.keys { display:flex; gap:30px; font-size:16px; color:var(--text-secondary); }
+.keys i { display:inline-block; width:13px; height:13px; border-radius:50%; margin-right:8px; vertical-align:-1px; }
+.muted { color:var(--text-muted); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.big-p { font-size:26px; line-height:1.35; letter-spacing:-.015em; margin:6px 0 0; }
+.checks { display:flex; gap:12px; margin-top:40px; flex-wrap:wrap; }
+.checks span { font-size:18px; background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:12px 18px; }
+.checks b { color:var(--success); margin-right:8px; }
+#t2 { padding:20px 38px 22px; }
+.pair { display:grid; grid-template-columns:200px 1fr 70px; gap:6px 18px; align-items:center; padding:9px 0; }
+.pair .model-name { font-size:19px; grid-row:span 2; }
+.pair .leader-bar { margin:0; height:12px; }
+.pair .leader-fill { width:0; transition:width 1s cubic-bezier(.2,.8,.2,1); }
+.pair .model-score { font-size:16px; font-weight:600; }
+.pair .model-score.told { color:var(--text-muted); font-weight:500; }
+.legend4 { display:flex; gap:28px; font-size:16px; color:var(--text-secondary); margin-top:18px; }
+.legend4 i { display:inline-block; width:14px; height:14px; border-radius:3px; vertical-align:-2px; margin-right:8px; }
+.cost-row { display:grid; grid-template-columns:170px 1fr 64px 70px; gap:14px; align-items:center; padding:11px 0; border-bottom:1px solid var(--line); }
+.cost-row:last-child { border:0; }
+.cost-row .model-name { font-size:18px; }
+.cost-row .leader-bar { margin:0; height:12px; }
+.cost-row .leader-fill { width:0; transition:width 1s cubic-bezier(.2,.8,.2,1); }
+.cost-row .model-score { font-size:17px; font-weight:600; }
+.cost-row .cost { font-size:15px; text-align:right; color:var(--text-secondary); }
+.cost-row.win { background:color-mix(in srgb,var(--openai-a) 35%,transparent); margin:0 -12px; padding:11px 12px; border-radius:8px; }
+.cost-row.big .cost { color:var(--danger); font-weight:600; }
+.card-head { margin-bottom:6px; }
+.cmd { margin:34px auto 0; display:inline-block; background:var(--quote-bg); color:var(--quote-ink); border-radius:10px; padding:18px 26px; font-size:17px; }
+#notes { position:fixed; left:0; right:0; bottom:0; background:rgba(17,24,39,.94); color:#F8FAFC; font-size:16px; line-height:1.5; padding:16px 28px; display:none; z-index:9; white-space:pre-line; }
+body.shownotes #notes { display:block; }
+body.static * { transition:none !important; }
+
+h1.xl { font-size:74px; line-height:1.04; font-weight:450; letter-spacing:-.04em; margin:0; }
+.center-t { text-align:center; }
+.with.center-t { margin-top:26px; justify-content:center; display:flex; gap:8px; color:var(--text-muted); font-size:15px; align-items:baseline; }
+.with b { color:var(--text-primary); font-size:19px; font-weight:650; }
+.lead { font-size:25px; line-height:1.45; color:var(--text-secondary); margin:30px 0 0; max-width:1150px; }
+.src { font-size:13px; color:var(--text-muted); margin-top:22px; }
+.term { margin-top:36px; font-size:24px; color:var(--text-secondary); }
+.term b { color:var(--accent); font-weight:600; }
+.slide h2 { font-size:48px; line-height:1.08; font-weight:450; letter-spacing:-.03em; margin:0 0 30px; }
+.cap { font-size:36px; line-height:1.18; letter-spacing:-.025em; min-height:86px; transition:opacity .3s; }
+.cap.off { opacity:0; }
+#ds { position:relative; height:520px; margin-top:6px; }
+#tiles { position:absolute; left:0; top:20px; width:1000px; display:grid; grid-template-columns:repeat(4,1fr); gap:18px; transition:opacity .6s, transform .6s; transform-origin:0 0; }
+.tile { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 20px 18px; box-shadow:0 10px 30px rgba(15,23,42,.05); opacity:0; transform:translateY(14px); transition:opacity .45s, transform .45s; }
+.tile.on { opacity:1; transform:none; }
+.tile svg { width:34px; height:34px; display:block; margin-bottom:14px; }
+.tile .nm { font-size:16px; color:var(--text-secondary); }
+.tile .ct { font-size:30px; letter-spacing:-.02em; margin-top:2px; }
+#total { position:absolute; left:1050px; top:30px; opacity:0; transition:opacity .5s; }
+#total span { font-size:96px; letter-spacing:-.05em; line-height:1; display:block; }
+#total small { font-size:24px; color:var(--text-secondary); }
+#fin { position:absolute; left:770px; top:20px; width:620px; opacity:0; transform:translateX(40px); transition:opacity .6s, transform .6s; }
+#fin.on { opacity:1; transform:none; }
+.fin-row { display:flex; justify-content:space-between; font-size:21px; padding:10px 0; border-bottom:1px solid var(--line); }
+.fin-more { font-size:16px; color:var(--text-muted); padding-top:10px; }
+.fin-job { margin-top:18px; font-size:21px; color:var(--accent); }
+#tiles.small { opacity:.25; transform:scale(.52); }
+.grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+.grid4 .card { padding:24px 26px; }
+.grid4 .n { font-size:46px; letter-spacing:-.03em; line-height:1.1; }
+.grid4 p { font-size:19px; line-height:1.35; color:var(--text-secondary); margin:8px 0 0; }
+
+#trk2 { position:absolute; left:770px; top:0; width:620px; opacity:0; transform:translateX(40px); transition:opacity .6s, transform .6s; padding:24px 28px; }
+#trk2.on { opacity:1; transform:none; }
+.tr2 { display:grid; grid-template-columns:62px 1fr 80px auto; gap:4px 12px; font-size:16px; padding:9px 0 8px; border-bottom:1px solid var(--line); align-items:baseline; opacity:0; transition:opacity .4s; }
+.tr2.on { opacity:1; }
+.tr2 b { color:var(--danger); font-weight:600; text-align:right; }
+.tr2 i { grid-column:2 / -1; font-style:normal; font-family:Inter,-apple-system,Helvetica,sans-serif; font-size:15px; color:var(--accent); opacity:0; transition:opacity .4s; }
+.tr2.hint i { opacity:1; }
+#hb { position:absolute; left:0; top:40px; width:700px; opacity:0; transform:translateY(20px); transition:opacity .6s, transform .6s; padding:22px 26px; }
+#hb.on { opacity:1; transform:none; }
+#hb p { font-size:22px; margin:4px 0 12px; }
+.stale { display:inline-block; font-size:14px; font-weight:600; color:var(--danger); border:1.5px solid var(--danger); border-radius:6px; padding:3px 10px; }
+#tiles.gone { opacity:0; }
+.res { display:grid; grid-template-columns:1fr 430px; gap:28px; align-items:start; }
+.res .ranking-card { margin:0; padding:26px 32px 22px; }
+.res .takeaways { margin:0; }
+.res .takeaways li { font-size:18px; }
+.res .takeaways b { font-size:20px; }
+
+.slide { padding-top:100px; }
+.slide > nav.top { position:absolute; left:0; right:0; top:0; margin:0; }
+.slide.mid { justify-content:center; padding-bottom:90px; }
+#tiles.small { opacity:.5; transform:scale(.6); }
+
+.fair { padding:26px 28px; }
+.fair-big b { display:block; font-size:21px; font-weight:550; letter-spacing:-.01em; }
+.fair-big span { display:block; font-size:18px; color:var(--success); margin-top:6px; font-weight:600; }
+.fair-ul { list-style:none; padding:0; margin:18px 0 0; border-top:1px solid var(--line); }
+.fair-ul li { font-size:17px; color:var(--text-secondary); padding:11px 0 11px 26px; border-bottom:1px solid var(--line); position:relative; line-height:1.35; }
+.fair-ul li:last-child { border:0; }
+.fair-ul li::before { content:"✓"; position:absolute; left:2px; color:var(--success); font-weight:700; }
+</style>
+</head>
+<body>
+<div id="stage" class="viz-root">
+
+<section class="slide mid" data-notes="about 70% of operational decisions in a company are never written down. that's the estimate from interloom's ceo, a company working on exactly this problem.
+a new hire still picks it up in a few weeks, just by watching how the team works.">
+  <div class="section-kicker">the problem</div>
+  <h1 class="xl">~70% of operational decisions<br>are never written down</h1>
+  <p class="lead">a new hire still picks them up in a few weeks, just by watching the team.</p>
+</section>
+
+<section class="slide mid" data-notes="you can't automate what nobody wrote down. distyl says it well, it's the institutional expertise, the operational nuance, the judgment in people's heads.
+if agents can pick that up on their own, a whole new part of the economy opens up to them.
+we call the skill tacit knowledge recovery.">
+  <div class="section-kicker">the opportunity</div>
+  <h1 class="xl">you can't automate<br>what nobody wrote down</h1>
+  <p class="lead">the institutional expertise, the operational nuance, the judgment in people's heads.<br>if agents can pick that up on their own, a whole new part of the economy opens up.</p>
+  <div class="term">we call it <b>tacit knowledge recovery</b></div>
+</section>
+
+<section class="slide mid" data-notes="so that's our question. can the best agents today actually do it?
+quick word on why this is new. benchmarks like tau-bench hand the agent the policy doc, so they measure explicit policy following. TheAgentCompany spells the task out in the instruction.
+we never state the policy. the agent has to recover it from precedent: about 300 past decisions in the tracker, with some rules that drifted in october and an outdated doc pointing the other way.
+that's tacit knowledge recovery: inferring the latent rules from how the team actually works. we built a benchmark to measure it.">
+  <h1 class="xl center-t">so, can the best AI agents<br>actually pick it up?</h1>
+  <div class="with center-t"><b>Implicit Action Bench</b><span>·</span>built on <b>Valkyrie</b></div>
+</section>
+
+<section class="slide" data-notes="first we needed a real company. we took redwood inference from onyx's enterprise rag bench, it's open source. half a million docs, slack, email, hubspot, drive, jira, the whole thing.
+then we zoom into the finance team. the job is super basic: log this morning's supplier invoices. any new hire does it in week one.
+and here's what we added: three quarters of the team's invoice history, with 8 unwritten rules. who reviews big invoices, which ones get a PO check, when to pay by card, how to catch a duplicate.
+some of them changed in october, and the handbook in the drive still says the old thing. the agent has to figure it all out from the rows.">
+  <div class="section-kicker">the company</div>
+  <div id="cap4" class="cap"></div>
+  <div id="ds">
+    <div id="tiles"></div>
+    <div id="total"><span class="mono" id="totn">0</span><small>docs</small></div>
+    <div id="trk2" class="card">
+      <div class="section-kicker">invoice tracker · the team's past work</div>
+      <div class="tr2 mono"><span>Oct 14</span><span>Quillmark Fiber</span><span>$10,922</span><b>REVIEW: Tomasz</b><i>big ones go to a reviewer</i></div>
+      <div class="tr2 mono"><span>Oct 19</span><span>Ironwood Hardware</span><span>$3,938</span><b>PO matched</b><i>infra gets checked against the order</i></div>
+      <div class="tr2 mono"><span>Oct 21</span><span>Kellerby Office</span><span>$690</span><b>card</b><i>small office stuff, paid by card since oct</i></div>
+      <div class="tr2 mono"><span>Oct 30</span><span>Fennick Catering</span><span>$1,782</span><b>DUPLICATE</b><i>re-sent invoices don't get paid twice</i></div>
+      <div class="fin-more">+ ~300 more rows over 3 quarters</div>
+    </div>
+    <div id="hb" class="card">
+      <div class="section-kicker">AP_policy.docx · january</div>
+      <p>"invoices over $5,000 are flagged REVIEW"</p>
+      <span class="stale">out of date since october</span>
+    </div>
+    <div id="fin" class="card">
+      <div class="section-kicker">finance team · monday</div>
+      <div class="fin-row mono"><span>Marrow &amp; Finch</span><span>$6,924.18</span></div>
+      <div class="fin-row mono"><span>Ironwood Hardware</span><span>$13,912.48</span></div>
+      <div class="fin-row mono"><span>Kellerby Office Supply</span><span>$612.40</span></div>
+      <div class="fin-more">+ 12 more in the inbox</div>
+      <div class="fin-job">job: log them in the tracker, the way the team does</div>
+    </div>
+  </div>
+  <div class="src">Redwood Inference, from EnterpriseRAG-Bench by Onyx (MIT)</div>
+</section>
+
+<section class="slide" data-notes="here's one real run. every dot is an invoice, red ones got flagged for a manager.
+until october anything over 5k got flagged. then the team moved the line to 10k. no doc says it, you only see it in these 3 invoices.
+monday a 6,924 invoice comes in. the team wouldn't flag it. fable 5.2 does.
+and if we tell fable the rule, it gets it right every time. it can do the job, it just didn't pick it up.">
+  <div class="section-kicker">one real run · claude fable 5.2</div>
+  <div id="cap" class="cap"></div>
+  <svg id="chart" width="1380" height="480" viewBox="0 0 1380 480"></svg>
+  <div class="keys"><span><i style="background:var(--danger)"></i>flagged for a manager to check</span><span><i style="background:#CBD5E1"></i>not flagged</span><span class="muted">the agent only sees these as rows in a spreadsheet</span></div>
+</section>
+
+<section class="slide mid" data-notes="so here are the results. full pass means all 15 invoices right in one go.
+the best model gets there about 1 time in 3. opus and sonnet never do.
+first thing we asked ourselves: is our test broken? so we told every model the 8 unwritten rules straight up. every one of them got the whole morning right, every time.
+same agent for all of them, scored by code against the right answers. so when they fail, they're failing at picking the rules up.
+and the priciest model isn't the best: fable 5.2 costs about 6 times more than gpt-6.1 sol and lands third.">
+  <div class="section-kicker">results · the finance team's monday</div>
+  <h2>they really struggle.<br>and the priciest model isn't the best one</h2>
+  <div class="res">
+    <div class="card ranking-card">
+      <div class="card-head leader-columns"><span>Model</span><span>Full pass</span><span>Cost / task</span></div>
+      <div id="leader-rows"></div>
+      <div class="axis" id="axis"></div>
+      <div class="card-foot"><span>Full pass = all 15 invoices right in one attempt</span><span class="mono">20 attempts / model</span></div>
+    </div>
+    <div class="card fair">
+      <div class="section-kicker">is the test fair?</div>
+      <div class="fair-big"><b>we told every model the 8 unwritten rules</b><span class="mono">→ 25 of 25 mornings fully right</span></div>
+      <ul class="fair-ul">
+        <li>same agent, prompt and tools for every model</li>
+        <li>scored by code: we know the right answer for every invoice</li>
+        <li><span class="mono">125</span> tries on Valkyrie behind this chart</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide mid" data-notes="so that's it. tell agents a company's rules and they nail it. leave them to pick the rules up from past work, like any new hire does, and they fall apart.
+that skill is tacit knowledge recovery, and it's what stands between agents and real work inside companies. now there's a way to measure it.
+it's live, runs on valkyrie, any model. thanks!">
+  <h1 class="xl center-t" style="font-size:60px">tell agents the rules and they nail it.<br>make them pick the rules up and they fall apart</h1>
+  <p class="lead center-t" style="margin:30px auto 0">that's tacit knowledge recovery. we built a way to measure it.</p>
+  <div class="with center-t"><b>implicit-action-bench.vercel.app</b><span>·</span>runs on <b>Valkyrie</b><span>· any model</span></div>
+</section>
+
+</div>
+<div id="notes"></div>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const slides = $$('.slide'); let cur = 0, timers = [];
+const LOGO = `<svg class="logo-mark" width="22" height="22" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="brandg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse"><stop stop-color="#A5B4FC"/><stop offset="1" stop-color="#4F46E5"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#brandg)"/><path d="M18 18h11v28H18z" fill="#fff"/><path d="M34 18h7v8h7v7h-7v13h-7z" fill="#fff" opacity=".96"/><circle cx="47.5" cy="22.5" r="5.5" fill="#fff"/></svg>`;
+slides.forEach((s, k) => {
+  const n = document.createElement('nav'); n.className = 'top';
+  n.innerHTML = `<div class="wrap"><span class="brand">${LOGO}<span>Implicit Action Bench</span></span><span class="pg mono">${k + 1} / ${slides.length}</span></div>`;
+  s.prepend(n);
+});
+function fit() {
+  const s = Math.min(innerWidth / 1600, innerHeight / 900), st = $('#stage');
+  st.style.transform = `scale(${s})`; st.style.left = (innerWidth - 1600 * s) / 2 + 'px'; st.style.top = (innerHeight - 900 * s) / 2 + 'px';
+}
+addEventListener('resize', fit); fit();
+function go(i) {
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((s, k) => s.classList.toggle('on', k === cur));
+  $('#notes').textContent = slides[cur].dataset.notes || '';
+  location.hash = cur + 1;
+  timers.forEach(clearTimeout); timers = [];
+  reset(); reset4(); if (cur === 4) play(); if (cur === 3) play4();
+  $$('.leader-fill').forEach(f => f.style.width = f.closest('.slide') === slides[cur] ? f.dataset.w + '%' : 0);
+}
+addEventListener('keydown', e => {
+  if (['ArrowRight', 'PageDown', ' '].includes(e.key)) go(cur + 1);
+  else if (['ArrowLeft', 'PageUp'].includes(e.key)) go(cur - 1);
+  else if (e.key === 'n') document.body.classList.toggle('shownotes');
+  else if (e.key === 'r') go(cur);
+});
+$('#stage').addEventListener('click', () => go(cur + 1));
+
+/* slide 2: real rows from tasks/morningL2-k3-nohandbook (Q3 + Q4 trackers), invoices over $4k, Aug to Nov.
+   Security and Halverson rows left out (they follow their own habits). New dot = MFL-2026-0350, which
+   Fable 5.2 logged as "REVIEW: Mireille" (run 4d0d826e, morningL2-k3-nohandbook-r5). Told the habits: 5/5. */
+const ROWS = [
+  ['08-10',7141.93,1],['08-11',4755.34,0],['08-12',4633.22,0],['08-12',4303.36,0],['08-13',10978.21,1],['08-20',4450.26,0],
+  ['08-21',4465.58,0],['08-21',5895.46,1],['08-24',11064.2,1],['08-25',4739.04,0],['09-04',4458.61,0],['09-04',4214.79,0],
+  ['09-07',4169.22,0],['09-08',4415.06,0],['09-15',12324.54,1],['09-21',4249.96,0],['09-21',15347.38,1],['09-21',5114.94,1],
+  ['09-24',4280.26,0],['09-25',8417.58,1],['09-25',5800.31,1],
+  ['10-01',4567.63,0],['10-02',4421.87,0],['10-08',4594.17,0],['10-13',4372.49,0],['10-14',10922.26,1],['10-15',6445.28,0],
+  ['10-21',4175.46,0],['10-22',8336.05,0],['10-26',7370.44,0],['10-27',4216.49,0],['10-27',11337.91,1],['10-30',14336.32,1],
+  ['11-02',4272.08,0],['11-09',12421.27,1],['11-10',12453.98,1],['11-12',4044.25,0],
+];
+const W = 1380, H = 480, L = 90, R = 30, T = 16, B = 46, RED = '#C2413B', GREY = '#CBD5E1', IND = '#4F46E5';
+const day = md => { const [m, d] = md.split('-').map(Number); return ({8:0, 9:31, 10:61, 11:92})[m] + d - 1; };
+const X = md => L + day(md) / 108 * (W - L - R), Y = a => T + (16000 - a) / 12000 * (H - T - B);
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, at, parent = $('#chart')) { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); parent.appendChild(e); return e; }
+function txt(x, y, s, at = {}, parent) { const t = el('text', { x, y, ...at }, parent); t.textContent = s; return t; }
+[5000, 10000, 15000].forEach(a => { el('line', { x1: L, x2: W - R, y1: Y(a), y2: Y(a), stroke: '#F1F5F9', 'stroke-width': 2 }); txt(L - 14, Y(a) + 6, '$' + a / 1000 + 'k', { 'text-anchor': 'end', 'font-size': 17, fill: '#94A3B8' }); });
+[['08-01','Aug'],['09-01','Sep'],['10-01','Oct'],['11-01','Nov']].forEach(([d, s]) => txt(X(d) + 6, H - 12, s, { 'font-size': 17, fill: '#94A3B8' }));
+el('line', { x1: X('10-01'), x2: X('10-01'), y1: T, y2: H - B, stroke: '#E5E7EB', 'stroke-dasharray': '4 6' });
+const r5 = el('line', { class: 'rule', x1: L, x2: X('10-01'), y1: Y(5000), y2: Y(5000), stroke: RED, 'stroke-width': 3, 'stroke-dasharray': '10 8' });
+const r10 = el('line', { class: 'rule', x1: X('10-01'), x2: W - R, y1: Y(10000), y2: Y(10000), stroke: RED, 'stroke-width': 3, 'stroke-dasharray': '10 8' });
+const dots = ROWS.map(([d, a, f]) => el('circle', { class: 'dot', cx: X(d), cy: Y(a), r: 9, fill: f ? RED : GREY, 'data-q': day(d) < 61 ? 'old' : 'new', 'data-ev': (day(d) >= 61 && !f && a > 5000) ? 1 : 0 }));
+const ev = dots.filter(d => d.dataset.ev === '1');
+const nd = el('circle', { class: 'dot', cx: X('11-13'), cy: Y(6924.18), r: 15, fill: '#fff', stroke: IND, 'stroke-width': 4 });
+const ndt = txt(X('11-13') - 28, Y(6924.18) + 7, '$6,924', { class: 'dot', 'font-size': 24, 'font-weight': 650, fill: IND, 'text-anchor': 'end' });
+const tag = el('g', { class: 'dot' });
+const tagr = el('rect', { x: X('11-13') - 330, y: Y(6924.18) + 28, width: 310, height: 52, rx: 10, fill: '#111827' }, tag);
+const tagt = txt(X('11-13') - 312, Y(6924.18) + 62, '', { 'font-size': 22, 'font-weight': 600, fill: '#FCA5A5' }, tag);
+const at = (t, f) => timers.push(setTimeout(f, t * 1000));
+function cap(s, id = '#cap') { const c = $(id); c.classList.add('off'); at(.3, () => { c.innerHTML = s; c.classList.remove('off'); }); }
+const show = (e, on) => e.style.opacity = on ? 1 : 0;
+function reset() {
+  dots.forEach(d => show(d, 0)); [r5, r10, nd, ndt, tag].forEach(e => show(e, 0));
+  ev.forEach(d => { d.setAttribute('stroke', 'none'); d.setAttribute('r', 9); });
+  nd.setAttribute('fill', '#fff'); nd.setAttribute('stroke', IND); ndt.setAttribute('fill', IND); $('#cap').innerHTML = '';
+}
+function play() {
+  cap('each dot is an invoice. <span style="color:' + RED + '">red</span> ones got flagged for a manager to check');
+  at(.6, () => dots.filter(d => d.dataset.q === 'old').forEach((d, i) => at(i * .05, () => show(d, 1))));
+  at(3.5, () => { cap('until october, the team flags anything over $5k'); show(r5, 1); });
+  at(7, () => {
+    cap('then the line moves to $10k.<br><span class="muted">no doc says it, you only see it in these 3 invoices</span>');
+    dots.filter(d => d.dataset.q === 'new').forEach((d, i) => at(i * .05, () => show(d, 1)));
+    at(.8, () => show(r10, 1));
+    at(1.8, () => ev.forEach(d => { d.setAttribute('stroke', IND); d.setAttribute('stroke-width', 4); d.setAttribute('r', 12); }));
+  });
+  at(12, () => { cap('monday, a $6,924 invoice comes in'); show(nd, 1); show(ndt, 1); });
+  at(15, () => {
+    cap('the team wouldn\'t flag it. fable 5.2 does');
+    nd.setAttribute('fill', RED); nd.setAttribute('stroke', RED); ndt.setAttribute('fill', RED);
+    tagt.textContent = 'Fable 5.2: REVIEW ✕'; tagr.setAttribute('fill', '#111827'); tagt.setAttribute('fill', '#FCA5A5'); show(tag, 1);
+  });
+  at(19, () => {
+    cap('tell fable the rule and it gets it right every time.<br><span class="muted">it can do the job, it just didn\'t pick it up</span>');
+    tagt.textContent = 'told the rule: 5 of 5 ✓'; tagr.setAttribute('fill', '#ECFDF5'); tagt.setAttribute('fill', '#147A59');
+  });
+}
+
+
+
+
+/* slide 4: the company. counts from the EnterpriseRAG-Bench README (approximate, by source) */
+const ICONS = {"slack": ["M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z", "#4A154B"], "gmail": ["M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z", "#EA4335"], "hubspot": ["M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z", "#FF7A59"], "googledrive": ["M12.01 1.485c-2.082 0-3.754.02-3.743.047.01.02 1.708 3.001 3.774 6.62l3.76 6.574h3.76c2.081 0 3.753-.02 3.742-.047-.005-.02-1.708-3.001-3.775-6.62l-3.76-6.574zm-4.76 1.73a789.828 789.861 0 0 0-3.63 6.319L0 15.868l1.89 3.298 1.885 3.297 3.62-6.335 3.618-6.33-1.88-3.287C8.1 4.704 7.255 3.22 7.25 3.214zm2.259 12.653-.203.348c-.114.198-.96 1.672-1.88 3.287a423.93 423.948 0 0 1-1.698 2.97c-.01.026 3.24.042 7.222.042h7.244l1.796-3.157c.992-1.734 1.85-3.23 1.906-3.323l.104-.167h-7.249z", "#1FA463"], "linear": ["M2.886 4.18A11.982 11.982 0 0 1 11.99 0C18.624 0 24 5.376 24 12.009c0 3.64-1.62 6.903-4.18 9.105L2.887 4.18ZM1.817 5.626l16.556 16.556c-.524.33-1.075.62-1.65.866L.951 7.277c.247-.575.537-1.126.866-1.65ZM.322 9.163l14.515 14.515c-.71.172-1.443.282-2.195.322L0 11.358a12 12 0 0 1 .322-2.195Zm-.17 4.862 9.823 9.824a12.02 12.02 0 0 1-9.824-9.824Z", "#5E6AD2"], "github": ["M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12", "#181717"], "jira": ["M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.001 1.001 0 0 0 23.013 0Z", "#0052CC"], "confluence": ["M.87 18.257c-.248.382-.53.875-.763 1.245a.764.764 0 0 0 .255 1.04l4.965 3.054a.764.764 0 0 0 1.058-.26c.199-.332.454-.763.733-1.221 1.967-3.247 3.945-2.853 7.508-1.146l4.957 2.337a.764.764 0 0 0 1.028-.382l2.364-5.346a.764.764 0 0 0-.382-1 599.851 599.851 0 0 1-4.965-2.361C10.911 10.97 5.224 11.185.87 18.257zM23.131 5.743c.249-.405.531-.875.764-1.25a.764.764 0 0 0-.256-1.034L18.675.404a.764.764 0 0 0-1.058.26c-.195.335-.451.763-.734 1.225-1.966 3.246-3.945 2.85-7.508 1.146L4.437.694a.764.764 0 0 0-1.027.382L1.046 6.422a.764.764 0 0 0 .382 1c1.039.49 3.105 1.467 4.965 2.361 6.698 3.246 12.392 3.029 16.738-4.04z", "#172B4D"]};
+const SRC = [['slack','Slack',275000],['gmail','Gmail',120000],['linear','Linear',35000],['googledrive','Google Drive',25000],['hubspot','HubSpot',15000],['github','GitHub',8000],['jira','Jira',6000],['confluence','Confluence',5000]];
+$('#tiles').innerHTML = SRC.map(([k, n]) => `<div class="tile"><svg viewBox="0 0 24 24"><path d="${ICONS[k][0]}" fill="${ICONS[k][1]}"/></svg><div class="nm">${n}</div><div class="ct mono" data-n="0">0</div></div>`).join('');
+const fmt = v => v.toLocaleString('en-US');
+function count(el, to, dur) { const t0 = performance.now(); const step = () => { const p = Math.min(1, (performance.now() - t0) / dur); el.textContent = fmt(Math.round(to * (1 - Math.pow(1 - p, 3)))); if (p < 1 && cur === 3) requestAnimationFrame(step); }; step(); }
+function reset4() { $('#trk2').classList.remove('on'); $('#hb').classList.remove('on'); $$('.tr2').forEach(r => r.classList.remove('on', 'hint')); $('#tiles').classList.remove('gone'); $$('.tile').forEach(t => { t.classList.remove('on'); t.querySelector('.ct').textContent = '0'; }); $('#tiles').classList.remove('small'); $('#total').style.opacity = 0; $('#totn').textContent = '0'; $('#fin').classList.remove('on'); $('#cap4').innerHTML = ''; }
+function play4() {
+  cap('meet redwood inference. a fake AI company with a very real mess', '#cap4');
+  $$('.tile').forEach((t, i) => at(.5 + i * .3, () => { t.classList.add('on'); count(t.querySelector('.ct'), SRC[i][2], 1400); }));
+  at(3.4, () => { $('#total').style.opacity = 1; count($('#totn'), 500000, 1800); });
+  at(6.5, () => cap('half a million docs. slack, email, hubspot, drive, the whole thing', '#cap4'));
+  at(10, () => { cap('we zoom into the finance team. the job is super basic', '#cap4'); $('#tiles').classList.add('small'); $('#total').style.opacity = 0; $('#fin').classList.add('on'); });
+  at(13.5, () => cap('log this morning\'s invoices. any new hire does it in week one', '#cap4'));
+  at(17, () => { cap('then we added the team\'s past work. 3 quarters of invoices, with 8 unwritten rules inside', '#cap4'); $('#fin').classList.remove('on'); $('#tiles').classList.remove('small'); $('#tiles').classList.add('gone'); $('#trk2').classList.add('on'); $$('.tr2').forEach((r, i) => at(.4 + i * .5, () => r.classList.add('on'))); });
+  at(20.5, () => $$('.tr2').forEach((r, i) => at(i * .8, () => r.classList.add('hint'))));
+  at(25, () => { cap('some changed in october. the handbook in the drive still says the old thing', '#cap4'); $('#hb').classList.add('on'); });
+  at(29, () => cap('the agent has to figure it all out from the rows, like a new hire would', '#cap4'));
+}
+if (location.search.includes('static')) { document.body.classList.add('static'); }
+
+/* results slide: same markup as the live page's leaderboard (renderPrecedent), data from its export */
+const PICONS = {"Anthropic": "<svg role=\"img\" aria-hidden=\"true\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Anthropic<\/title><path d=\"M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z\"/><\/svg>\n", "OpenAI": "<svg role=\"img\" aria-hidden=\"true\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>OpenAI<\/title><path d=\"M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z\"/><\/svg>\n", "Google": "<svg role=\"img\" aria-hidden=\"true\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Google Gemini<\/title><path d=\"M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81\"/><\/svg>\n"};
+const PBM = [{"name": "Claude Fable 5.2", "provider": "Anthropic", "cost_per_attempt": 0.9059056531234292, "main": {"n": 20, "k": 2, "pass": 0.1, "pass_lo": 0.027865893984153206, "pass_hi": 0.30103820641179335, "mean": 0.7633449999999999, "mean_lo": 0.6566799999999999, "mean_hi": 0.850015}, "told": {"n": 5, "k": 5, "pass": 1.0, "pass_lo": 0.5655085052479191, "pass_hi": 1.0, "mean": 1.0, "mean_lo": 1.0, "mean_hi": 1.0}}, {"name": "Claude Opus 5.5", "provider": "Anthropic", "cost_per_attempt": 0.6454115000577108, "main": {"n": 20, "k": 0, "pass": 0.0, "pass_lo": 0.0, "pass_hi": 0.16113012549493322, "mean": 0.5866500000000001, "mean_lo": 0.54999, "mean_hi": 0.6266399999999999}, "told": {"n": 5, "k": 5, "pass": 1.0, "pass_lo": 0.5655085052479191, "pass_hi": 1.0, "mean": 1.0, "mean_lo": 1.0, "mean_hi": 1.0}}, {"name": "Claude Sonnet 5.5", "provider": "Anthropic", "cost_per_attempt": 0.12650592239111574, "main": {"n": 20, "k": 0, "pass": 0.0, "pass_lo": 0.0, "pass_hi": 0.16113012549493322, "mean": 0.3766750000000001, "mean_lo": 0.32334000000000007, "mean_hi": 0.4333400000000001}, "told": {"n": 5, "k": 5, "pass": 1.0, "pass_lo": 0.5655085052479191, "pass_hi": 1.0, "mean": 1.0, "mean_lo": 1.0, "mean_hi": 1.0}}, {"name": "GPT-6.1 Sol", "provider": "OpenAI", "cost_per_attempt": 0.16273373060820495, "main": {"n": 20, "k": 7, "pass": 0.35, "pass_lo": 0.18118954786794464, "pass_hi": 0.5671494897805354, "mean": 0.826685, "mean_lo": 0.7633550000000001, "mean_hi": 0.890015}, "told": {"n": 5, "k": 5, "pass": 1.0, "pass_lo": 0.5655085052479191, "pass_hi": 1.0, "mean": 1.0, "mean_lo": 1.0, "mean_hi": 1.0}}, {"name": "GPT-6 Astra", "provider": "OpenAI", "cost_per_attempt": 0.8404587182708809, "main": {"n": 20, "k": 3, "pass": 0.15, "pass_lo": 0.05236779195949584, "pass_hi": 0.36042329588695743, "mean": 0.7566850000000002, "mean_lo": 0.6966850000000002, "mean_hi": 0.820015}, "told": {"n": 5, "k": 5, "pass": 1.0, "pass_lo": 0.5655085052479191, "pass_hi": 1.0, "mean": 1.0, "mean_lo": 1.0, "mean_hi": 1.0}}];
+const pct = v => `${(v * 100).toFixed(1)}%`;
+const TOKEN = {Anthropic:'anthropic', OpenAI:'openai', Google:'google'};
+$('#leader-rows').innerHTML = [...PBM].sort((a, b) => b.main.pass - a.main.pass || b.main.mean - a.main.mean).map(m => `<div class="leader-row">
+  <div class="leader-top"><span class="model-name">${PICONS[m.provider] || ''}${m.name}<span class="model-tag">${m.provider}</span></span><span class="model-score mono">${pct(m.main.pass)}<small>${pct(m.main.pass_lo)}–${pct(m.main.pass_hi)}</small></span><span class="model-metric mono">$${m.cost_per_attempt.toFixed(2)}</span></div>
+  <div class="leader-bar"><div class="leader-fill" data-w="${Math.max(m.main.pass * 100, .8)}" style="background:linear-gradient(90deg,var(--${TOKEN[m.provider]}-a),var(--${TOKEN[m.provider]}-b))"></div></div></div>`).join('');
+$('#axis').innerHTML = [0,20,40,60,80,100].map(v => `<span style="left:${v}%">${v}%</span>`).join('');
+
+go((parseInt(location.hash.slice(1)) || 1) - 1);
+
+</script>
+</body>
+</html>

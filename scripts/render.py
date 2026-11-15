@@ -566,6 +566,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
 <body>
 <nav class="top"><div class="wrap">
   <a class="brand" href="#"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="brandg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse"><stop stop-color="#A5B4FC"/><stop offset="1" stop-color="#4F46E5"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#brandg)"/><path d="M18 18h11v28H18z" fill="#fff"/><path d="M34 18h7v8h7v7h-7v13h-7z" fill="#fff" opacity=".96"/><circle cx="47.5" cy="22.5" r="5.5" fill="#fff"/></svg><span>Implicit Action Bench</span></a>
+  <a class="navright" href="/demo">Demo deck</a>
 </div></nav>
 <main class="wrap">
 
