@@ -512,7 +512,7 @@ function renderTaskLibrary() {
 
 function renderTrajectories() {
   document.getElementById("trajectory-list").innerHTML = DATA.trajectories.map(example => `<article class="trajectory">
-    <div><div class="eyebrow">${escapeHtml(example.classification.replaceAll("_", " "))}</div><h3>${escapeHtml(example.task_id.replace("redwood-", "").replaceAll("-", " "))}</h3><span class="score-pill ${scoreClass(example.score)} mono">${percent(example.score)}</span></div>
+    <div><div class="eyebrow">${escapeHtml(example.classification.replaceAll("_", " "))}</div><h3>${escapeHtml(example.task_id.replace("redwood-", "").replaceAll("-", " "))}</h3></div>
     <div><p><b>Observed.</b> ${escapeHtml(example.observed)}</p><p><b>Why it matters.</b> ${escapeHtml(example.why_interesting)}</p><code>${escapeHtml(example.trajectory)}</code></div>
   </article>`).join("");
 }
