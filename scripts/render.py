@@ -565,7 +565,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
 </head>
 <body>
 <nav class="top"><div class="wrap">
-  <a class="brand" href="#"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#4f46e5"/><path d="M8 22h16" stroke="#c7d2fe" stroke-width="2.4" stroke-linecap="round"/><path d="M8 16h9" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M8 10h5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="22" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M24.4 14.4l2.6 2.6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span>Implicit Action Bench</span></a>
+  <a class="brand" href="#"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="brandg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse"><stop stop-color="#A5B4FC"/><stop offset="1" stop-color="#4F46E5"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#brandg)"/><path d="M18 18h11v28H18z" fill="#fff"/><path d="M34 18h7v8h7v7h-7v13h-7z" fill="#fff" opacity=".96"/><circle cx="47.5" cy="22.5" r="5.5" fill="#fff"/></svg><span>Implicit Action Bench</span></a>
 </div></nav>
 <main class="wrap">
 
