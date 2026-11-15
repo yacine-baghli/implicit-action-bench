@@ -47,21 +47,18 @@ nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 .stat .value { font-size:44px; font-weight:400; letter-spacing:-.03em; line-height:1.15; }
 .stat .key { color:var(--text-muted); font-size:17px; }
 .leaderboard { display:block; padding-bottom:110px; }
-.leaderboard-overview { display:grid; grid-template-columns:minmax(260px,.68fr) minmax(560px,1.32fr); gap:56px; align-items:start; margin-bottom:24px; }
+.leaderboard-intro { display:grid; grid-template-columns:minmax(250px,.72fr) minmax(0,1.28fr); gap:80px; align-items:start; margin-bottom:34px; }
 .section-kicker { color:var(--accent); font-size:11px; font-weight:650; text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px; }
-.leaderboard-title { padding-top:14px; }
-.leaderboard-title h2 { font-size:38px; line-height:1.1; letter-spacing:-.03em; margin-bottom:0; max-width:390px; }
+.leaderboard-intro h2 { font-size:34px; line-height:1.13; letter-spacing:-.025em; margin-bottom:0; }
 .leaderboard-body { display:grid; grid-template-columns:1fr 1fr; gap:26px 42px; }
 .leaderboard-body p { color:var(--text-secondary); margin:0; }
 .leaderboard-body .chips { grid-column:1 / -1; margin-top:0; }
-.research-context { max-width:960px; margin:30px auto 0; padding:28px 30px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2); }
 h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .chips { display:flex; gap:8px; margin-top:26px; flex-wrap:wrap; }
 .chips a { font-size:13px; background:var(--surface-2); border-radius:6px; padding:6px 12px; text-decoration:none; }
 .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:32px 38px 34px; box-shadow:0 14px 44px rgba(15,23,42,.055); }
-.ranking-card { padding:24px 28px 26px; }
-.score-overview-title { font-size:16px; font-weight:600; margin:0 0 18px; letter-spacing:-.01em; }
-.plot-card { max-width:832px; margin:0 auto; }
+.ranking-card { margin-bottom:24px; }
+.plot-card { max-width:1040px; margin:0 auto; }
 .control-bar { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding-bottom:22px; margin-bottom:8px; border-bottom:1px solid var(--line); }
 .control-group > span { display:block; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.07em; margin-bottom:7px; }
 .segmented { display:inline-flex; padding:3px; gap:2px; border-radius:7px; background:var(--surface-2); border:1px solid var(--line); }
@@ -97,14 +94,14 @@ h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .plot-stage { position:relative; padding-left:20px; }
 .plot-axis-title-y { position:absolute; left:-26px; top:50%; transform:rotate(-90deg) translateX(-50%); transform-origin:left top; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; white-space:nowrap; }
 .plot-axis-title-x { color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; text-align:center; margin:40px 0 0; }
-.efficiency-plot { position:relative; height:312px; margin:0 20px 0 52px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); background-image:linear-gradient(to top,var(--line) 1px,transparent 1px),linear-gradient(to right,var(--line) 1px,transparent 1px); background-size:100% 25%,20% 100%; }
+.efficiency-plot { position:relative; height:390px; margin:0 24px 0 56px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); background-image:linear-gradient(to top,var(--line) 1px,transparent 1px),linear-gradient(to right,var(--line) 1px,transparent 1px); background-size:100% 25%,20% 100%; }
 .plot-y-label { position:absolute; left:-50px; color:var(--text-muted); font-size:11px; transform:translateY(50%); }
 .plot-x-label { position:absolute; bottom:-30px; color:var(--text-muted); font-size:11px; transform:translateX(-50%); }
 .plot-point { position:absolute; transform:translate(-50%,50%); display:flex; align-items:center; gap:10px; z-index:2; cursor:default; transition:z-index .15s ease; }
 .plot-point:hover,.plot-point:focus-visible { z-index:4; outline:none; }
-.plot-logo { width:44px; height:44px; border:1px solid var(--line); background:var(--card); border-radius:50%; display:grid; place-items:center; box-shadow:0 8px 24px rgba(0,0,0,.12); transition:transform .18s ease,box-shadow .18s ease; }
+.plot-logo { width:50px; height:50px; border:1px solid var(--line); background:var(--card); border-radius:50%; display:grid; place-items:center; box-shadow:0 8px 24px rgba(0,0,0,.14); transition:transform .18s ease,box-shadow .18s ease; }
 .plot-point:hover .plot-logo,.plot-point:focus-visible .plot-logo { transform:scale(1.14); box-shadow:0 12px 30px rgba(0,0,0,.20); }
-.plot-logo svg { width:24px; height:24px; fill:currentColor; }
+.plot-logo svg { width:27px; height:27px; fill:currentColor; }
 .provider-anthropic .plot-logo { color:var(--anthropic-c); border-color:color-mix(in srgb,var(--anthropic-c) 32%,var(--line)); }
 .provider-openai .plot-logo { color:var(--openai-c); border-color:color-mix(in srgb,var(--openai-c) 32%,var(--line)); }
 .provider-google .plot-logo { color:var(--google-c); border-color:color-mix(in srgb,var(--google-c) 32%,var(--line)); }
@@ -179,7 +176,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
 [hidden] { display:none !important; }
 @media (max-width:920px) {
   .takeaway-layout { grid-template-columns:1fr; }
-  .leaderboard-overview { grid-template-columns:1fr; gap:20px; }
+  .leaderboard-intro { grid-template-columns:1fr; gap:20px; }
   .leaderboard-body { grid-template-columns:1fr; gap:14px; }
   .leaderboard-body .chips { grid-column:auto; }
   .stats { grid-template-columns:repeat(2,1fr); row-gap:24px; }
@@ -188,20 +185,20 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   .navlinks { display:none; }
   .wrap { padding:0 22px; }
   .task-list { grid-template-columns:1fr; }
-  .efficiency-plot { height:300px; margin-right:6px; }
+  .efficiency-plot { height:360px; margin-right:6px; }
 }
 @media (max-width:620px) {
   body { width:100vw; max-width:100vw; overflow-x:hidden; }
   .wrap { width:100vw; max-width:100vw; }
-  .hero,.stats,.leaderboard,.leaderboard-overview,.leaderboard-body,.card,.plot-shell { width:100%; max-width:100%; min-width:0; }
-  .leaderboard-overview > *,.leaderboard-body > * { min-width:0; }
+  .hero,.stats,.leaderboard,.leaderboard-intro,.leaderboard-body,.card,.plot-shell { width:100%; max-width:100%; min-width:0; }
+  .leaderboard-intro > *,.leaderboard-body > * { min-width:0; }
   .navright { display:none; }
   .stats { grid-template-columns:1fr 1fr; }
   .stat .value { font-size:34px; }
   .stat .key { font-size:14px; }
   .hero h1 { font-size:32px; overflow-wrap:anywhere; }
   .hero h1 br { display:none; }
-  .leaderboard-title h2 { font-size:30px; overflow-wrap:anywhere; }
+  .leaderboard-intro h2 { font-size:30px; overflow-wrap:anywhere; }
   .trial-grid { grid-template-columns:1fr; }
   .trajectory { grid-template-columns:1fr; gap:10px; }
   .table-scroll { overflow-x:auto; }
@@ -215,7 +212,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   .plot-head { align-items:flex-start; flex-direction:column; }
   .plot-stage { padding-left:0; }
   .plot-axis-title-y { display:none; }
-  .efficiency-plot { margin-left:38px; height:260px; }
+  .efficiency-plot { margin-left:38px; height:300px; }
   .plot-label { display:none; }
   .plot-logo { width:42px; height:42px; }
   .plot-logo svg { width:23px; height:23px; }
@@ -242,19 +239,23 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
   <section class="stats"><div class="stat"><div class="value mono">3</div><div class="key">frontier models</div></div><div class="stat"><div class="value mono">24</div><div class="key">attempts / model</div></div><div class="stat"><div class="value mono">$0.53</div><div class="key">lowest est. cost / task</div></div><div class="stat"><div class="value mono">80.0%</div><div class="key">leading official score</div></div></section>
 
   <section class="leaderboard" id="leaderboard">
-    <div class="leaderboard-overview">
-      <div class="leaderboard-title"><div class="section-kicker">Enterprise action intelligence</div><h2>The implicit-action-bench leaderboard</h2></div>
-      <div class="card ranking-card">
-        <h3 class="score-overview-title">Score overview</h3>
-        <div class="control-bar">
-          <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="raw" aria-pressed="true">Official score</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
-          <div class="control-group"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
-        </div>
-        <div class="card-head leader-columns"><span>Model</span><span id="score-head">Official score</span><span id="metric-head">Cost / task</span></div>
-        <div id="leader-rows"></div>
-        <div class="axis" id="axis"></div>
-        <div class="card-foot"><span>Official and action-recorded rankings</span><span class="mono">24 attempts / model</span></div>
+    <div class="leaderboard-intro">
+      <div><div class="section-kicker">Enterprise action intelligence</div><h2>The implicit-action-bench leaderboard</h2></div>
+      <div class="leaderboard-body">
+        <p>Eight high-context tasks are grounded in the Redwood Inference world from EnterpriseRAG-Bench. Each sandbox contains at least 120 authentic records plus current-decision overlays, requiring models to reconstruct the controlling rule from a realistic evidence neighborhood.</p>
+        <p>The official score measures end-to-end success: evidence discovery, constraint resolution, and useful action. The action-recorded view offers a complementary lens on decision quality once a model commits to an action.</p>
+        <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
       </div>
+    </div>
+    <div class="card ranking-card">
+      <div class="control-bar">
+        <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="raw" aria-pressed="true">Official score</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
+        <div class="control-group"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
+      </div>
+      <div class="card-head leader-columns"><span>Model</span><span id="score-head">Official score</span><span id="metric-head">Cost / task</span></div>
+      <div id="leader-rows"></div>
+      <div class="axis" id="axis"></div>
+      <div class="card-foot"><span>Official and action-recorded rankings</span><span class="mono">24 attempts / model</span></div>
     </div>
     <div class="card plot-card">
       <div class="plot-shell">
@@ -264,11 +265,6 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
         <div class="plot-note" id="plot-note"></div>
       </div>
       <div class="card-foot"><span>3 trials × 8 tasks × 3 frontier models</span><span class="mono">release 1.0</span></div>
-    </div>
-    <div class="research-context leaderboard-body">
-      <p>Eight high-context tasks are grounded in the Redwood Inference world from EnterpriseRAG-Bench. Each sandbox contains at least 120 authentic records plus current-decision overlays, requiring models to reconstruct the controlling rule from a realistic evidence neighborhood.</p>
-      <p>The official score measures end-to-end success: evidence discovery, constraint resolution, and useful action. The action-recorded view offers a complementary lens on decision quality once a model commits to an action.</p>
-      <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
     </div>
   </section>
 
