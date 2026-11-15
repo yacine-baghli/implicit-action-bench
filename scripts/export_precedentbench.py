@@ -5,7 +5,7 @@
 
 Reads PrecedentBench's per-try results (morning_v3.json) and writes
 results/precedentbench/summary.json. Only the hardest honest setting is shown:
-8 habits (with and without last year's policy doc), 3 examples per habit,
+8 habits (with and without an old policy doc from January), 3 examples per habit,
 whole morning right (every one of 15 invoices). Mean score = share of invoices right.
 The told control (all 8 habits stated in the instruction) is the fairness line.
 
@@ -184,7 +184,7 @@ def main() -> None:
         "jobs": {
             "invoices": {
                 "title": "Supplier invoices",
-                "setting": "8 habits (with and without last year's policy doc), 3 examples per habit",
+                "setting": "8 habits (with and without an old policy doc from January), 3 examples per habit",
                 "metric": "whole morning right: all 15 invoices",
                 "models": models,
                 "told": {"k": told_k, "n": told_n},
