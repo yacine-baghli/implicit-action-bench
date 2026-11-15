@@ -8,30 +8,30 @@
 <style>
 .viz-root {
   color-scheme: light;
-  --surface-1:#fff; --surface-2:#f5f5f4; --card:#fff; --line:#e7e7e4; --track:#f1f1f0;
-  --text-primary:#0b0b0b; --text-secondary:#4b4b48; --text-muted:#8b8b87; --accent:#4f46e5;
-  --anthropic-a:#f6a879; --anthropic-b:#e8672f; --anthropic-c:#b9471a;
-  --openai-a:#7fd6b5; --openai-b:#16a06e; --openai-c:#0c7650;
-  --google-a:#a6c8ff; --google-b:#6d72e8; --google-c:#3f46b8;
-  --success:#177245; --warning:#a25f00; --danger:#b42318; --quote-bg:#0f0f0e; --quote-ink:#f5f5f4;
+  --surface-1:#FBF8F2; --surface-2:#F4EDE0; --card:#FFFDF8; --line:#DED6C8; --track:#EDE4D3;
+  --text-primary:#14213D; --text-secondary:#3E4A64; --text-muted:#6B7488; --accent:#F2523F;
+  --anthropic-a:#FFB3AA; --anthropic-b:#F2523F; --anthropic-c:#C2412F;
+  --openai-a:#8ED4C7; --openai-b:#2D927E; --openai-c:#176859;
+  --google-a:#AABCE0; --google-b:#5D78B2; --google-c:#304F8C;
+  --success:#176859; --warning:#A85B14; --danger:#B64034; --quote-bg:#14213D; --quote-ink:#F4EDE0;
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])).viz-root {
-    color-scheme:dark; --surface-1:#121211; --surface-2:#1c1c1a; --card:#171716; --line:#2c2c29; --track:#262624;
-    --text-primary:#f0efec; --text-secondary:#c3c2b9; --text-muted:#8d8c85; --accent:#7c74f0;
-    --anthropic-a:#a8501f; --anthropic-b:#e0632b; --anthropic-c:#f39a6a;
-    --openai-a:#0f6b4a; --openai-b:#1aa874; --openai-c:#5fd3a5;
-    --google-a:#42477e; --google-b:#7d83ef; --google-c:#aeb2ff;
-    --success:#65c995; --warning:#f0b45e; --danger:#ff8f87; --quote-bg:#f0efec; --quote-ink:#121211;
+    color-scheme:dark; --surface-1:#0A1226; --surface-2:#0F1A33; --card:#14213D; --line:#33415E; --track:#1D2A46;
+    --text-primary:#F4EDE0; --text-secondary:#D5CDBF; --text-muted:#9AA3B5; --accent:#FF6B5B;
+    --anthropic-a:#7A3029; --anthropic-b:#FF6B5B; --anthropic-c:#FFB3AA;
+    --openai-a:#185447; --openai-b:#42A994; --openai-c:#8ED4C7;
+    --google-a:#30405F; --google-b:#738FC8; --google-c:#B9C7E4;
+    --success:#8ED4C7; --warning:#F0B46A; --danger:#FF9A90; --quote-bg:#F4EDE0; --quote-ink:#14213D;
   }
 }
 :root[data-theme="dark"].viz-root {
-  color-scheme:dark; --surface-1:#121211; --surface-2:#1c1c1a; --card:#171716; --line:#2c2c29; --track:#262624;
-  --text-primary:#f0efec; --text-secondary:#c3c2b9; --text-muted:#8d8c85; --accent:#7c74f0;
-  --anthropic-a:#a8501f; --anthropic-b:#e0632b; --anthropic-c:#f39a6a;
-  --openai-a:#0f6b4a; --openai-b:#1aa874; --openai-c:#5fd3a5;
-  --google-a:#42477e; --google-b:#7d83ef; --google-c:#aeb2ff;
-  --success:#65c995; --warning:#f0b45e; --danger:#ff8f87; --quote-bg:#f0efec; --quote-ink:#121211;
+  color-scheme:dark; --surface-1:#0A1226; --surface-2:#0F1A33; --card:#14213D; --line:#33415E; --track:#1D2A46;
+  --text-primary:#F4EDE0; --text-secondary:#D5CDBF; --text-muted:#9AA3B5; --accent:#FF6B5B;
+  --anthropic-a:#7A3029; --anthropic-b:#FF6B5B; --anthropic-c:#FFB3AA;
+  --openai-a:#185447; --openai-b:#42A994; --openai-c:#8ED4C7;
+  --google-a:#30405F; --google-b:#738FC8; --google-c:#B9C7E4;
+  --success:#8ED4C7; --warning:#F0B46A; --danger:#FF9A90; --quote-bg:#F4EDE0; --quote-ink:#14213D;
 }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; overflow-x:hidden; }
@@ -42,7 +42,7 @@ a { color:inherit; }
 nav.top { border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; background:color-mix(in srgb,var(--surface-1) 92%,transparent); backdrop-filter:blur(12px); }
 nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 .brand { display:flex; align-items:center; gap:9px; font-weight:650; font-size:16px; letter-spacing:-.01em; text-decoration:none; }
-.brand-mark { width:22px; height:22px; border-radius:6px; background:linear-gradient(135deg,#8b85f5,var(--accent)); display:inline-block; }
+.brand-mark { width:22px; height:22px; border-radius:6px; background:linear-gradient(135deg,#FFB3AA,var(--accent)); display:inline-block; box-shadow:inset 0 0 0 1px rgba(20,33,61,.08); }
 .navlinks { display:flex; gap:30px; font-size:14px; }
 .navlinks a { text-decoration:none; }
 .navlinks a:hover { color:var(--accent); }
@@ -52,12 +52,13 @@ nav.top .wrap { display:flex; align-items:center; min-height:64px; gap:36px; }
 .crumbs span { margin:0 7px; }
 .hero { text-align:center; padding:54px 0 44px; }
 .hero h1 { font-size:56px; line-height:1.06; font-weight:450; letter-spacing:-.035em; margin:0 0 18px; }
-.hero .with { color:var(--text-muted); font-size:13px; margin-bottom:22px; display:flex; gap:8px; justify-content:center; align-items:baseline; }
+.hero .with { color:var(--text-muted); font-size:13px; margin-bottom:22px; display:flex; gap:8px; justify-content:center; align-items:baseline; flex-wrap:wrap; }
 .hero .with b { color:var(--text-primary); font-size:17px; font-weight:650; letter-spacing:-.02em; }
+.hero .with .team-credit { font-size:11px; letter-spacing:.01em; }
 .hero p { color:var(--text-secondary); max-width:760px; margin:0 auto 26px; font-size:16px; }
 .buttons { display:flex; gap:10px; justify-content:center; }
 .button { font:inherit; font-size:13px; padding:9px 18px; border-radius:6px; text-decoration:none; background:var(--surface-2); border:1px solid var(--line); }
-.button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+.button.primary { background:var(--accent); color:#14213D; border-color:var(--accent); font-weight:550; }
 .stats { display:grid; grid-template-columns:repeat(4,1fr); padding:28px 0 82px; }
 .stat { text-align:center; border-left:1px solid var(--line); padding:6px 0; }
 .stat:first-child { border-left:0; }
@@ -246,7 +247,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
 
   <section class="hero">
     <h1>The benchmark for actions shaped<br>by rules nobody states.</h1>
-    <div class="with">Built on <b>Valkyrie</b> · evaluated with <b>mini-SWE-agent</b></div>
+    <div class="with">Built on <b>Valkyrie</b><span>·</span><b>mini-SWE-agent</b><span class="team-credit">· by Yaya &amp; Vivi team</span></div>
     <p>implicit-action-bench measures whether frontier agents can recover company-specific constraints from realistic enterprise evidence and take the right consequential action.</p>
     <div class="buttons"><a class="button primary" href="#leaderboard">Explore leaderboard</a><a class="button" href="#method">Read methodology</a></div>
   </section>
