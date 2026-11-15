@@ -30,7 +30,9 @@
       "mean_lo": 1.0,
       "mean_hi": 1.0
      },
-     "mean_agent_minutes": 2.5251666666666663
+     "mean_agent_minutes": 2.5251666666666663,
+     "cost_per_attempt": 0.9059056531234292,
+     "cost_type": "estimated"
     },
     {
      "id": "anthropic/claude-opus-5-5",
@@ -56,7 +58,9 @@
       "mean_lo": 1.0,
       "mean_hi": 1.0
      },
-     "mean_agent_minutes": 1.3210833333333334
+     "mean_agent_minutes": 1.3210833333333334,
+     "cost_per_attempt": 0.6454115000577108,
+     "cost_type": "estimated"
     },
     {
      "id": "anthropic/claude-sonnet-5-5",
@@ -82,7 +86,9 @@
       "mean_lo": 1.0,
       "mean_hi": 1.0
      },
-     "mean_agent_minutes": 0.7115000000000001
+     "mean_agent_minutes": 0.7115000000000001,
+     "cost_per_attempt": 0.12650592239111574,
+     "cost_type": "estimated"
     },
     {
      "id": "openai/gpt-6.1-sol",
@@ -108,7 +114,9 @@
       "mean_lo": 1.0,
       "mean_hi": 1.0
      },
-     "mean_agent_minutes": 0.8987499999999999
+     "mean_agent_minutes": 0.8987499999999999,
+     "cost_per_attempt": 0.16273373060820495,
+     "cost_type": "estimated"
     },
     {
      "id": "openai/gpt-6-astra",
@@ -134,7 +142,9 @@
       "mean_lo": 1.0,
       "mean_hi": 1.0
      },
-     "mean_agent_minutes": 1.1427500000000004
+     "mean_agent_minutes": 1.1427500000000004,
+     "cost_per_attempt": 0.8404587182708809,
+     "cost_type": "estimated"
     }
    ],
    "told": {

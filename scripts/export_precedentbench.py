@@ -123,6 +123,27 @@ def agent_seconds(rows: list[dict]) -> dict[str, float]:
     return cache
 
 
+def effective_rates() -> dict[str, float]:
+    """Estimated $ per 1M tokens per model, one method for everyone.
+
+    Track 1 recorded real spend and token counts per model (provider prompt caching included).
+    Effective rate = cost / (prompt + completion tokens). Sonnet 5.5 isn't in track 1, so it is
+    scaled from Opus 5.5 by the list-price ratio (Sonnet is half Opus on input and output).
+    New models (e.g. Gemini) get a rate here as soon as track 1 has their cost.
+    """
+    summary = json.loads((Path(__file__).resolve().parent.parent / "results" / "comparison-v3" / "summary.json").read_text())
+    rates = {}
+    for mid, r in summary["models"].items():
+        u = r.get("usage") or {}
+        cost = r.get("estimated_list_cost_usd") or u.get("reported_cost_usd") or 0
+        toks = (u.get("prompt_tokens") or 0) + (u.get("completion_tokens") or 0)
+        if cost and toks:
+            rates[mid] = cost / toks * 1e6
+    if "anthropic/claude-opus-5-5" in rates:
+        rates.setdefault("anthropic/claude-sonnet-5-5", rates["anthropic/claude-opus-5-5"] / 2)
+    return rates
+
+
 def level_pass(rows: list[dict], versions_pred) -> dict:
     xs = [r for r in rows if versions_pred(r)]
     k = sum(r["reward"] == 1 for r in xs)
@@ -140,10 +161,18 @@ def main() -> None:
         models.append({"id": mid, "name": name, "provider": provider,
                        "main": stats(main_rows), "told": stats(told_rows), "_rows": main_rows})
     timing = agent_seconds([r for m in models for r in m["_rows"]])
+    rates = effective_rates()
+    tokens = json.loads((OUT_DIR / "token_cache.json").read_text()) if (OUT_DIR / "token_cache.json").exists() else {}
     for m in models:
-        secs = [timing.get(f"{r['run_id']}|{r['task']}") for r in m.pop("_rows")]
+        rows_m = m.pop("_rows")
+        secs = [timing.get(f"{r['run_id']}|{r['task']}") for r in rows_m]
         secs = [x for x in secs if x is not None]
         m["mean_agent_minutes"] = sum(secs) / len(secs) / 60 if secs else None
+        toks = [tokens.get(f"{r['run_id']}|{r['task']}") for r in rows_m]
+        toks = [t["in"] + t["out"] for t in toks if t]
+        rate = rates.get(m["id"])
+        m["cost_per_attempt"] = (sum(toks) / len(toks)) * rate / 1e6 if toks and rate else None
+        m["cost_type"] = "estimated" if m["cost_per_attempt"] is not None else None
     top3 = ("gpt-6.1-sol", "claude-fable-5-2", "gpt-6-astra")
     four = level_pass(rows, lambda r: r["model"] in top3 and r.get("version", "").startswith("morning3-")
                       and not r.get("handbook") and not r.get("told") and r.get("dose") == 3)
