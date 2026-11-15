@@ -237,7 +237,7 @@ def build_page_data() -> dict[str, Any]:
             },
             {
                 "title": "Decision quality and execution efficiency are both measurable.",
-                "detail": "The official score captures end-to-end completion, while the action-recorded view isolates decision quality once an agent commits to a business action.",
+                "detail": "The end-to-end score captures complete agent performance, while the decision-quality view isolates reasoning quality once an agent commits to a business action.",
             },
             {
                 "title": "Cross-system evidence changes the ranking.",
@@ -412,9 +412,10 @@ h2 { font-size:21px; font-weight:500; margin:0 0 22px; letter-spacing:-.01em; }
 .axis span:last-child { transform:translateX(-100%); }
 .card-foot { display:flex; justify-content:space-between; align-items:center; margin-top:28px; gap:12px; color:var(--text-muted); font-size:12px; }
 .plot-shell { margin:0; padding:0; }
-.plot-head { display:flex; justify-content:space-between; gap:16px; align-items:baseline; margin-bottom:20px; }
+.plot-head { display:flex; justify-content:space-between; gap:24px; align-items:flex-end; margin-bottom:20px; }
 .plot-head b { font-size:18px; font-weight:520; letter-spacing:-.01em; }
-.plot-head span { color:var(--text-muted); font-size:12px; }
+.plot-heading > span { display:block; color:var(--text-muted); font-size:12px; margin-top:4px; }
+.plot-control { flex:none; text-align:right; }
 .plot-stage { position:relative; padding-left:20px; }
 .plot-axis-title-y { position:absolute; left:-26px; top:50%; transform:rotate(-90deg) translateX(-50%); transform-origin:left top; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; white-space:nowrap; }
 .plot-axis-title-x { color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; text-align:center; margin:40px 0 0; }
@@ -567,23 +568,25 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
       <div><div class="section-kicker">Enterprise action intelligence</div><h2>The implicit-action-bench leaderboard</h2></div>
       <div class="leaderboard-body">
         <p>Eight high-context tasks are grounded in the Redwood Inference world from EnterpriseRAG-Bench. Each sandbox contains at least 120 authentic records plus current-decision overlays, requiring models to reconstruct the controlling rule from a realistic evidence neighborhood.</p>
-        <p>The full-pass view applies the benchmark's strictest criterion: every scoring component must pass. Official score and action-recorded score remain available as complementary views of end-to-end performance and decision quality.</p>
+        <p>The full-pass view applies the benchmark's strictest criterion: every scoring component must pass. End-to-end performance and decision quality remain available as complementary views of agent execution and business reasoning.</p>
         <div class="chips"><a href="#results">Task results</a><a href="#trajectories">Trajectory evidence</a><a href="#takeaways">Research insights</a></div>
       </div>
     </div>
     <div class="card ranking-card">
       <div class="control-bar">
-        <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="pass" aria-pressed="true">Full pass</button><button type="button" data-score-mode="raw" aria-pressed="false">Official score</button><button type="button" data-score-mode="actionful" aria-pressed="false">Action recorded</button></div></div>
-        <div class="control-group"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
+        <div class="control-group"><span>Score view</span><div class="segmented" id="score-toggle"><button type="button" data-score-mode="pass" aria-pressed="true">Full pass</button><button type="button" data-score-mode="raw" aria-pressed="false">End-to-end</button><button type="button" data-score-mode="actionful" aria-pressed="false">Decision quality</button></div></div>
       </div>
       <div class="card-head leader-columns"><span>Model</span><span id="score-head">Full pass</span><span id="metric-head">Cost / task</span></div>
       <div id="leader-rows"></div>
       <div class="axis" id="axis"></div>
-      <div class="card-foot"><span>Full-pass, official, and action-recorded rankings</span><span class="mono">24 attempts / model</span></div>
+      <div class="card-foot"><span>Full-pass, end-to-end, and decision-quality rankings</span><span class="mono">24 attempts / model</span></div>
     </div>
     <div class="card plot-card">
       <div class="plot-shell">
-        <div class="plot-head"><b id="plot-title">Full-pass success vs. cost</b><span>Hover or focus a model for complete results</span></div>
+        <div class="plot-head">
+          <div class="plot-heading"><b id="plot-title">Full-pass success vs. cost</b><span>Hover or focus a model for complete results</span></div>
+          <div class="control-group plot-control"><span>Efficiency axis</span><div class="segmented" id="metric-toggle"><button type="button" data-metric="cost" aria-pressed="true">Cost</button><button type="button" data-metric="time" aria-pressed="false">Time</button></div></div>
+        </div>
         <div class="plot-stage"><span class="plot-axis-title-y">Success rate</span><div class="efficiency-plot" id="efficiency-plot"></div></div>
         <div class="plot-axis-title-x" id="plot-axis-title-x">Average API cost per task attempt</div>
         <div class="plot-note" id="plot-note"></div>
@@ -629,7 +632,7 @@ footer { border-top:1px solid var(--line); color:var(--text-muted); font-size:12
     <p><b>Shared harness.</b> Anthropic, OpenAI, and Google models use the same mini-SWE-agent package, system-prompt structure, business-action tool catalog, 25-step cap, and three independent trials. Task sandboxes have no public internet access.</p>
     <div class="method-callout mono">score = 0 if a forbidden action occurs<br>otherwise 60% deterministic + 20% awareness + 20% alternative quality</div>
     <p><b>Interpretation.</b> Full pass requires every scoring component. Partial credit is included in the mean. Standard deviation is calculated across the three complete trial means, and blocked providers remain unscored.</p>
-    <p><b>Research contribution.</b> The benchmark jointly measures decision quality and execution efficiency. The __SCORE_SPREAD__-point frontier-model spread, task-specific ranking reversals, and action-recorded comparison expose capabilities that aggregate question-answering evaluations do not capture.</p>
+    <p><b>Research contribution.</b> The benchmark jointly measures decision quality and execution efficiency. The __SCORE_SPREAD__-point frontier-model spread, task-specific ranking reversals, and decision-quality comparison expose capabilities that aggregate question-answering evaluations do not capture.</p>
   </section>
 </main>
 <footer><div class="wrap">implicit-action-bench · Enterprise constraint-aware action benchmark · built on Valkyrie</div></footer>
@@ -663,12 +666,12 @@ function displayedStddev(model) {
 
 function scoreModeLabel() {
   if (scoreMode === "pass") return "Full pass";
-  return scoreMode === "raw" ? "Official score" : "Action-recorded score";
+  return scoreMode === "raw" ? "End-to-end score" : "Decision quality";
 }
 
 function scoreModeTitle() {
   if (scoreMode === "pass") return "Full-pass success";
-  return scoreMode === "raw" ? "Official success" : "Action-recorded success";
+  return scoreMode === "raw" ? "End-to-end performance" : "Decision quality";
 }
 
 function metricValue(model) {
@@ -844,8 +847,8 @@ function modelTooltipMarkup(model) {
   return `<div class="tip-head"><span class="tip-logo">${ICONS[model.provider] || ""}</span><div><b>${escapeHtml(model.name)}</b><span>${escapeHtml(model.provider)} · mini-SWE-agent</span></div></div>
     <div class="tip-primary"><div><span>${scoreLabel}</span><strong class="mono">${percent(selectedScore)}</strong></div><small class="mono">± ${(selectedStddev * 100).toFixed(1)} pp</small></div>
     <div class="tip-grid">
-      <div class="tip-metric"><span>Official score</span><b class="mono">${percent(model.score)}</b></div>
-      <div class="tip-metric"><span>Action recorded</span><b class="mono">${percent(model.actionful_mean)}</b></div>
+      <div class="tip-metric"><span>End-to-end score</span><b class="mono">${percent(model.score)}</b></div>
+      <div class="tip-metric"><span>Decision quality</span><b class="mono">${percent(model.actionful_mean)}</b></div>
       <div class="tip-metric"><span>Full pass</span><b class="mono">${percent(model.pass_rate)}</b></div>
       <div class="tip-metric"><span>Recorded actions</span><b class="mono">${model.actionful_runs}/${model.attempts}</b></div>
       <div class="tip-metric"><span>Average cost</span><b class="mono">${cost}</b></div>

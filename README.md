@@ -9,15 +9,15 @@ implicit-action-bench tests whether AI agents correctly apply implicit business 
 The static leaderboard is served from [`index.html`](./index.html). Its first view reports the strict full-pass rate beside average API cost per task attempt. Two controls let readers:
 
 - switch the efficiency axis from **cost** to **mean agent time**;
-- switch among **full pass**, the official **raw result**, and the diagnostic **action-recorded result**.
+- switch among **full pass**, **end-to-end performance**, and **decision quality**.
 
-The action-recorded view uses attempts whose business action is preserved in verifier metadata or confirmed from the mini-SWE-agent trajectory. It helps separate decision quality from agent-loop completion, but it is not the official ranking.
+The decision-quality view uses attempts whose business action is preserved in verifier metadata or confirmed from the mini-SWE-agent trajectory. It separates business reasoning quality from agent-loop completion while preserving full pass as the strict default ranking.
 
 ## Pilot results
 
 All models ran the same eight tasks, three times each, with the same published mini-SWE-agent harness, tools, 25-step limit, Modal sandbox, and offline task environment.
 
-| Model | Official raw score | Action-recorded score | Full pass | Avg. API cost / task | Mean agent time |
+| Model | End-to-end score | Decision quality | Full pass | Avg. API cost / task | Mean agent time |
 |---|---:|---:|---:|---:|---:|
 | GPT-6.1 Sol | **89.2% ± 2.4 pp** | **89.2%** | **62.5%** | **$0.12 reported** | 1.4 min |
 | Claude Opus 5.5 | **82.5% ± 3.7 pp** | 82.5% | 45.8% | $0.22 reported | **1.0 min** |
@@ -65,7 +65,7 @@ else:
           + 0.20 × alternative-action quality
 ```
 
-The official leaderboard mean includes every attempt, including format failures and runs that exhaust the step budget before taking action. The diagnostic action-recorded mean includes attempts with a verifier-preserved or trajectory-confirmed business action.
+The end-to-end mean includes every attempt, including format failures and runs that exhaust the step budget before taking action. The decision-quality mean includes attempts with a verifier-preserved or trajectory-confirmed business action.
 
 ## Repository layout
 
