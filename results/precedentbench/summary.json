@@ -1,0 +1,175 @@
+{
+ "benchmark": "PrecedentBench",
+ "jobs": {
+  "invoices": {
+   "title": "Supplier invoices",
+   "setting": "8 habits (with and without last year's policy doc), 3 examples per habit",
+   "metric": "whole morning right: all 15 invoices",
+   "models": [
+    {
+     "id": "anthropic/claude-fable-5-2",
+     "name": "Claude Fable 5.2",
+     "provider": "Anthropic",
+     "main": {
+      "n": 20,
+      "k": 2,
+      "pass": 0.1,
+      "pass_lo": 0.027865893984153206,
+      "pass_hi": 0.30103820641179335,
+      "mean": 0.7633449999999999,
+      "mean_lo": 0.6566799999999999,
+      "mean_hi": 0.850015
+     },
+     "told": {
+      "n": 5,
+      "k": 5,
+      "pass": 1.0,
+      "pass_lo": 0.5655085052479191,
+      "pass_hi": 1.0,
+      "mean": 1.0,
+      "mean_lo": 1.0,
+      "mean_hi": 1.0
+     }
+    },
+    {
+     "id": "anthropic/claude-opus-5-5",
+     "name": "Claude Opus 5.5",
+     "provider": "Anthropic",
+     "main": {
+      "n": 20,
+      "k": 0,
+      "pass": 0.0,
+      "pass_lo": 0.0,
+      "pass_hi": 0.16113012549493322,
+      "mean": 0.5866500000000001,
+      "mean_lo": 0.54999,
+      "mean_hi": 0.6266399999999999
+     },
+     "told": {
+      "n": 5,
+      "k": 5,
+      "pass": 1.0,
+      "pass_lo": 0.5655085052479191,
+      "pass_hi": 1.0,
+      "mean": 1.0,
+      "mean_lo": 1.0,
+      "mean_hi": 1.0
+     }
+    },
+    {
+     "id": "anthropic/claude-sonnet-5-5",
+     "name": "Claude Sonnet 5.5",
+     "provider": "Anthropic",
+     "main": {
+      "n": 20,
+      "k": 0,
+      "pass": 0.0,
+      "pass_lo": 0.0,
+      "pass_hi": 0.16113012549493322,
+      "mean": 0.3766750000000001,
+      "mean_lo": 0.32334000000000007,
+      "mean_hi": 0.4333400000000001
+     },
+     "told": {
+      "n": 5,
+      "k": 5,
+      "pass": 1.0,
+      "pass_lo": 0.5655085052479191,
+      "pass_hi": 1.0,
+      "mean": 1.0,
+      "mean_lo": 1.0,
+      "mean_hi": 1.0
+     }
+    },
+    {
+     "id": "openai/gpt-6.1-sol",
+     "name": "GPT-6.1 Sol",
+     "provider": "OpenAI",
+     "main": {
+      "n": 20,
+      "k": 7,
+      "pass": 0.35,
+      "pass_lo": 0.18118954786794464,
+      "pass_hi": 0.5671494897805354,
+      "mean": 0.826685,
+      "mean_lo": 0.7633550000000001,
+      "mean_hi": 0.890015
+     },
+     "told": {
+      "n": 5,
+      "k": 5,
+      "pass": 1.0,
+      "pass_lo": 0.5655085052479191,
+      "pass_hi": 1.0,
+      "mean": 1.0,
+      "mean_lo": 1.0,
+      "mean_hi": 1.0
+     }
+    },
+    {
+     "id": "openai/gpt-6-astra",
+     "name": "GPT-6 Astra",
+     "provider": "OpenAI",
+     "main": {
+      "n": 20,
+      "k": 3,
+      "pass": 0.15,
+      "pass_lo": 0.05236779195949584,
+      "pass_hi": 0.36042329588695743,
+      "mean": 0.7566850000000002,
+      "mean_lo": 0.6966850000000002,
+      "mean_hi": 0.820015
+     },
+     "told": {
+      "n": 5,
+      "k": 5,
+      "pass": 1.0,
+      "pass_lo": 0.5655085052479191,
+      "pass_hi": 1.0,
+      "mean": 1.0,
+      "mean_lo": 1.0,
+      "mean_hi": 1.0
+     }
+    }
+   ],
+   "told": {
+    "k": 25,
+    "n": 25
+   },
+   "cards": [
+    {
+     "label": "Thin evidence",
+     "model": "Claude Fable 5.2",
+     "setting": "8 habits, 3 examples each",
+     "observed": "Got 13 of 15 invoices right, but flagged two mid-size invoices for review: with only three rows showing the new $10,000 cutoff, it kept the old $5,000 one in case the recent rows were slips.",
+     "why": "The same model is near perfect when each habit is shown five times. With many habits and thin evidence, even the strongest agent holds on to the old way.",
+     "run": "valkyrie run 4d0d826e-e060-4dbd-b54d-63c2253b3303 \u00b7 morningL2-k3-nohandbook-r5"
+    },
+    {
+     "label": "Reads the history like a spreadsheet",
+     "model": "GPT-6.1 Sol",
+     "setting": "8 habits, 3 examples each",
+     "observed": "Wrote a short Python script that walked all three quarterly trackers and counted, per supplier, cost centers, who logged it and the review notes. Then logged all 15 invoices correctly, including the re-sent invoice marked DUPLICATE - do not pay.",
+     "why": "Every model has the same terminal and tools. Choosing to analyze the history systematically is part of the skill, and it is why Sol leads at three examples.",
+     "run": "valkyrie run 9df3920d-731c-4ea3-9de5-afae905b3b0a \u00b7 morningL2-k3-nohandbook-r4"
+    },
+    {
+     "label": "Misses the newest habit",
+     "model": "GPT-6 Astra",
+     "setting": "8 habits, 3 examples each",
+     "observed": "Caught the duplicate and the new reviewers, but left the small Kellerby and Pellham invoices blank instead of noting \"card\", a habit that only started on October 19.",
+     "why": "The most recent change, with the fewest rows behind it, is the one that slips.",
+     "run": "valkyrie run adbb1b8c-1b0b-4966-b430-f31515e131d5 \u00b7 morningL2-k3-nohandbook-r5"
+    },
+    {
+     "label": "Follows when told, not when inferring",
+     "model": "Claude Opus 5.5",
+     "setting": "8 habits, 5 examples each",
+     "observed": "Read most habits correctly but would not write \"PO matched\": \"I couldn't check purchase orders, so the Infra invoices have no PO note.\" Told the 8 habits in plain words, Opus and Sonnet get every try fully right.",
+     "why": "They can follow the team's rules. They do not pick them up from how the team works.",
+     "run": "valkyrie run de093376-839d-4b50-bd9c-74af6b064d20 \u00b7 morningL2-k5-nohandbook-r5"
+    }
+   ]
+  }
+ }
+}
