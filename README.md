@@ -2,6 +2,9 @@
 
 implicit-action-bench tests whether AI agents correctly apply implicit business knowledge and common sense that is not stated in the current task, but is present—or should be inferred—from the surrounding company context. The benchmark feels like real work: long tasks end with an action, while the correct behavior depends on unstated or previously stated constraints.
 
+<img width="1315" height="882" alt="image" src="https://github.com/user-attachments/assets/76a2fe37-60c8-4a99-94df-4cb127069b29" />
+
+
 ## Live leaderboard
 
 **Production:** [implicit-action-bench.vercel.app](https://implicit-action-bench.vercel.app)
